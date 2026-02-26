@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Ho System (歩) — Collaborative Development Methodology</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    button { font-family: inherit; }
+    a { color: inherit; }
+  </style>
+  <style>
+    :root {
+      --color-ink: #1a1a1a;
+      --color-ink-muted: #7a7a7a;
+      --color-ground: #f5f2ed;
+      --color-accent: #c45a2d;
+      --color-rule: #d0c9be;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --max-width: 1080px;
+      --gutter: clamp(1.5rem, 5vw, 4rem);
+    }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); letter-spacing: 0.02em; text-decoration: none; }
+    header nav { display: flex; gap: 2rem; }
+    header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
+    header nav a:hover { color: var(--color-ink) !important; }
+    footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; }
+    footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); max-width: none; }
+    @media (max-width: 640px) { header nav { gap: 1.2rem; } header nav a { font-size: 0.72rem; } }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+    </div>
+  </header>
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState } = React;
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555", darkMuted: "#999", darkText: "#c8c2b8",
+  shu: "#4a6fa5", ha: "#5a8a5a", ri: "#c49a2a",
+};
+
+function Label({ children, dark }) {
+  return <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>{children}</div>;
+}
+
+function Prose({ children, dark, style }) {
+  return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
+}
+
+function Chip({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, letterSpacing: "0.04em", padding: "0.25rem 0.6rem", border: "1px solid " + C.rule, borderRadius: 2, whiteSpace: "nowrap" }}>{children}</span>;
+}
+
+function Section({ dark, children, style }) {
+  return <section style={{ background: dark ? C.darkBg : C.ground, padding: "5rem 2rem", ...style }}><div style={{ maxWidth: 900, margin: "0 auto" }}>{children}</div></section>;
+}
+
+function Exp({ label, sub, jp, open, toggle, color, children }) {
+  return (
+    <div style={{ borderBottom: "1px solid " + C.rule }}>
+      <button onClick={toggle} style={{ width: "100%", padding: "1.25rem 0", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left", color: C.ink, gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: color || C.accent, flexShrink: 0 }} />
+          <div>
+            <div style={{ fontFamily: F.display, fontSize: "1.15rem", lineHeight: 1.3 }}>{label}{jp && <span style={{ fontFamily: F.mono, fontSize: "0.85rem", color: C.inkMuted, marginLeft: "0.5rem" }}>{jp}</span>}</div>
+            {sub && <div style={{ fontSize: "0.85rem", color: C.inkMuted, marginTop: "0.25rem", fontStyle: "italic" }}>{sub}</div>}
+          </div>
+        </div>
+        <span style={{ color: C.accent, fontSize: "1.1rem", transition: "transform 0.2s", transform: open ? "rotate(90deg)" : "none", flexShrink: 0 }}>&#8594;</span>
+      </button>
+      {open && <div style={{ paddingBottom: "1.75rem", paddingLeft: "1.75rem" }}>{children}</div>}
+    </div>
+  );
+}
+
+function Card({ title, children, style }) {
+  return (
+    <div style={{ flex: "1 1 250px", padding: "1.5rem 1.75rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3, ...style }}>
+      {title && <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.75rem" }}>{title}</div>}
+      <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>{children}</div>
+    </div>
+  );
+}
+
+function StageBadge({ stage, label }) {
+  const colors = { shu: C.shu, ha: C.ha, ri: C.ri };
+  return <span style={{ fontFamily: F.mono, fontSize: "0.7rem", letterSpacing: "0.06em", padding: "0.2rem 0.5rem", background: colors[stage] + "18", color: colors[stage], border: "1px solid " + colors[stage] + "40", borderRadius: 2 }}>{label}</span>;
+}
+
+function TierRow({ tier, name, desc }) {
+  return (
+    <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", gap: "3px", marginTop: "0.35rem", flexShrink: 0 }}>
+        {[1, 2, 3].map(n => <div key={n} style={{ width: 8, height: 8, borderRadius: "50%", background: n <= tier ? C.accent : C.rule }} />)}
+      </div>
+      <div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent, marginBottom: "0.15rem" }}>{name}</div>
+        <div style={{ fontSize: "0.88rem", color: C.inkLight, lineHeight: 1.55 }}>{desc}</div>
+      </div>
+    </div>
+  );
+}
+
+function ExtLink({ href, children }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none", borderBottom: "1px solid " + C.accent + "40" }}>{children}</a>;
+}
+
+/* ─── APP ─── */
+
+function App() {
+  const [methOpen, setMethOpen] = useState(null);
+  const toggleMeth = (id) => setMethOpen(methOpen === id ? null : id);
+
+  return (
+    <div style={{ fontFamily: F.body, color: C.ink, background: C.ground }}>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+      {/* ═══ HERO ═══ */}
+      <Section>
+        <Label>Case Study — The Ho System (歩) — Collaborative Development Methodology</Label>
+        <h1 style={{ fontFamily: F.display, fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.15, marginBottom: "2.5rem", maxWidth: 700 }}>
+          A Structured Methodology for{" "}
+          <span style={{ color: C.accent, fontStyle: "italic" }}>Building With AI</span>
+        </h1>
+        <Prose>
+          I designed the Ho System to address the Access-Judgment Gap — the space between having AI tools and knowing whether what they produce is correct. The methodology structures human-AI collaboration so the human maintains architectural authority while AI handles implementation. It draws on constructionism, reflective practice, and the Japanese craft tradition of shu-ha-ri to produce both working systems and genuine understanding.
+        </Prose>
+        <Prose style={{ marginBottom: 0 }}>
+          I developed the theory, designed the structural framework, created the templates and progression model, and worked out the methodology through building a production system at Harvard. The intellectual foundations, systems architecture, and all documentation are mine.
+        </Prose>
+        <div style={{ marginTop: "2.5rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {["Systems Design", "Methodology", "Human-AI Collaboration", "Constructionism", "Reflective Practice", "Open Source (CC BY-NC-ND 4.0)"].map(t => <Chip key={t}>{t}</Chip>)}
+        </div>
+      </Section>
+
+      {/* ═══ THE PROBLEM ═══ */}
+      <Section dark>
+        <Label dark>The Problem</Label>
+        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          {[
+            { title: "The Access-Judgment Gap", text: "Anyone can prompt AI to generate code. The bottleneck isn't access — it's judgment: knowing whether what was built is correct, secure, and aligned with design intent. That gap cannot be closed by better prompting or more powerful models." },
+            { title: "The Vibe Coding Crisis", text: "AI-generated code contains 1.7× more defects. Experienced developers are 19% slower with AI tools while believing they're faster. The illusion of productivity may be more dangerous than the productivity loss itself.", cite: "CodeRabbit 2025, METR/Becker et al. 2025" },
+            { title: "The Missing Middle", text: "Traditional learning says: master the skills first, then build. AI shortcuts say: understanding is optional. Both are inadequate. The Ho System is the third path — one where you genuinely learn while actually building." },
+          ].map((item, i) => (
+            <div key={i} style={{ flex: "1 1 250px", padding: "1.75rem", background: C.darkBgDeep, borderRadius: 3, border: "1px solid " + C.darkRule }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.1rem", color: "#e8e2d8", marginBottom: "0.75rem" }}>{item.title}</div>
+              <div style={{ fontSize: "0.92rem", color: C.darkText, lineHeight: 1.65 }}>{item.text}</div>
+              {item.cite && <div style={{ fontFamily: F.mono, fontSize: "0.68rem", color: C.darkMuted, marginTop: "0.75rem" }}>{item.cite}</div>}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ THE METHODOLOGY ═══ */}
+      <Section>
+        <Label>The Methodology</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "1.5rem" }}>Five structural elements define how it works</h2>
+        <Prose>
+          The Ho System structures development into bounded sessions called <em>hos</em>, sequenced into project arcs, with a progression model that adapts as the practitioner develops. The methodology is the structure. The facilitation — designing effective sequences for specific learners — is the consulting work.
+        </Prose>
+        <div style={{ borderTop: "1px solid " + C.rule, marginTop: "1rem" }}>
+
+          {/* The Ho */}
+          <Exp label="The Ho — The Unit of Work" jp="歩" sub={`"A bounded step forward — not a sprint, not a leap."`} open={methOpen === "ho"} toggle={() => toggleMeth("ho")} color={C.accent}>
+            <Prose style={{ maxWidth: 580 }}>A ho is a bounded work session that produces something real and leaves a record of what happened. Five invariants define it.</Prose>
+            <div style={{ display: "grid", gap: "0.75rem", marginBottom: "1.25rem" }}>
+              {[
+                ["Bounded", "Has edges. ~2 hours in early stages, flexible later. The boundary exists so the learner can commit, reflect, and reset."],
+                ["Deliverable", "Produces something that exists outside the document. Working code, passing tests, a deployed service — not a document about work."],
+                ["Traceable", "Connected to actual changes via commit hash. A ho without traceability is a story about work. With traceability, it's evidence."],
+                ["Reflective", "Includes honest self-assessment. What was understood, what remains opaque. The devlog."],
+                ["Sequenced", "Exists within a larger arc. Numbered, connected to predecessors and successors. Position in the sequence means something."],
+              ].map(([name, desc], i) => (
+                <div key={i} style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start" }}>
+                  <span style={{ fontFamily: F.mono, fontSize: "0.75rem", color: C.accent, minWidth: 18, marginTop: "0.2rem" }}>{String(i + 1).padStart(2, "0")}</span>
+                  <div><span style={{ fontWeight: 600, fontSize: "0.92rem" }}>{name}.</span> <span style={{ fontSize: "0.88rem", color: C.inkLight }}>{desc}</span></div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.inkMuted, padding: "1rem 1.25rem", background: C.groundWarm, borderRadius: 3, lineHeight: 1.6 }}>
+              Numbering encodes relationship: <span style={{ color: C.accent }}>Major.Minor.Sub</span>. Ho 05.6 is the 6th branch from major session 5. The plan always diverges from reality — and the divergence is diagnostic.
+            </div>
+          </Exp>
+
+          {/* Shu-Ha-Ri */}
+          <Exp label="Shu-Ha-Ri — The Progression Model" jp="守破離" sub={`"Follow the form. Break from the form. Transcend the form."`} open={methOpen === "shr"} toggle={() => toggleMeth("shr")} color={C.accent}>
+            <Prose style={{ maxWidth: 580 }}>The methodology adapts through three stages. These don't progress linearly — you might be at Ri for Python and Shu for Docker in the same project. New domains reset you to Shu.</Prose>
+            <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+              {[
+                { stage: "shu", kanji: "守", name: "Follow", desc: "Author prescribes the work. 4-9 parts, 10-25 min each. Strict ~2hr boundary. Full devlog with confidence self-assessment.", quote: "Trust the structure. It knows things you don't yet." },
+                { stage: "ha", kanji: "破", name: "Break", desc: "Learner scopes own work. Think → Execute → Reflect. Decision record replaces learning journal. 2-4 hours.", quote: "The ho gives you a problem; you decide the solution." },
+                { stage: "ri", kanji: "離", name: "Transcend", desc: "Practitioner-level. Minimal recording: problem, solution, what changed, results. Structure internalized.", quote: "The form has been absorbed. Practice flows." },
+              ].map(s => (
+                <div key={s.stage} style={{ flex: "1 1 180px", padding: "1.25rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                    <span style={{ fontFamily: F.display, fontSize: "1.5rem", color: C[s.stage] }}>{s.kanji}</span>
+                    <div><StageBadge stage={s.stage} label={s.stage.toUpperCase()} /><div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, marginTop: "0.15rem" }}>{s.name}</div></div>
+                  </div>
+                  <div style={{ fontSize: "0.85rem", color: C.inkLight, lineHeight: 1.6, marginBottom: "0.75rem" }}>{s.desc}</div>
+                  <div style={{ fontSize: "0.82rem", fontStyle: "italic", color: C.inkMuted }}>{s.quote}</div>
+                </div>
+              ))}
+            </div>
+          </Exp>
+
+          {/* Tiered Understanding */}
+          <Exp label="Tiered Understanding — Calibrated Comprehension" sub={`"Not everything needs to be understood at the same depth."`} open={methOpen === "tier"} toggle={() => toggleMeth("tier")} color={C.accent}>
+            <Prose style={{ maxWidth: 580 }}>Explicit, deliberate triage for cognitive attention. For every component, the practitioner declares how deeply they need to understand it — and that declaration is honest, revisable, and tracked.</Prose>
+            <TierRow tier={1} name="Tier 1 — Black Box" desc="Use it without investigating. Know inputs, outputs, invocation. Deliberate choice, not ignorance. 'If this broke in a new way, I'd need help.'" />
+            <TierRow tier={2} name="Tier 2 — Functional" desc="Configure, troubleshoot, modify, explain to others. The target level for most ho work. 'I could explain this and answer follow-up questions.'" />
+            <TierRow tier={3} name="Tier 3 — Deep" desc="Architectural understanding. Could redesign it. Develops cumulatively across a project arc, rarely within a single ho." />
+            <div style={{ marginTop: "1rem", fontFamily: F.mono, fontSize: "0.78rem", color: C.inkMuted, padding: "1rem 1.25rem", background: C.groundWarm, borderRadius: 3, lineHeight: 1.6 }}>
+              Declaring tiers honestly prevents the false confidence that AI-assisted work produces. Structured self-assessment, practiced repeatedly, is the antidote to the illusion of competence.
+            </div>
+          </Exp>
+
+          {/* Devlog */}
+          <Exp label="The Devlog — Reflection as Practice" sub={`"The artifact that distinguishes 'I built this' from 'AI built this while I watched.'"`} open={methOpen === "dev"} toggle={() => toggleMeth("dev")} color={C.accent}>
+            <Prose style={{ maxWidth: 580 }}>A structured reflection written after every ho. Not a project log, not a commit message — a learning document. Three properties: honest, immediate, structured.</Prose>
+            <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65, marginBottom: "1.25rem" }}>
+              Code can be generated. Tests can be generated. Configuration files can be generated. <strong>The devlog cannot be generated</strong> — it requires the learner to honestly assess what happened.
+            </div>
+            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              {[
+                { stage: "shu", text: "Learning journal. Tiers achieved, confidence scale (1-5), gaps identified." },
+                { stage: "ha", text: "Decision record. Problem defined, approach chosen, whether it held up." },
+                { stage: "ri", text: "Absorbed into practice. Brief notes. The structure lives in the practitioner." },
+              ].map(s => (
+                <div key={s.stage} style={{ flex: "1 1 150px", padding: "0.75rem 1rem", background: C[s.stage] + "12", border: "1px solid " + C[s.stage] + "30", borderRadius: 3 }}>
+                  <StageBadge stage={s.stage} label={s.stage.toUpperCase()} />
+                  <div style={{ fontSize: "0.82rem", color: C.inkLight, marginTop: "0.5rem" }}>{s.text}</div>
+                </div>
+              ))}
+            </div>
+          </Exp>
+
+          {/* Project Arc */}
+          <Exp label="The Project Arc — From Idea to Production" sub="Orientation → Foundation → Construction → Integration → Operations" open={methOpen === "arc"} toggle={() => toggleMeth("arc")} color={C.accent}>
+            <Prose style={{ maxWidth: 580 }}>A project arc is the complete sequence of hos from idea to running system. It begins with Kamae (構え) — four planning documents before the first ho — and ends with a working system in production.</Prose>
+            <div style={{ display: "grid", gap: "0.5rem", marginBottom: "1.25rem" }}>
+              {[
+                { phase: "Orientation", hos: "0–0.5", focus: "Tooling, environment, mental models." },
+                { phase: "Foundation", hos: "1–2", focus: "Project structure, core infrastructure, first working component." },
+                { phase: "Construction", hos: "3–6", focus: "Primary capabilities. Longest phase, most branching. Shu→Ha transition." },
+                { phase: "Integration", hos: "7–9", focus: "Assembly, system-level concerns, deployment." },
+                { phase: "Operations", hos: "10+", focus: "Maintenance, extension. Ri-stage. The practitioner owns the system." },
+              ].map((p, i) => (
+                <div key={i} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", padding: "0.5rem 0" }}>
+                  <div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.accent, minWidth: 55, marginTop: "0.15rem" }}>Ho {p.hos}</div>
+                  <div><span style={{ fontWeight: 600, fontSize: "0.9rem" }}>{p.phase}.</span> <span style={{ fontSize: "0.85rem", color: C.inkLight }}>{p.focus}</span></div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.inkMuted, padding: "1rem 1.25rem", background: C.groundWarm, borderRadius: 3, lineHeight: 1.6 }}>
+              The Kanyō pilot planned 11 sequential hos and produced 19 documents across three levels of branching. The gap between plan and reality is itself meaningful — it tells the story of where real complexity lived.
+            </div>
+          </Exp>
+        </div>
+      </Section>
+
+      {/* ═══ VERIFICATION ═══ */}
+      <Section dark>
+        <Label dark>Verification</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "1rem" }}>Architectural authority without verification is just optimism</h2>
+        <Prose dark style={{ marginBottom: "2rem" }}>The Ho System addresses overconfidence in AI-assisted development through a four-layer verification stack — a progression of practices that develop alongside the practitioner.</Prose>
+        <div style={{ display: "grid", gap: "1rem" }}>
+          {[
+            { layer: "Layer 1a", name: "Test Coverage", desc: "Automated behavior verification. Established in Ho 01 and maintained throughout. The feature is not complete until tests exist that would fail if the feature were broken.", when: "Every ho, from day one" },
+            { layer: "Layer 1b", name: "Linting & Static Analysis", desc: "Code quality, type checking, formatting. AI-generated code introduces inconsistent naming, unused imports, type drift. The linting pipeline catches structural degradation that tests miss.", when: "Continuous — code-lint-test cycle" },
+            { layer: "Layer 2", name: "Directed Self-Review", desc: "Reviewing AI output against declared intent. Not 'does it work?' but 'does it do what I specified?' Develops the judgment that distinguishes authority from passive acceptance.", when: "Every commit" },
+            { layer: "Layer 3", name: "Cross-Agent Verification", desc: "A second AI reviews the first's work with explicit instructions to find problems. Adversarial by design. Most valuable for complex changes where domain knowledge is still developing.", when: "Complex changes, Ri stage" },
+          ].map((v, i) => (
+            <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "1.25rem 1.5rem", background: C.darkBgDeep, borderRadius: 3, border: "1px solid " + C.darkRule }}>
+              <div style={{ fontFamily: F.mono, fontSize: "0.68rem", color: C.accent, minWidth: 60, marginTop: "0.2rem" }}>{v.layer}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: F.display, fontSize: "1rem", color: "#e8e2d8", marginBottom: "0.4rem" }}>{v.name}</div>
+                <div style={{ fontSize: "0.88rem", color: C.darkText, lineHeight: 1.6 }}>{v.desc}</div>
+                <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.darkMuted, marginTop: "0.5rem" }}>{v.when}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ KANYŌ ═══ */}
+      <Section>
+        <Label>Where the Methodology Was Built</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "1.5rem" }}>
+          Kanyō <span style={{ fontFamily: F.mono, fontSize: "1rem", color: C.inkMuted }}>観鷹</span>
+          <span style={{ fontSize: "1rem", color: C.inkMuted, fontStyle: "italic" }}> — Contemplating Falcons</span>
+        </h2>
+        <Prose>The Ho System wasn't designed in theory and then applied. It was <strong>developed through practice</strong> — worked out session by session while building Kanyō, a computer vision system for real-time monitoring of peregrine falcons at Harvard's Memorial Hall. The methodology emerged from the build, then was formalized into the framework above.</Prose>
+        <Prose>The builder (the author) has an MIT M.Arch and 25+ years in education leadership and systems design. Prior programming experience: minimal. Kanyō was built from zero to production deployment in approximately six weeks of structured ho sessions — not as a tutorial exercise but as functioning infrastructure now in active use.</Prose>
+
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginBottom: "0.25rem" }}>
+          <ExtLink href="https://kanyo.sageframe.net">kanyo.sageframe.net ↗</ExtLink>
+          <span style={{ color: C.rule }}>·</span>
+          <ExtLink href="https://github.com/sageframe-no-kaji/kanyo-contemplating-falcons-dev">Detection Engine ↗</ExtLink>
+          <span style={{ color: C.rule }}>·</span>
+          <ExtLink href="https://github.com/sageframe-no-kaji/kanyo-viewer">Viewer ↗</ExtLink>
+        </div>
+
+        {/* Stats inside Kanyō section */}
+        <div style={{ background: C.darkBgDeep, padding: "2rem", borderRadius: 3, margin: "2rem 0 2.5rem 0" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "1.5rem 1rem" }}>
+            {[
+              { val: "19", label: "Ho Documents" },
+              { val: "6", label: "Weeks to Production" },
+              { val: "272", label: "Passing Tests" },
+              { val: "7+12", label: "Major + Branches" },
+            ].map((it, i) => (
+              <div key={i} style={{ textAlign: "center", flex: "1 1 100px" }}>
+                <div style={{ fontFamily: F.display, fontSize: "1.75rem", color: C.accent }}>{it.val}</div>
+                <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.darkMuted, letterSpacing: "0.06em", marginTop: "0.3rem" }}>{it.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Label>What Was Built</Label>
+        <div style={{ borderTop: "1px solid " + C.rule }}>
+          {[
+            { name: "Detection Pipeline", summary: "YOLOv8 computer vision processing live YouTube streams in real time", desc: "YOLOv8 object detection with configurable confidence thresholds and frame sampling. Processes live YouTube streams in real time, filtering for falcon presence across multiple camera feeds. Handles both daytime and infrared conditions with separate confidence tuning. The model often misclassifies falcons as cats or dogs — on a dedicated falcon cam, any animal detection equals falcon present, so the system filters by COCO animal class range rather than bird-only." },
+            { name: "Behavioral State Machine", summary: "Five-state debounced system that eliminates false detection spam", desc: "A five-state system (Absent → Pending → Visiting → Roosting → Departed) with debounced transitions that eliminates false detection spam. Arrival confirmation requires 30% detection ratio across a 10-second window — real arrivals hit 60%+, false positives fall below 15%. Departure requires 90 continuous seconds of absence; if the bird flickers back at 89 seconds, the counter resets. Stream outage recovery handles brief disconnections without triggering false departures. One arrival. One departure. Three hours of presence tracked correctly." },
+            { name: "Clip Extraction System", summary: "Buffer-based architecture with hardware-accelerated encoding", desc: "A 60-second ring buffer holds pre-event footage so arrival clips can include the 15 seconds before detection. Parallel recording captures arrival clips, departure clips, and full visit videos simultaneously. Hardware-accelerated encoding via ffmpeg with automatic encoder detection (NVIDIA, Intel, VideoToolbox) and graceful fallback to software — dropping clip generation from 90 seconds to 5 seconds per event." },
+            { name: "Backend API & Frontend Viewer", summary: "FastAPI + React with HKSV-style event timelines across multiple streams", desc: "FastAPI backend serving real-time detection data, visit histories, and system status across a multi-stream architecture. React frontend with HKSV-style horizontal event timelines, dual-timezone display, mobile-responsive dark theme, and per-event share/download links. The viewer is a separate repository and deployment — it reads clip data generated by the detection pipeline, keeping concerns cleanly separated." },
+            { name: "Deployment Infrastructure", summary: "Docker with GPU support, Cloudflare tunnels, automatic stream reconnection", desc: "Docker containerization with NVIDIA GPU support (plus CPU and Intel iGPU variants). Cloudflare tunnel for public access without exposing the origin server. Automatic YouTube stream reconnection with configurable retry logic. Per-stream configuration with independent detection containers — each camera feed runs its own isolated pipeline." },
+            { name: "Quality Assurance", summary: "272 tests across two repos, linting pipeline from day one", desc: "272 passing tests across two repositories: 239 covering the detection engine (state machine, clip extraction, event handling, notifications) at 58% coverage, and 33 covering the viewer backend (API routes, stream config, visitor handling) at 89% coverage. The detection engine's uncovered code is primarily the real-time pipeline orchestrators — infinite-loop, multi-threaded frame processing that requires live video infrastructure to test meaningfully. Linting pipeline (black, isort, flake8, mypy) established from Ho 01 and maintained throughout." },
+          ].map((item, i) => (
+            <Exp key={i} label={item.name} sub={item.summary} open={methOpen === "built-" + i} toggle={() => setMethOpen(methOpen === "built-" + i ? null : "built-" + i)}>
+              <div style={{ fontSize: "0.88rem", color: C.inkLight, lineHeight: 1.65 }}>{item.desc}</div>
+            </Exp>
+          ))}
+        </div>
+
+        <div style={{ marginTop: "2.5rem", display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+          <Card title="Tiered Understanding Works">Tier 2 (functional) for Python, config management, testing, API design. Tier 1 (deliberate black-box) for YOLO internals, CSS, React build tooling. The methodology directed attention to the right things — and declared honestly what it didn't.</Card>
+          <Card title="AI Without Dependency">If AI tools were removed, the developer could maintain, debug, and extend the system. New features would be slower, not impossible. The Ho System produces people who <em>used</em> AI, not people who <em>depend on</em> AI.</Card>
+          <Card title="Plans Meet Reality">The planned 11-ho arc became 19 documents across three branching levels. Where branches concentrate reveals where complexity lived. Where stages shifted reveals where the developer grew.</Card>
+        </div>
+      </Section>
+
+      {/* ═══ HŌZŌ — THREE HOURS ═══ */}
+      <Section dark>
+        <Label dark>Where the Methodology Arrives</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "1.5rem" }}>
+          Hōzō <span style={{ fontFamily: F.mono, fontSize: "1rem", color: C.darkMuted }}>宝蔵</span>
+          <span style={{ fontSize: "1rem", color: C.darkMuted, fontStyle: "italic" }}> — Three Hours</span>
+        </h2>
+        <Prose dark>Kanyō took six weeks. Hōzō took three hours. Same methodology, same person, same quality standards — different stage of practice.</Prose>
+        <Prose dark>Hōzō (宝蔵 — "treasure storehouse") is a wake-on-demand ZFS backup orchestrator. It wakes a sleeping backup server over the network, syncs ZFS snapshots incrementally, verifies the remote state, sends notifications, and shuts the remote machine back down. It has a CLI, a web dashboard with WebAuthn passkey authentication, per-job log viewers, configurable scheduling, and a break-glass disaster recovery system deliberately buried where you can't trigger it casually.</Prose>
+
+        <div style={{ marginBottom: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+          <ExtLink href="https://github.com/sageframe-no-kaji/hozo-sentinel">GitHub Repository ↗</ExtLink>
+          <span style={{ color: C.darkRule }}>·</span>
+          <span style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.darkMuted, fontStyle: "italic" }}>"Three Hours" — essay coming soon</span>
+        </div>
+
+        <div style={{ background: C.darkBgDeep, padding: "2rem", borderRadius: 3, margin: "0.5rem 0 2rem 0", border: "1px solid " + C.darkRule }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "1.5rem 1rem" }}>
+            {[
+              { val: "3", label: "Hours" },
+              { val: "278", label: "Tests" },
+              { val: "99%", label: "Coverage" },
+              { val: "0", label: "Lint / Type Errors" },
+            ].map((it, i) => (
+              <div key={i} style={{ textAlign: "center", flex: "1 1 80px" }}>
+                <div style={{ fontFamily: F.display, fontSize: "1.75rem", color: C.accent }}>{it.val}</div>
+                <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.darkMuted, letterSpacing: "0.06em", marginTop: "0.3rem" }}>{it.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Prose dark>The AI wrote the code. The author built the system. Those are different things. Three hours produced a production application because fourteen months of structured practice developed the judgment to define the problem precisely, specify the architecture completely, and verify the output rigorously.</Prose>
+
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+          {[
+            { stage: "shu", label: "Shu → Kanyō", desc: "Six weeks. Structured sessions. Detailed walkthroughs. Extensive devlogs. Deliberate, slow, sometimes tedious. Follow the form." },
+            { stage: "ha", label: "Ha → Transition", desc: "Writing own session plans. Making architectural decisions. Developing judgment about when to push deeper and when to treat something as a black box." },
+            { stage: "ri", label: "Ri → Hōzō", desc: "Three hours. No walkthrough. No session plan. A clear mental model, a specification, and disciplined execution. The form has dissolved into practice." },
+          ].map(s => (
+            <div key={s.stage} style={{ flex: "1 1 200px", padding: "1.25rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <StageBadge stage={s.stage} label={s.label} />
+              <div style={{ fontSize: "0.85rem", color: C.darkText, lineHeight: 1.6, marginTop: "0.75rem" }}>{s.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: "2rem", fontFamily: F.mono, fontSize: "0.82rem", color: C.darkMuted, fontStyle: "italic" }}>
+          "The Ho System is slow at the beginning so it can be fast forever after. There are no shortcuts to the place where shortcuts work."
+        </div>
+      </Section>
+
+      {/* ═══ FOUNDATIONS ═══ */}
+      <Section>
+        <Label>Intellectual Foundations</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "1.5rem" }}>Grounded in established theory, not blog-post thinking</h2>
+        <Prose style={{ marginBottom: "2rem" }}>The position paper provides the full intellectual case — problem space, theoretical grounding, design principles, and evidence from practice.</Prose>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1rem" }}>
+          {[
+            { name: "Constructionism", author: "Papert", text: "People learn most powerfully when building artifacts that matter to them. The ho project is not an exercise — it is a production system." },
+            { name: "Zone of Proximal Development", author: "Vygotsky", text: "AI as implementation partner qualitatively expands what a systems thinker can build — without simplifying the design." },
+            { name: "Reflective Practice", author: "Schön", text: "Expertise develops through reflection-in-action and reflection-on-action. The devlog embeds this structurally." },
+            { name: "Cognitive Apprenticeship", author: "Collins, Brown & Newman", text: "Inverted: the learner commissions implementation and must evaluate it. This develops architectural judgment." },
+          ].map((f, i) => (
+            <div key={i} style={{ padding: "1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.display, fontSize: "1rem", marginBottom: "0.25rem" }}>{f.name}</div>
+              <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.accent, marginBottom: "0.75rem" }}>{f.author}</div>
+              <div style={{ fontSize: "0.85rem", color: C.inkLight, lineHeight: 1.6 }}>{f.text}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: "1.5rem" }}>
+          <ExtLink href="https://github.com/sageframe-no-kaji/ho-system/blob/main/framework/ho-foundations-evidence.md">Read the full position paper ↗</ExtLink>
+        </div>
+      </Section>
+
+      {/* ═══ KINHIN ═══ */}
+      <Section dark>
+        <Label dark>What's Next</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "1.5rem" }}>
+          Kinhin <span style={{ fontFamily: F.mono, fontSize: "1rem", color: C.darkMuted }}>経行</span>
+          <span style={{ fontSize: "1rem", color: C.darkMuted, fontStyle: "italic", display: "block", marginTop: "0.25rem" }}>A structured workbench for Ho-based development</span>
+        </h2>
+        <Prose dark>Kinhin (経行 — walking meditation) is the operational form of the Ho methodology: the environment where a practitioner defines a project, works through a ho sequence, captures structured reflection, and accumulates a navigable record of their learning trajectory. Currently in architecture phase.</Prose>
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap", marginBottom: "2rem" }}>
+          {[
+            { label: "Stack", value: "Python 3.12 / FastAPI / PostgreSQL / HTMX / Docker Compose" },
+            { label: "Arc", value: "13 hos across 4 phases — ~28-30 hours over 6-8 weeks" },
+            { label: "Property", value: "Self-documenting — built using the methodology it implements" },
+          ].map((item, i) => (
+            <div key={i} style={{ flex: "1 1 220px", padding: "1rem 1.25rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.accent, letterSpacing: "0.06em", marginBottom: "0.3rem" }}>{item.label}</div>
+              <div style={{ fontSize: "0.88rem", color: C.darkText, lineHeight: 1.55 }}>{item.value}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ padding: "1.75rem 2rem", background: C.darkBgDeep, borderRadius: 3, border: "1px solid " + C.darkRule }}>
+          <div style={{ fontSize: "0.95rem", color: C.darkText, lineHeight: 1.7 }}>
+            <strong style={{ color: "#e8e2d8" }}>The methodology is open source.</strong> Framework, templates, evidence — all CC BY-NC-ND 4.0.{" "}
+            <strong style={{ color: "#e8e2d8" }}>Mastery requires facilitation.</strong> Designing effective ho sequences, calibrating difficulty, reading devlogs diagnostically — that's the consulting work. The platform makes the consulting more valuable, not less.
+          </div>
+        </div>
+      </Section>
+
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+  <footer>
+    <div class="container">
+      <p>© 2025 Andrew Todd Marcus · Cambridge, MA</p>
+      <p>Blueprint for Creativity · Sageframe</p>
+    </div>
+  </footer>
+</body>
+</html>

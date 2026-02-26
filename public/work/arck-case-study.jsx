@@ -1,0 +1,424 @@
+import { useState } from "react";
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  sera: "#8b5e8b", icm: "#b8860b", sje: "#3a7ca5", green: "#5a8a3a",
+  darkBg: "#1a1a1a", darkRule: "#333", darkMuted: "#888", darkText: "#c8c2b8",
+};
+
+function Label({ children, dark }) {
+  return (
+    <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>
+      {children}
+    </div>
+  );
+}
+
+function Exp({ label, sub, open, toggle, color, children }) {
+  return (
+    <div style={{ borderBottom: "1px solid " + C.rule }}>
+      <button onClick={toggle} style={{ width: "100%", padding: "1.25rem 0", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left", color: C.ink, gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: color || C.accent, flexShrink: 0 }} />
+          <div>
+            <div style={{ fontFamily: F.display, fontSize: "1.15rem", lineHeight: 1.3 }}>{label}</div>
+            {sub && <div style={{ fontSize: "0.85rem", color: C.inkMuted, marginTop: "0.2rem" }}>{sub}</div>}
+          </div>
+        </div>
+        <span style={{ color: C.accent, fontSize: "1.1rem", transition: "transform 0.2s", transform: open ? "rotate(90deg)" : "none" }}>&#8594;</span>
+      </button>
+      {open && <div style={{ paddingBottom: "1.5rem", paddingLeft: "1.75rem" }}>{children}</div>}
+    </div>
+  );
+}
+
+function Chip({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, letterSpacing: "0.04em", padding: "0.25rem 0.6rem", border: "1px solid " + C.rule, borderRadius: 2, whiteSpace: "nowrap" }}>{children}</span>;
+}
+
+function Prose({ children }) {
+  return <p style={{ fontSize: "1.05rem", color: C.inkLight, marginBottom: "2rem", lineHeight: 1.7, maxWidth: 640 }}>{children}</p>;
+}
+
+// ─── TAB: FOUNDATIONAL FRAMEWORK ───
+
+function FoundationalFramework() {
+  const [active, setActive] = useState(null);
+  const items = [
+    { id: "sera", name: "Social, Emotional, & Relational Awareness (SERA)", tag: "How to Be", color: C.sera, desc: "Students must feel safe, seen, and heard in order to learn. SERA develops a conception of self as the foundation for all creative and civic engagement.", std: "CASEL Framework", skills: ["Self Awareness", "Self Management", "Social Awareness", "Relationship Skills", "Responsible Decision Making"] },
+    { id: "icm", name: "Integrated Creative Mindset (ICM)", tag: "How to Do", color: C.icm, desc: "A process-based approach to creativity where students meet challenges through deep awareness of context, propose numerous solutions, and advance them through critical evaluation informed by multi-disciplinary knowledge.", std: "ARCK Framework (original)", skills: ["Abstraction", "Critical Process", "Contextualization", "Universal Mindset", "Synthesis of Knowledge", "Communication", "Curiosity/Play"] },
+    { id: "sje", name: "Social Justice & Equity (SJ&E)", tag: "How to Act", color: C.sje, desc: "Without Social, Emotional, & Relational Awareness and Social Justice & Equity, a creative mindset can produce exploitative products and systems. SJ&E frames creativity as a tool for just, ethical, and community-centric innovation.", std: "Learning for Justice Standards", skills: ["Identity", "Diversity", "Justice", "Action"] },
+  ];
+  return (
+    <div>
+      <Prose>The organizational framework rests on a specific architectural claim: creativity without social-emotional foundation and equity orientation can be exploitative. The three Core Ideologies are not parallel tracks but <em>nested dependencies</em>. Social, Emotional, &amp; Relational Awareness (SERA) creates the conditions for creative engagement. Integrated Creative Mindset (ICM) provides the process. Social Justice &amp; Equity (SJ&amp;E) ensures the work serves a just purpose.</Prose>
+      <Label>Core Ideologies</Label>
+      <div style={{ borderTop: "1px solid " + C.rule }}>
+        {items.map((it) => (
+          <Exp key={it.id} label={it.name} sub={it.tag} open={active === it.id} toggle={() => setActive(active === it.id ? null : it.id)} color={it.color}>
+            <p style={{ fontSize: "0.95rem", color: C.inkLight, lineHeight: 1.7, margin: "0 0 1rem 0", maxWidth: 580 }}>{it.desc}</p>
+            <div style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.inkMuted, marginBottom: "0.75rem" }}>Anchor Standard: <span style={{ color: C.accent }}>{it.std}</span></div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>{it.skills.map((s) => <Chip key={s}>{s}</Chip>)}</div>
+          </Exp>
+        ))}
+      </div>
+      <div style={{ marginTop: "2rem" }}>
+        <Label>Pedagogical Values</Label>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          {["Universal Design for Learning (UDL)", "Trauma-Informed Teaching", "Culturally & Linguistically Responsive Teaching"].map((v) => (
+            <div key={v} style={{ flex: "1 1 200px", padding: "1rem 1.25rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 2 }}>
+              <div style={{ fontSize: "0.9rem", color: C.inkLight }}>{v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ marginTop: "2rem", padding: "1.5rem 2rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+        <div style={{ fontFamily: F.display, fontSize: "1.1rem", marginBottom: "0.75rem" }}>Key Design Insight</div>
+        <p style={{ fontSize: "0.95rem", color: C.inkLight, lineHeight: 1.7, margin: 0, maxWidth: 620 }}>The Integrated Creative Mindset competency framework was designed from scratch because no existing creativity framework adequately integrated the dependency on Social, Emotional, &amp; Relational Awareness and Social Justice &amp; Equity. CASEL and Learning for Justice were selected as external anchors for the other two domains to provide credibility and cross-comparability. The original framework is the intellectual contribution; the integration architecture is the systems design contribution.</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── TAB: THEORY OF CHANGE ───
+
+function TheoryOfChange() {
+  const [active, setActive] = useState(null);
+  const chains = [
+    { id: "students", label: "Students", color: C.accent, assumption: "The lack of equity and quality in education is a root cause of systemic social issues and the widening creative and opportunity gap. If students are presented with developmentally appropriate integrated creative projects founded on social emotional learning and social justice and equity, they will develop the human skills needed to realize their full potential.", activities: "Partner with K-8 schools in Boston Public Schools to deliver ARCK\u2019s 36-week Creators Program curriculum based on the Arts with Impact Framework. Provide trained Teaching Artists, high quality art supplies, and teaching supported by trauma-informed, culturally and linguistically responsive, and universal design principles. Thorough vetting, training, and supervision of Teaching Artists to ensure programs meet internal standards.", outputs: "Highly trained Teaching Artists serving approximately 600 under-resourced BPS students annually. Personal art kits to all students. Instruction in 35 classrooms. 1,260 direct contact hours. Support for 35 classroom teachers and associated paraprofessionals.", outcomes: "Students demonstrate measurable competencies across all three domains: ICM skills (abstraction, critical process, contextualization, universal mindset, synthesis of knowledge, communication, curiosity/play), SERA skills (self-awareness, self-management, social awareness, relationship skills, responsible decision-making), and SJ&E skills (identity, diversity, justice, action).", impact: "Over multiple years, students develop the tools to thrive in a global culture, develop relational skills and an innovative creative mindset, achieve their full potential as creative socially conscious leaders, and gain tools to process emotions and heal from trauma." },
+    { id: "educators", label: "Educators", color: C.green, assumption: "Professional development and coaching create a positive effect on student achievement. When teachers are given the tools to integrate the Arts with Impact Framework, they will integrate critical creativity into STEM, Literacy, and Social Science content areas and develop their own curriculum to support increased critical thinking, social emotional regulation, and understanding of equity issues.", activities: "Work directly with Districts, Schools, and Educators to provide: six-week remotely delivered synchronous Integrated Creativity Professional Development, plus four-week in-person Curriculum Development Coaching for teacher-led delivery of curriculum based on the Arts with Impact framework.", outputs: "Professional Development to over 45 classroom teachers annually. In-class curriculum coaching to over 15 teachers annually.", outcomes: "Educators understand, employ, and develop strategies to implement Arts with Impact curricula. Develop a mindset rooted in interdisciplinary, process-based learning. Learn the Core Ideologies (ICM, SERA, SJ&E). Build capacity to develop independent and complementary arts integrated curricula.", impact: "Teachers develop a creative mindset founded on holistically integrated creativity. Establish a culture of integrated creativity. Help transform education to center student creativity, social-emotional awareness, and social justice." },
+    { id: "community", label: "Community", color: C.sje, assumption: "Community-based programming focused on the value of creativity in education will increase awareness, financial support, and drive community participation in education reform. Community-based art programming reflective of community identity can address economic growth, social cohesion, public health, cultural identity, and belonging.", activities: "Broaden understanding of the importance of creativity through the Building Bridges Program: Artists-in-Residence engaging BIPOC artists for public art and student mentoring, panel discussions, creativity workshops, Mindful Arts summer and extracurricular programs, family engagement, community public art projects, and policy initiatives.", outputs: "Summer art opportunities to 150 students through BPS 5th Quarter and ARCK programs. Intensive design workshops for 15+ students. Support for 2-5 BIPOC artists generating public work and mentoring 25 BPS students. 3-5 family and community workshops. Public panels. Support for numerous policy initiatives.", outcomes: "Increased awareness of the value of the arts. Access to inclusive public art via direct participation. Understanding of creativity in education. Increased community discourse around educational reform. Visibility of BIPOC artists. Active participation in sponsor events, public exhibitions, and community viewership of student art.", impact: "Increased social and public policy support for public art as an economic stimulator. Expansion of awareness and urgency for systemic educational change. Increased public support for programs and art opportunities supporting youth well-being. Promotion of diversity, equity, and inclusion." },
+  ];
+  return (
+    <div>
+      <Prose>The Logic Model makes the causal argument explicit: if we believe this, and we do this, producing this, then this changes, toward this. Three distinct chains serve three populations, each with different causal logic. The assessment system is designed to test each link in each chain.</Prose>
+      <Label>Three Causal Chains</Label>
+      <div style={{ borderTop: "1px solid " + C.rule }}>
+        {chains.map((ch) => (
+          <Exp key={ch.id} label={ch.label} sub={"Assumptions through Impact"} open={active === ch.id} toggle={() => setActive(active === ch.id ? null : ch.id)} color={ch.color}>
+            {[
+              { stage: "Assumptions", text: ch.assumption, note: "If we believe..." },
+              { stage: "Activities", text: ch.activities, note: "And we do..." },
+              { stage: "Outputs", text: ch.outputs, note: "Producing..." },
+              { stage: "Outcomes", text: ch.outcomes, note: "Then this changes..." },
+              { stage: "Impact", text: ch.impact, note: "Toward this..." },
+            ].map((s, i) => (
+              <div key={s.stage} style={{ marginBottom: i < 4 ? "1rem" : 0 }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "0.35rem" }}>
+                  <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: ch.color, letterSpacing: "0.04em", fontWeight: 500 }}>{s.stage.toUpperCase()}</span>
+                  <span style={{ fontSize: "0.8rem", fontStyle: "italic", color: C.inkMuted }}>{s.note}</span>
+                </div>
+                <p style={{ fontSize: "0.9rem", color: C.inkLight, lineHeight: 1.65, margin: 0, maxWidth: 600, paddingLeft: "0.5rem", borderLeft: "2px solid " + ch.color + "40" }}>{s.text}</p>
+                {i < 4 && <div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.accent, margin: "0.6rem 0 0 0.5rem" }}>&#8595;</div>}
+              </div>
+            ))}
+          </Exp>
+        ))}
+      </div>
+      <div style={{ marginTop: "2rem", padding: "1.5rem 2rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+        <div style={{ fontFamily: F.display, fontSize: "1.1rem", marginBottom: "0.75rem" }}>Design Significance</div>
+        <p style={{ fontSize: "0.95rem", color: C.inkLight, lineHeight: 1.7, margin: 0, maxWidth: 620 }}>Most organizations leave their causal logic implicit. This logic model makes testable claims at every stage: the assessment system is designed to verify Outcomes, the data flow routes evidence to the audiences who need to evaluate Impact, and the instruments are timed to capture Outputs in real time. The logic model is not a grant requirement fulfilled — it is the structural argument the entire measurement system is built to test.</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── TAB: CREATORS CURRICULUM ───
+
+function CreatorsCurriculum() {
+  const [am, setAm] = useState(null);
+  const modules = [
+    { num: 1, name: "Journey to Self-Awareness", q: "Who am I?", color: C.sera, theme: "Centers on Social, Emotional, & Relational Awareness. Students explore identity, origin, and intention \u2014 building foundational self-awareness as the basis for all subsequent engagement.", steps: [{ a: "Quality", m: "Observation & Reflection" }, { a: "Transformation", m: "Analysis & Abstraction" }, { a: "Memory", m: "Evolution & Activation" }, { a: "Self", m: "Synthesis of Self & Representation" }], comps: "ICM: Abstraction, Critical Process, Curiosity/Play  |  SERA: Self Awareness, Self Management  |  SJ&E: Identity", grades: { "K-2": "16 classes", "3-5": "10 classes", "6-8": "10 classes" } },
+    { num: 2, name: "Journey to Community", q: "Who are we?", color: C.green, theme: "Addresses the intersection of Social, Emotional, & Relational Awareness and Social Justice & Equity. Students move from self to other to group to community, developing collaboration, empathy, and collective identity.", steps: [{ a: "Understanding Other", m: "Conversation & Perception" }, { a: "Relationship", m: "Processing & Construction" }, { a: "Group", m: "Diversity & Application" }, { a: "Community", m: "Synthesis of Community & Cohesion" }], comps: "ICM: Contextualization, Universal Mindset, Curiosity/Play  |  SERA: Social Awareness, Relationship Skills  |  SJ&E: Diversity", grades: { "K-2": "10 classes", "3-5": "14 classes", "6-8": "10 classes" } },
+    { num: 3, name: "Journey to Action", q: "What will we do?", color: C.sje, theme: "Centers on Social Justice & Equity. The community defines shared values and engages with the world through age-appropriate public art and social action. Scope expands by grade: Family, School, Community/World.", steps: [{ a: "Community Identity", m: "Collaboration & Social Awareness" }, { a: "Values", m: "Comprehension & Universal Mindset" }, { a: "Intention", m: "Equity & Contextualization" }, { a: "Action", m: "Synthesis of Values & Action" }], comps: "ICM: Synthesis of Knowledge, Communication, Curiosity/Play  |  SERA: Responsible Decision Making  |  SJ&E: Justice, Action", grades: { "K-2": "8 / Family", "3-5": "10 / School", "6-8": "14 / Community" } },
+  ];
+  return (
+    <div>
+      <Prose>The Creators Curriculum is the flagship delivery vehicle \u2014 a 36-week, in-class program structured as three progressive Journeys, each expanding the circle of engagement from self to community to action. The structure is fractal: the same expansion operates across modules, within each module's four Steps, and across grade bands. Each Step uses a paired Approach + Method progression \u2014 content changes, architecture persists.</Prose>
+      <Label>Module Architecture</Label>
+      <div style={{ borderTop: "1px solid " + C.rule }}>
+        {modules.map((mod) => (
+          <Exp key={mod.num} label={"Module " + mod.num + ": " + mod.name} sub={"\u201C" + mod.q + "\u201D"} open={am === mod.num} toggle={() => setAm(am === mod.num ? null : mod.num)} color={mod.color}>
+            <p style={{ fontSize: "0.95rem", color: C.inkLight, lineHeight: 1.7, margin: "0 0 1.25rem 0", maxWidth: 580 }}>{mod.theme}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
+              {mod.steps.map((s, i) => (
+                <div key={i} style={{ display: "flex", gap: "0.75rem", fontSize: "0.9rem", padding: "0.6rem 0.9rem", background: C.white, border: "1px solid " + C.rule, borderLeft: "3px solid " + mod.color, borderRadius: 2 }}>
+                  <span style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent, fontWeight: 500, minWidth: 16 }}>{i + 1}</span>
+                  <div><span style={{ fontWeight: 500 }}>{s.a}</span><span style={{ color: C.inkMuted }}>{" \u2014 " + s.m}</span></div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+              {Object.entries(mod.grades).map(([g, info]) => <Chip key={g}><span style={{ color: C.accent }}>{g}</span>{" " + info}</Chip>)}
+            </div>
+            <div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, lineHeight: 1.7 }}>{mod.comps}</div>
+          </Exp>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── TAB: ASSESSMENT ───
+
+const LAYERS = [
+  { id: "f", label: "Foundation Layer", sub: "Theoretical & strategic infrastructure", color: C.accent, items: [
+    { code: "CPD-LM", name: "Logic Model", detail: "Maps assumption, activity, output, outcome, and impact chains across three populations.", who: "Organization", freq: "Annual revision", data: "Strategic framework" },
+    { code: "CPD-RSO", name: "Competency Metrics & Rubric", detail: "21 sub-skills under three domains with observable indicators mapped to program modules.", who: "Organization", freq: "Annual revision", data: "Competency framework" },
+  ]},
+  { id: "s", label: "Student Competency Assessment", sub: "Triangulated measurement from three perspectives", color: C.icm, items: [
+    { code: "CC-TA", name: "Teaching Artist Competency Evaluation", detail: "Class-level assessment of all 21 sub-skills using percentage bands (few/some/most).", who: "Teaching Artists", freq: "3x per year", data: "Quantitative (percentage bands)" },
+    { code: "CC-S", name: "Student Self-Assessment", detail: "Age-differentiated: K-2 facilitated thumb voting, 3-5 kinesthetic positioning + graffiti walls, 6-8 independent reporting.", who: "Students (K-8)", freq: "3x per year", data: "Mixed methods (age-adapted)" },
+    { code: "CC-CT", name: "Classroom Teacher Evaluation", detail: "Daily observers assess competency improvement plus qualitative narratives on benefit, parent feedback, community impact.", who: "Classroom Teachers", freq: "Annual", data: "Mixed methods" },
+  ]},
+  { id: "p", label: "Practitioner Quality Assurance", sub: "Teaching Artist development & accountability", color: C.green, items: [
+    { code: "TEE-O", name: "Classroom Observation System", detail: "Three-part: structured collection form, quantitative survey, narrative report. Binary proficiency linked to competency domains.", who: "Program Managers", freq: "2x per year", data: "Observational (binary + narrative)" },
+    { code: "TEE-TA", name: "Modular Check-In Conversations", detail: "Structured 1:1s covering classroom experience, logistics, curriculum development, support needs.", who: "TAs + Managers", freq: "3x per year", data: "Structured conversation" },
+    { code: "PE-TA", name: "Monthly Narrative Testimonials", detail: "Narrative evidence of competency demonstration, quotes, impact stories, confidential challenge reporting.", who: "Teaching Artists", freq: "Monthly", data: "Qualitative narrative" },
+  ]},
+  { id: "e", label: "System-Level Evaluation", sub: "Stakeholder satisfaction & program impact", color: C.sera, items: [
+    { code: "PE-PA", name: "Administrator Year-End Survey", detail: "Same percentage-band metrics for cross-comparability. Expectation alignment, partnership factors, impact narratives.", who: "School Admins", freq: "Annual", data: "Mixed methods" },
+    { code: "PE-PC", name: "Biannual Partner Check-In", detail: "Meeting protocol for mid-cycle review: logistics, reflections, successes/challenges, future planning.", who: "Admins + Managers", freq: "2x per year", data: "Meeting protocol" },
+  ]},
+];
+
+function Assessment() {
+  const [ex, setEx] = useState(null);
+  const [ei, setEi] = useState(null);
+  return (
+    <div>
+      <Prose>Eleven interconnected instruments organized in four layers, each at different levels of abstraction and temporal frequency. Consistent percentage-band metrics enable cross-stakeholder comparison while preserving each perspective's distinct value.</Prose>
+      <div style={{ borderTop: "1px solid " + C.rule }}>
+        {LAYERS.map((layer) => (
+          <Exp key={layer.id} label={layer.label} sub={layer.sub} open={ex === layer.id} toggle={() => { setEx(ex === layer.id ? null : layer.id); setEi(null); }} color={layer.color}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {layer.items.map((item) => (
+                <button key={item.code} onClick={(e) => { e.stopPropagation(); setEi(ei === item.code ? null : item.code); }}
+                  style={{ width: "100%", textAlign: "left", cursor: "pointer", color: C.ink, background: ei === item.code ? C.white : "transparent", border: ei === item.code ? "1px solid " + C.rule : "1px solid transparent", borderRadius: 3, padding: "0.75rem 1rem" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem" }}>
+                    <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.accent }}>{item.code}</span>
+                    <span style={{ fontSize: "0.95rem", fontWeight: 500 }}>{item.name}</span>
+                  </div>
+                  {ei === item.code && (
+                    <div style={{ marginTop: "0.75rem" }}>
+                      <p style={{ fontSize: "0.9rem", color: C.inkLight, lineHeight: 1.7, margin: "0 0 0.75rem 0", maxWidth: 540 }}>{item.detail}</p>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", fontSize: "0.85rem" }}>
+                        <span style={{ color: C.inkMuted }}>{"By: "}<span style={{ color: C.inkLight }}>{item.who}</span></span>
+                        <span style={{ color: C.inkMuted }}>{"Freq: "}<span style={{ color: C.inkLight }}>{item.freq}</span></span>
+                        <span style={{ color: C.inkMuted }}>{"Data: "}<span style={{ color: C.inkLight }}>{item.data}</span></span>
+                      </div>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </Exp>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── TAB: DATA FLOW ───
+
+function DataFlow() {
+  return (
+    <div>
+      <Prose>Data flows through collection, aggregation, and sense-making stages. Each instrument has pre-specified collection and reporting formats producing specific claims for specific audiences.</Prose>
+      <Label>Collection Cadence</Label>
+      <div style={{ borderTop: "1px solid " + C.rule, marginBottom: "2.5rem" }}>
+        {[
+          { freq: "Monthly", codes: ["PE-TA"] },
+          { freq: "Per Module (3x/yr)", codes: ["CC-TA", "CC-S", "TEE-TA"] },
+          { freq: "Biannual (2x/yr)", codes: ["TEE-O", "PE-PC"] },
+          { freq: "Annual", codes: ["CC-CT", "PE-PA"] },
+        ].map((g) => (
+          <div key={g.freq} style={{ display: "flex", alignItems: "center", borderBottom: "1px solid " + C.rule, padding: "0.75rem 0" }}>
+            <div style={{ width: 150, flexShrink: 0, fontFamily: F.mono, fontSize: "0.78rem", color: C.inkMuted }}>{g.freq}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+              {g.codes.map((c) => <span key={c} style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.accent, padding: "0.2rem 0.5rem", border: "1px solid " + C.rule, borderRadius: 2 }}>{c}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+      <Label>Audience Routing</Label>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {[
+          { a: "Internal Program Team", p: "Continuous improvement, TA support, early warning", s: "TEE-O, TEE-TA, PE-TA, CC-TA" },
+          { a: "School Partners", p: "Partnership health, alignment, course correction", s: "PE-PC, CC-CT, PE-PA" },
+          { a: "Funders & Board", p: "Impact evidence, outcome claims, growth metrics", s: "CC-TA (aggregated), CC-CT, PE-PA, PE-TA (curated)" },
+          { a: "Teaching Artists", p: "Professional development, feedback, recognition", s: "TEE-O-R, TEE-TA, CC-TA (own data)" },
+        ].map((r) => (
+          <div key={r.a} style={{ padding: "1rem 1.25rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 2 }}>
+            <div style={{ fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.2rem" }}>{r.a}</div>
+            <div style={{ fontSize: "0.85rem", color: C.inkMuted, marginBottom: "0.5rem" }}>{r.p}</div>
+            <div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.accent }}>{r.s}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN ───
+
+export default function ARCKCaseStudy() {
+  const [tab, setTab] = useState("framework");
+  const [activeStream, setActiveStream] = useState(null);
+  const [activePrinciple, setActivePrinciple] = useState(null);
+
+  const tabs = [
+    { id: "framework", label: "foundational framework" },
+    { id: "toc", label: "theory of change" },
+    { id: "curriculum", label: "creators curriculum" },
+    { id: "assessment", label: "assessment system" },
+    { id: "flow", label: "data flow" },
+  ];
+
+  const streams = [
+    { id: "cc", name: "Creators Curriculum", pop: "Students K-8", d: "Flagship 36-week in-class program delivered by trained Teaching Artists. Three progressive modules spanning 34 classes per grade band, differentiated for K-2, 3-5, and 6-8. Each module follows a four-Step structure using paired Approach + Method progressions. Approximately 600 students, 35 classrooms, and 1,260 direct contact hours annually." },
+    { id: "et", name: "Educator Training", pop: "Teachers & Staff", d: "Six-session synchronous PD course designed for Lesley University graduate credit (1 credit) and DESE professional development hours. 22.5 total hours across direct instruction, asynchronous engagement, and a curriculum development practicum. Designed to build independent capacity for framework implementation \u2014 not dependency on ARCK delivery." },
+    { id: "ta", name: "Teaching Artist Development", pop: "Teaching Artists", d: "Eight-day intensive onboarding moving from organizational theory and pedagogical values through experiential learning to curriculum production. TAs experience lessons as learners, then use a structured Curriculum Development Prompt (WHY/HOW/WHAT) to design original curriculum within the framework through iterative critique cycles. Output is deployable curriculum \u2014 not a certificate." },
+    { id: "bb", name: "Building Bridges", pop: "Community & Families", d: "Multi-strand community engagement: Artists-in-Residence engaging BIPOC artists for public art, student mentoring, and curriculum co-development; family creativity workshops exploring Core Ideologies in multigenerational contexts; creative corporate partnerships; Mindful Arts restorative summer programming; and policy participation including the Massachusetts Education Equity Partnership." },
+  ];
+
+  const principles = [
+    { t: "Nested Dependencies, Not Parallel Tracks", d: "The three ideologies are ordered preconditions. Social, Emotional, & Relational Awareness creates safety for creative risk. Integrated Creative Mindset provides process. Social Justice & Equity ensures the work serves justice." },
+    { t: "Fractal Consistency", d: "The same three-domain structure appears at every level: mission, curriculum, competency framework, and assessment. Each layer speaks the same language at different scales." },
+    { t: "Expanding Circles of Engagement", d: "Self to other to group to community to world. This progression operates across modules, within modules, and across grade bands simultaneously." },
+    { t: "Process Over Content", d: "Approach + Method pairs, not specific art projects. The structural progression works across disciplines and grade levels. Content changes, architecture persists." },
+    { t: "Triangulated Measurement", d: "Every competency claim supported by multiple observers \u2014 practitioners, participants, external stakeholders \u2014 each with distinct visibility into student experience." },
+    { t: "Measurement as Design Tool", d: "Assessment embedded in ongoing practice. Different temporal frequencies capture different signals. Pre-specified reporting formats produce the specific claims each audience needs." },
+    { t: "Extensible Infrastructure", d: "Naming convention (XX-YY-Z), shared competency framework, standardized data formats. The system can be extended, modified, or handed off without losing coherence." },
+  ];
+
+  const wrap = { maxWidth: 1080, margin: "0 auto", padding: "0 clamp(1.5rem, 5vw, 4rem)" };
+
+  return (
+    <div style={{ background: C.ground, color: C.ink, minHeight: "100vh", fontFamily: F.body, lineHeight: 1.7, fontWeight: 400 }}>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+      {/* ═══ 1. HERO (light ground) ═══ */}
+      <div style={{ borderBottom: "1px solid " + C.rule, padding: "clamp(3rem, 10vh, 6rem) 0 clamp(2rem, 5vh, 3rem)" }}>
+        <div style={wrap}>
+          <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkMuted, marginBottom: "1.5rem" }}>Case Study — ARCK Boston — Organizational Systems Architecture</div>
+          <h1 style={{ fontFamily: F.display, fontSize: "clamp(1.8rem, 4vw, 2.8rem)", lineHeight: 1.15, fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 1.5rem 0" }}>
+            {"End-to-End Design of a Multi-Site "}
+            <br />
+            <em style={{ fontStyle: "italic", color: C.accent }}>Organizational System</em>
+          </h1>
+          <p style={{ fontSize: "1.1rem", lineHeight: 1.75, color: C.inkLight, maxWidth: 660, margin: 0 }}>
+            As Managing Director, I designed the complete organizational operating system for a multi-site creative learning nonprofit serving 600+ students annually across Boston Public Schools. This included the foundational framework, theory of change, original competency model, curriculum architecture, practitioner training pipeline, community engagement strategy, and multi-stakeholder assessment infrastructure. I hired and managed the team that implemented it. The systems architecture is mine.
+          </p>
+        </div>
+      </div>
+
+      {/* ═══ 2. PROGRAM STREAMS (warm stone) ═══ */}
+      <div style={{ background: "#3d3a37", borderBottom: "1px solid #4a4744" }}>
+        <div style={{ ...wrap, padding: "clamp(1.5rem, 4vh, 2.5rem) clamp(1.5rem, 5vw, 4rem)" }}>
+          <div style={{ fontFamily: F.body, fontSize: "0.88rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#999", marginBottom: "1.5rem" }}>Four Program Streams</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0.75rem" }}>
+            {streams.map((s) => (
+              <button key={s.id} onClick={() => setActiveStream(activeStream === s.id ? null : s.id)}
+                style={{ textAlign: "left", cursor: "pointer", padding: "1rem 1.25rem", background: activeStream === s.id ? C.white : C.ground, border: "1px solid " + (activeStream === s.id ? C.accent : C.rule), borderRadius: 2, transition: "all 0.15s ease" }}>
+                <div style={{ fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.15rem", color: C.ink }}>{s.name}</div>
+                <div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted }}>{s.pop}</div>
+              </button>
+            ))}
+          </div>
+          {activeStream && (
+            <div style={{ marginTop: "1rem", padding: "1.25rem 1.5rem", background: C.ground, border: "1px solid " + C.rule, borderRadius: 2, borderLeft: "3px solid " + C.accent }}>
+              <p style={{ fontSize: "0.95rem", color: C.inkLight, lineHeight: 1.7, margin: 0, maxWidth: 620 }}>
+                {streams.find((s) => s.id === activeStream)?.d}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ═══ 3. DESIGN PRINCIPLES (warm stone) ═══ */}
+      <div style={{ background: "#3d3a37", borderBottom: "1px solid #4a4744" }}>
+        <div style={{ ...wrap, padding: "clamp(1.5rem, 4vh, 2.5rem) clamp(1.5rem, 5vw, 4rem)" }}>
+          <div style={{ fontFamily: F.body, fontSize: "0.88rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#999", marginBottom: "1.5rem" }}>Governing Design Principles</div>
+          <p style={{ fontSize: "0.95rem", color: "#aaa", lineHeight: 1.7, maxWidth: 620, margin: "0 0 1.5rem 0" }}>
+            Seven principles that transformed years of organic, founder-driven programming into a coherent, extensible, and measurable organizational system. These govern the architecture across every layer below.
+          </p>
+          <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", minHeight: 160 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", flexShrink: 0, width: "clamp(220px, 40%, 340px)" }}>
+              {principles.map((p, i) => (
+                <button key={i} onClick={() => setActivePrinciple(activePrinciple === i ? null : i)} style={{
+                  width: "100%", textAlign: "left", cursor: "pointer", padding: "0.55rem 1rem",
+                  background: activePrinciple === i ? "#4a4744" : "transparent",
+                  border: activePrinciple === i ? "1px solid #5a5653" : "1px solid transparent",
+                  borderLeft: "3px solid " + (activePrinciple === i ? C.accent : "transparent"),
+                  borderRadius: 2, fontFamily: F.display, fontSize: "0.95rem",
+                  color: activePrinciple === i ? C.ground : "#999",
+                  transition: "all 0.15s ease",
+                }}>
+                  {p.t}
+                </button>
+              ))}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {activePrinciple !== null ? (
+                <div style={{ background: "#4a4744", border: "1px solid #5a5653", borderRadius: 2, padding: "1.5rem 2rem" }}>
+                  <div style={{ fontFamily: F.display, fontSize: "1.1rem", marginBottom: "0.6rem", color: C.ground }}>{principles[activePrinciple].t}</div>
+                  <div style={{ fontSize: "0.95rem", color: "#d0c9be", lineHeight: 1.7, maxWidth: 480 }}>{principles[activePrinciple].d}</div>
+                </div>
+              ) : (
+                <div style={{ fontSize: "0.9rem", color: "#777", fontStyle: "italic", padding: "1.5rem 2rem" }}>Select a principle to read more.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ 4. STATS TICKER (dark) ═══ */}
+      <div style={{ background: C.darkBg, borderBottom: "1px solid " + C.darkRule, padding: "1.25rem 0" }}>
+        <div style={{ ...wrap, display: "flex", flexWrap: "wrap", gap: "0.5rem 2rem", fontFamily: F.mono, fontSize: "0.78rem", color: "#888" }}>
+          {["4 nested system layers", "4 program streams", "3 populations served", "3 competency domains / 21 sub-skills", "11 assessment instruments", "600+ students/year"].map((m) => (
+            <span key={m} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ width: 6, height: 6, background: C.accent, borderRadius: "50%", display: "inline-block" }} />{m}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ 5. STICKY TAB NAV ═══ */}
+      <div style={{ borderBottom: "1px solid " + C.rule, background: "rgba(245,242,237,0.92)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ ...wrap, display: "flex", gap: "1.5rem", overflowX: "auto" }}>
+          {tabs.map((t) => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              padding: "1rem 0", background: "transparent", border: "none",
+              borderBottom: tab === t.id ? "2px solid " + C.accent : "2px solid transparent",
+              color: tab === t.id ? C.ink : C.inkMuted, cursor: "pointer",
+              fontFamily: F.mono, fontSize: "0.75rem", fontWeight: tab === t.id ? 500 : 400,
+              letterSpacing: "0.04em", textTransform: "lowercase", whiteSpace: "nowrap",
+            }}>{t.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ 6. TAB CONTENT ═══ */}
+      <div style={{ padding: "clamp(2rem, 6vh, 4rem) 0 clamp(3rem, 8vh, 6rem)" }}>
+        <div style={wrap}>
+          {tab === "framework" && <FoundationalFramework />}
+          {tab === "toc" && <TheoryOfChange />}
+          {tab === "curriculum" && <CreatorsCurriculum />}
+          {tab === "assessment" && <Assessment />}
+          {tab === "flow" && <DataFlow />}
+        </div>
+      </div>
+
+    </div>
+  );
+}

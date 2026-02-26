@@ -102,12 +102,17 @@
     .writing h3 { margin-bottom: 1.5rem; }
     .writing h2 { margin-bottom: 0.75rem; }
     .writing > .container > p { margin-bottom: 2rem; }
-    .writing-grid { display: grid; gap: 0; margin-bottom: 2rem; }
-    .writing-item { display: block; padding: 1.25rem 0; border-bottom: 1px solid var(--color-rule); text-decoration: none; transition: all 0.15s ease; }
-    .writing-item:first-child { border-top: 1px solid var(--color-rule); }
-    .writing-item:hover { background: var(--color-ground); padding-left: 1rem; padding-right: 1rem; margin-left: -1rem; margin-right: -1rem; }
-    .writing-item-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--color-ink); margin-bottom: 0.3rem; }
-    .writing-item-desc { font-size: 0.85rem; color: var(--color-ink-muted); }
+    .writing-slider { position: relative; margin-bottom: 2rem; }
+    .writing-cards { display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 0.5rem; scrollbar-width: thin; scrollbar-color: var(--color-rule) transparent; }
+    .writing-cards::-webkit-scrollbar { height: 4px; }
+    .writing-cards::-webkit-scrollbar-track { background: transparent; }
+    .writing-cards::-webkit-scrollbar-thumb { background: var(--color-rule); border-radius: 2px; }
+    .writing-card { display: flex; flex-direction: column; min-width: 300px; max-width: 340px; flex-shrink: 0; scroll-snap-align: start; border: 1px solid var(--color-rule); border-radius: 3px; overflow: hidden; text-decoration: none; transition: all 0.2s ease; background: var(--color-ground); }
+    .writing-card:hover { border-color: var(--color-accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .writing-card-img { height: 180px; background-size: cover; background-position: center; background-color: var(--color-ground-warm); }
+    .writing-card-body { padding: 1.25rem 1.25rem 1.5rem; flex: 1; }
+    .writing-card-title { font-family: var(--font-display); font-size: 1.05rem; color: var(--color-ink); line-height: 1.3; margin-bottom: 0.5rem; }
+    .writing-card-desc { font-size: 0.85rem; color: var(--color-ink-muted); line-height: 1.6; }
     .writing-cta { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-accent); }
     .writing-cta:hover { color: var(--color-ink); }
 
@@ -140,6 +145,7 @@
       .work-item { grid-template-columns: 1fr; }
       .work-item-right { margin-top: 0.5rem; }
       .hero-meta { flex-direction: column; gap: 0.4rem; }
+      .writing-card { min-width: 280px; }
     }
 
     /* ANIMATIONS */
@@ -173,8 +179,8 @@
       <p class="hero-intro fade-in">Every organization I've worked with faces the same underlying challenge: they hold deep, hard-won knowledge—about their craft, their mission, their way of working—but lack the infrastructure to make it transferable and scalable. My work begins by helping organizations see the full range of what's possible, then designing the structures that make it operational.</p>
       <div class="hero-meta fade-in">
         <span>Systems Design & Organizational Strategy</span>
+        <span>Human–AI Collaboration</span>
         <span>Strategy Through Production</span>
-        <span>Innovation Infrastructure</span>
       </div>
     </div>
   </section>
@@ -187,19 +193,19 @@
       <div class="cap-grid">
         <div class="cap-card reveal">
           <h2>Systems Diagnosis & Organizational Design</h2>
-          <p>I help leadership teams see their own systems clearly—where expertise is trapped, where processes break down, where growth outpaces infrastructure. Then I design the operational architecture to close the gap: workflows, evaluation frameworks, knowledge systems, and decision structures that align people, process, and purpose.</p>
+          <p>I help people see what they already know. Organizations hold expertise trapped in informal practice, institutional habit, or individual heads. I create the conditions for teams to surface what matters, name what's dead, and articulate what they actually care about—then design the operational architecture that makes it visible and actionable.</p>
         </div>
         <div class="cap-card reveal">
           <h2>Infrastructure Design & Scaling</h2>
-          <p>I build the systems that make organizations actually work—then make them work across contexts. Assessment platforms adopted across seven countries. National professional development programs reaching 50,000+ students. LMS platforms constructed from scratch. I take what works in one place and design the infrastructure to scale it without losing what made it effective.</p>
+          <p>I build the systems that make organizations work—then make them work across contexts. Assessment platforms across seven countries. National PD programs reaching 50,000+ students. LMS platforms from scratch for state certification. The pattern is always the same: the people closest to the work maintain authority over what gets built. I provide tools, process, and implementation. Capability transfers.</p>
         </div>
         <div class="cap-card reveal">
-          <h2>From Strategy to Production</h2>
-          <p>Most consultants diagnose, recommend, and leave. I build the thing. I've developed a structured methodology for human–AI collaboration that lets me go from organizational diagnosis to working production infrastructure in weeks—not months, not after a vendor search. A computer vision system deployed at Harvard. A backup orchestrator with 278 tests. An LMS built from scratch for state certification. Strategy and implementation, same person, same engagement.</p>
+          <h2>Human–AI Collaboration</h2>
+          <p>The most visible expression of my methodology. The Ho System structures how humans and AI build together—human maintains architectural authority, AI handles implementation, genuine understanding develops through the process. I use it to build production systems, including a computer vision platform deployed at Harvard. But the principles are the same ones I've applied to every collaboration for 25 years. The domain is new. The methodology isn't.</p>
         </div>
         <div class="cap-card reveal">
           <h2>Strategic Facilitation & Advisory</h2>
-          <p>I design and lead the processes through which teams build shared direction, develop common language, and create the collaborative capacity to sustain change. Workshops, retreats, coaching, and long-term advisory—always structured around operational outcomes. And when facilitation surfaces a need for new infrastructure, I can build that too.</p>
+          <p>I create structured conditions for teams to access the creative and collaborative capacity they already have—then channel it toward operational outcomes that outlast the engagement. Not delivering content. Designing processes through which people develop shared direction, common language, and genuine capability by doing the work together. Workshops, retreats, coaching, and long-term advisory.</p>
         </div>
       </div>
     </div>
@@ -216,21 +222,21 @@
           </div>
           <div class="work-item-right"><span class="work-item-tag">live system</span><span class="work-item-arrow">→</span></div>
         </a>
-        <a class="work-item reveal" href="https://github.com/sageframe-no-kaji/ho-system" target="_blank" rel="noopener">
+        <a class="work-item reveal" href="work/ho-system.html">
           <div>
             <div class="work-item-title">The Ho System — Human–AI Collaboration Methodology</div>
             <div class="work-item-desc">A structured framework for building with AI while maintaining architectural authority. Open methodology with position paper, templates, and evidence from practice.</div>
           </div>
-          <div class="work-item-right"><span class="work-item-tag">methodology</span><span class="work-item-arrow">→</span></div>
+          <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
         </a>
-        <a class="work-item reveal" href="/work/nuvu-sms.html">
+        <a class="work-item reveal" href="#">
           <div>
             <div class="work-item-title">NuVu Transcript & Studio Management System</div>
             <div class="work-item-desc">Portfolio-based assessment and learning management platform scaled across 15 partner schools in 7 countries, serving 7,000+ students. The system that became NuVu's operational backbone.</div>
           </div>
           <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
         </a>
-        <a class="work-item reveal" href="/work/cs-framework.html">
+        <a class="work-item reveal" href="#">
           <div>
             <div class="work-item-title">Citizen Schools — Learning Framework & National Program Design</div>
             <div class="work-item-desc">Organizational learning framework, Experience-Based Learning engine, and national professional development infrastructure. Catalyst PD initiative projected to reach 50,000+ students.</div>
@@ -244,12 +250,12 @@
           </div>
           <div class="work-item-right"><span class="work-item-tag">in development</span><span class="work-item-arrow">→</span></div>
         </a>
-        <a class="work-item reveal" href="#" target="_blank" rel="noopener">
+        <a class="work-item reveal" href="work/arck.html">
           <div>
             <div class="work-item-title">ARCK Boston — Assessment & Evaluation Architecture</div>
             <div class="work-item-desc">End-to-end assessment system for a multi-site arts education nonprofit. Logic models, competency frameworks, and data sense-making infrastructure designed for organizational growth.</div>
           </div>
-          <div class="work-item-right"><span class="work-item-tag">portfolio</span><span class="work-item-arrow">→</span></div>
+          <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
         </a>
       </div>
     </div>
@@ -259,10 +265,10 @@
     <div class="container">
       <h3>Approach</h3>
       <div class="approach-text">
-        <h2>The thinking and the making are the same practice.</h2>
-        <p>I don't separate strategy from build. I've set national learning direction and built the systems to deliver it. I've led organizational transformation and constructed the infrastructure that made it operational. I've developed a structured human–AI collaboration methodology and used it to build production software from scratch.</p>
-        <p>Every challenge is a design problem: grounded in <strong>authentic inquiry</strong>, advanced through <strong>iterative prototyping</strong>, refined by <strong>rigorous feedback</strong>. The quality of your problem definition determines the quality of your design parameters. Good parameters don't constrain creativity—they focus it.</p>
-        <p>I'm most effective in moments of transition—when organizations are growing, redefining direction, or confronting complexity that demands both <strong>imagination and operational clarity</strong>.</p>
+        <h2>One methodology. Every domain.</h2>
+        <p>I create structured conditions for people to surface what they already know—what matters, what's trapped, what's dead—and then I design the collaborative framework through which they build what's next. The depth of involvement varies. The pattern is always the same: <strong>free the knowledge, design the structure, transfer the capability.</strong></p>
+        <p>This is the same thing whether I'm working with an AI, a school, a nonprofit, a C-suite, or a group of teenagers. It draws on 25 years of practice, formalized through the Ho System and tested across every domain I've touched. The domain changes. The methodology doesn't.</p>
+        <p>The result is that I don't separate strategy from build. I've set national learning direction and built the systems to deliver it. I've diagnosed organizational incoherence and constructed the infrastructure to resolve it. I've developed a structured human–AI methodology and used it to build production software from scratch. When facilitation surfaces a need for new tools, <strong>I build those too.</strong></p>
       </div>
     </div>
   </section>
@@ -294,19 +300,30 @@
       <h3 class="reveal">Writing — Constructive Interference</h3>
       <h2 class="reveal">On systems thinking, AI collaboration, and building things you actually understand.</h2>
       <p class="reveal">Published on Substack. On the discipline of working with AI, the design of organizational infrastructure, and what it means to build at the edge of your own competence.</p>
-      <div class="writing-grid reveal">
-        <a class="writing-item" href="https://sageframe.substack.com/p/i-built-a-computer-vision-system" target="_blank" rel="noopener">
-          <div class="writing-item-title">I Built a Computer Vision System for Harvard's Falcon Cameras</div>
-          <div class="writing-item-desc">The methodology behind building a production system without knowing how to code—and why vibe coding is a worse problem than most people realize.</div>
-        </a>
-        <a class="writing-item" href="https://sageframe.substack.com/p/a-condition-of-the-dash" target="_blank" rel="noopener">
-          <div class="writing-item-title">A Condition of the Dash;</div>
-          <div class="writing-item-desc">On being accused of machinery, the em-dash as a life choice, and the difference between AI slop and paying attention.</div>
-        </a>
-        <a class="writing-item" href="https://sageframe.substack.com/p/learning-to-think-in-systems" target="_blank" rel="noopener">
-          <div class="writing-item-title">Learning to Think in Systems</div>
-          <div class="writing-item-desc">Designing a medical case data structure—or, what happens when you don't know the "right" way.</div>
-        </a>
+      <div class="writing-slider reveal">
+        <div class="writing-cards">
+          <a class="writing-card" href="https://sageframe.substack.com/p/walking-without-google-maps" target="_blank" rel="noopener">
+            <div class="writing-card-img" style="background-image: url('img/walking.webp')"></div>
+            <div class="writing-card-body">
+              <div class="writing-card-title">Walking Without Google Maps</div>
+              <div class="writing-card-desc">Why the most important skill for the AI age has nothing to do with AI.</div>
+            </div>
+          </a>
+          <a class="writing-card" href="https://sageframe.substack.com/p/a-condition-of-the-dash" target="_blank" rel="noopener">
+            <div class="writing-card-img" style="background-image: url('img/dash.png')"></div>
+            <div class="writing-card-body">
+              <div class="writing-card-title">A Condition of the Dash;</div>
+              <div class="writing-card-desc">On being accused of machinery, the em-dash as a life choice, and the difference between AI slop and paying attention.</div>
+            </div>
+          </a>
+          <a class="writing-card" href="https://sageframe.substack.com/p/i-built-a-computer-vision-system" target="_blank" rel="noopener">
+            <div class="writing-card-img" style="background-image: url('img/ho-process.jpg')"></div>
+            <div class="writing-card-body">
+              <div class="writing-card-title">I Built a Computer Vision System for Harvard's Falcon Cameras</div>
+              <div class="writing-card-desc">The methodology behind building a production system without knowing how to code—and why vibe coding is a worse problem than most people realize.</div>
+            </div>
+          </a>
+        </div>
       </div>
       <a class="writing-cta reveal" href="https://sageframe.substack.com" target="_blank" rel="noopener">All essays on Substack <span>→</span></a>
     </div>
@@ -337,7 +354,7 @@
       <h2 class="reveal">Let's talk about what you're building.</h2>
       <p class="reveal">Whether you're a leader navigating organizational change, a team trying to scale what works, or someone rethinking how they operate—I'd welcome the conversation.</p>
       <div class="contact-links reveal">
-        <a class="contact-link" href="mailto:atmarcus@gmail.com">Email</a>
+        <a class="contact-link" href="mailto:andrew@atmarcus.net">Email</a>
         <a class="contact-link" href="https://linkedin.com/in/atmarcus" target="_blank" rel="noopener">LinkedIn</a>
         <a class="contact-link" href="https://github.com/sageframe-no-kaji" target="_blank" rel="noopener">GitHub</a>
         <a class="contact-link" href="https://sageframe.substack.com" target="_blank" rel="noopener">Substack</a>
