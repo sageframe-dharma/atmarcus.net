@@ -79,6 +79,8 @@
     .work-item-tag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; white-space: nowrap; }
     .work-item-arrow { color: var(--color-accent); font-size: 1.1rem; transition: transform 0.2s ease; }
     .work-item:hover .work-item-arrow { transform: translateX(4px); }
+    .work-group { margin-bottom: 2rem; }
+    .work-group-label { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-muted); padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-rule); }
 
     /* APPROACH */
     .approach { background: var(--color-ink); color: var(--color-ground); }
@@ -215,49 +217,56 @@
     <div class="container">
       <h3 class="reveal">Selected Work</h3>
       <div class="work-grid">
-        <a class="work-item reveal" href="https://kanyo.sageframe.net" target="_blank" rel="noopener">
-          <div>
-            <div class="work-item-title">Kanyō — Production Computer Vision System</div>
-            <div class="work-item-desc">Real-time wildlife monitoring platform deployed at Harvard Memorial Hall. Built from scratch in six weeks using the Ho System methodology. Not a prototype—a working system with active research engagement.</div>
-          </div>
-          <div class="work-item-right"><span class="work-item-tag">live system</span><span class="work-item-arrow">→</span></div>
-        </a>
-        <a class="work-item reveal" href="work/ho-system.html">
-          <div>
-            <div class="work-item-title">The Ho System — Human–AI Collaboration Methodology</div>
-            <div class="work-item-desc">A structured framework for building with AI while maintaining architectural authority. Open methodology with position paper, templates, and evidence from practice.</div>
-          </div>
-          <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
-        </a>
-        <a class="work-item reveal" href="#">
-          <div>
-            <div class="work-item-title">NuVu Transcript & Studio Management System</div>
-            <div class="work-item-desc">Portfolio-based assessment and learning management platform scaled across 15 partner schools in 7 countries, serving 7,000+ students. The system that became NuVu's operational backbone.</div>
-          </div>
-          <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
-        </a>
-        <a class="work-item reveal" href="#">
-          <div>
-            <div class="work-item-title">Citizen Schools — Learning Framework & National Program Design</div>
-            <div class="work-item-desc">Organizational learning framework, Experience-Based Learning engine, and national professional development infrastructure. Catalyst PD initiative projected to reach 50,000+ students.</div>
-          </div>
-          <div class="work-item-right"><span class="work-item-tag">framework</span><span class="work-item-arrow">→</span></div>
-        </a>
-        <a class="work-item reveal" href="#" target="_blank" rel="noopener">
-          <div>
-            <div class="work-item-title">Satori Internal Affairs — Medical Mystery Simulator</div>
-            <div class="work-item-desc">Interactive clinical reasoning game with deterministic engine, concurrent state machines, and LLM-generated case architecture. Designed to teach how doctors actually think.</div>
-          </div>
-          <div class="work-item-right"><span class="work-item-tag">in development</span><span class="work-item-arrow">→</span></div>
-        </a>
-        <a class="work-item reveal" href="work/arck.html">
-          <div>
-            <div class="work-item-title">ARCK Boston — Assessment & Evaluation Architecture</div>
-            <div class="work-item-desc">End-to-end assessment system for a multi-site arts education nonprofit. Logic models, competency frameworks, and data sense-making infrastructure designed for organizational growth.</div>
-          </div>
-          <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
-        </a>
+  <div class="work-group">
+    <div class="work-group-label reveal">Methodology & Practice</div>
+    <a class="work-item reveal" href="work/ho-system.html">
+      <div>
+        <div class="work-item-title">The Ho System — Human–AI Collaboration Methodology</div>
+        <div class="work-item-desc">A structured framework for building with AI while maintaining architectural authority. Open methodology with position paper, templates, and evidence from practice.</div>
       </div>
+      <div class="work-item-right"><span class="work-item-tag">methodology</span><span class="work-item-arrow">→</span></div>
+    </a>
+    <a class="work-item reveal" href="https://kanyo.sageframe.net" target="_blank" rel="noopener">
+      <div>
+        <div class="work-item-title">Kanyō — Wildlife Monitoring Platform</div>
+        <div class="work-item-desc">Real-time wildlife monitoring platform deployed at Harvard Memorial Hall. Built from scratch in six weeks using the Ho System methodology. Not a prototype—a working system with active research engagement.</div>
+      </div>
+      <div class="work-item-right"><span class="work-item-tag">live system</span><span class="work-item-arrow">→</span></div>
+    </a>
+    <a class="work-item reveal" href="https://github.com/sageframe-no-kaji/hozo-sentinel" target="_blank" rel="noopener">
+      <div>
+        <div class="work-item-title">Hōzō — Sentinel Monitoring Tool</div>
+        <div class="work-item-desc">Production CLI tool built in three hours. Evidence of methodology mastery—fourteen months of structured practice compressed into fluent execution.</div>
+      </div>
+      <div class="work-item-right"><span class="work-item-tag">in development</span><span class="work-item-arrow">→</span></div>
+    </a>
+  </div>
+
+  <div class="work-group">
+    <div class="work-group-label reveal">Organizational Systems</div>
+    <a class="work-item reveal" href="work/nuvu-sms.html">
+      <div>
+        <div class="work-item-title">NuVu Studio — Learning Infrastructure at Scale</div>
+        <div class="work-item-desc">Academic infrastructure across 15 partner schools in seven countries. Assessment systems, transcript architecture, and an LMS built from scratch—scaled to 7,000+ students.</div>
+      </div>
+      <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
+    </a>
+    <a class="work-item reveal" href="work/arck.html">
+      <div>
+        <div class="work-item-title">ARCK Boston — Organizational Systems Architecture</div>
+        <div class="work-item-desc">End-to-end assessment system for a multi-site arts education nonprofit. Logic models, competency frameworks, and data sense-making infrastructure designed for organizational growth.</div>
+      </div>
+      <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
+    </a>
+    <a class="work-item reveal" href="work/citizen-schools.html">
+      <div>
+        <div class="work-item-title">Citizen Schools — National Learning Framework</div>
+        <div class="work-item-desc">Unified learning framework that restructured national programming. Experience-based learning engine, organizational learning architecture, and practitioner development pipeline.</div>
+      </div>
+      <div class="work-item-right"><span class="work-item-tag">case study</span><span class="work-item-arrow">→</span></div>
+    </a>
+  </div>
+</div>
     </div>
   </section>
 
