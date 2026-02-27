@@ -451,8 +451,9 @@ function ARCKCaseStudy() {
       </div>
 
       {/* ═══ 5. STICKY TAB NAV ═══ */}
-      <div style={{ borderBottom: "1px solid " + C.rule, background: "rgba(245,242,237,0.92)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ ...wrap, display: "flex", gap: "1.5rem", overflowX: "auto" }}>
+      <div style={{ borderTop: "2px solid " + C.accent, borderBottom: "1px solid " + C.rule, background: "rgba(245,242,237,0.92)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 100, marginTop: "2.5rem" }}>
+        <div style={{ ...wrap, display: "flex", alignItems: "center", gap: "1.5rem", overflowX: "auto" }}>
+          <span style={{ fontFamily: F.mono, fontSize: "0.65rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: C.accent, whiteSpace: "nowrap" }}>Jump to</span>
           {tabs.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               padding: "1rem 0", background: "transparent", border: "none",
