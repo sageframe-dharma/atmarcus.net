@@ -27,9 +27,7 @@
     .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
     header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
     header .container { display: flex; justify-content: space-between; align-items: center; }
-    .wordmark { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
-    .wm-circle { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--color-ink); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; color: var(--color-ink); flex-shrink: 0; }
-    .wm-name { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); letter-spacing: 0.02em; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; }
     header nav { display: flex; gap: 2rem; }
     header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
     header nav a:hover { color: var(--color-ink) !important; }
@@ -55,7 +53,7 @@
     .bottom-sheet nav a { display: block; padding: 1rem 0; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 400; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; border-bottom: 1px solid var(--color-rule); }
     .bottom-sheet nav a:last-child { border-bottom: none; }
     .bottom-sheet nav a:hover, .bottom-sheet nav a:active { color: var(--color-ink); }
-    @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } .wm-name { display: none; } }
+    @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } }
   </style>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -64,7 +62,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="../index.html" class="wordmark"><span class="wm-circle">ATM</span><span class="wm-name">Andrew Todd Marcus</span></a>
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
       <nav>
         <a href="../index.html#work">work</a>
         <a href="../index.html#approach">approach</a>

@@ -40,9 +40,7 @@
     /* HEADER */
     header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
     header .container { display: flex; justify-content: space-between; align-items: center; }
-    .wordmark { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
-    .wm-circle { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--color-ink); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; color: var(--color-ink); flex-shrink: 0; }
-    .wm-name { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); letter-spacing: 0.02em; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; }
     nav { display: flex; gap: 2rem; }
     nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; }
     nav a:hover { color: var(--color-ink); }
@@ -166,7 +164,6 @@
     @media (max-width: 640px) {
       header nav { display: none; }
       .nav-toggle { display: block; }
-      .wm-name { display: none; }
       .cap-grid { grid-template-columns: 1fr; }
       .work-item { grid-template-columns: 1fr; }
       .work-item-right { margin-top: 0.5rem; }
@@ -187,7 +184,7 @@
 <body>
   <header>
     <div class="container">
-      <a class="wordmark" href="#"><span class="wm-circle">ATM</span><span class="wm-name">Andrew Todd Marcus</span></a>
+      <a class="wordmark" href="#">Andrew Todd Marcus</a>
       <nav>
         <a href="#work">work</a>
         <a href="#approach">approach</a>
