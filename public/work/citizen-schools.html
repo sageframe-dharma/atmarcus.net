@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Citizen Schools — National Learning Framework</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    button { font-family: inherit; }
+    a { color: inherit; }
+  </style>
+  <style>
+    :root {
+      --color-ink: #1a1a1a;
+      --color-ink-muted: #7a7a7a;
+      --color-ground: #f5f2ed;
+      --color-accent: #c45a2d;
+      --color-rule: #d0c9be;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --max-width: 1080px;
+      --gutter: clamp(1.5rem, 5vw, 4rem);
+    }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); letter-spacing: 0.02em; text-decoration: none; }
+    header nav { display: flex; gap: 2rem; }
+    header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
+    header nav a:hover { color: var(--color-ink) !important; }
+    footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; }
+    footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); max-width: none; }
+    @media (max-width: 640px) { header nav { gap: 1.2rem; } header nav a { font-size: 0.72rem; } }
+    /* DIAGRAM */
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0c9be;border-radius:3px}
+    @media(max-width:768px){
+      .lf-root{flex-direction:column-reverse!important}
+      .lf-panel{width:100%!important;min-width:0!important;max-height:none!important}
+      .lf-diagram{padding:1rem!important;min-height:auto!important}
+    }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+    </div>
+  </header>
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState, useMemo, useCallback } = React;
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555", darkMuted: "#999", darkText: "#c8c2b8",
+  orange: "#f47920", panelBg: "#f0ede7",
+};
+
+/* ─── PAGE COMPONENTS ─── */
+
+function Label({ children, dark }) {
+  return <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>{children}</div>;
+}
+
+function Prose({ children, dark, style }) {
+  return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
+}
+
+function Section({ dark, children, style }) {
+  return <section style={{ background: dark ? C.darkBg : C.ground, padding: "5rem 2rem", ...style }}><div style={{ maxWidth: 900, margin: "0 auto" }}>{children}</div></section>;
+}
+
+/* ─── DIAGRAM DATA ─── */
+
+const GP = [
+  { id:"AEBL",abbr:"AEBL",name:"Authentic Experience Based Learning",color:"#4a3b8c",tint:"rgba(74,59,140,0.14)",center:0,tagline:"Abiding learning is rooted in experience.",desc:"We believe that all learners thrive when provided with the opportunity to engage directly and creatively with open-ended problems and ambiguous solutions in a learner-driven, process-based, and humanistic context." },
+  { id:"DMAL",abbr:"DMAL",name:"Diverse Mentorship Across Levels",color:"#2e8b3a",tint:"rgba(46,139,58,0.14)",center:240,tagline:"Trusting relationships are critical for learning and growth.",desc:"We believe that active, personal engagement with diverse and experienced mentors inspires stakeholders of all roles and types to become agents of change. Diversity in mentors includes: social identity, education, profession, and thought." },
+  { id:"AC",abbr:"AC",name:"Activated Communities",color:"#8b2252",tint:"rgba(139,34,82,0.14)",center:120,tagline:"Engaged communities are activated for transformation.",desc:"We believe that positive change is best supported by engagement at all tiers of a community in vision setting, decision making, and active participation in education and learning." },
+];
+
+const LP = [
+  { id:"CC",abbr:"CC",name:"Critical Creativity",color:"#4a54a0",baseAngle:345,w:{AEBL:1,DMAL:3,AC:3},desc:"Deep and nuanced learning requires critical thinking and creativity to evaluate and refine ideas." },
+  { id:"UA",abbr:"UA",name:"Universal Agency",color:"#6b4a9c",baseAngle:35,w:{AEBL:1,DMAL:2,AC:1},desc:"All stakeholders have the right and responsibility to participate in decision making." },
+  { id:"SA",abbr:"SA",name:"Social Activation",color:"#9b5a7a",baseAngle:80,w:{AEBL:2,DMAL:2,AC:1},desc:"Education should empower students and communities as agents of change in the world." },
+  { id:"CE",abbr:"CE",name:"Civic Engagement",color:"#8b4a6a",baseAngle:125,w:{AEBL:2,DMAL:2,AC:1},desc:"Identification and engagement with communities as participants in education is fundamental to authentic learning." },
+  { id:"HCA",abbr:"HCA",name:"Human Centered Attitude",color:"#3a7d4a",baseAngle:175,w:{AEBL:2,DMAL:1,AC:2},desc:"The cultivation of qualities such as curiosity, care, compassion, relationship, and responsibility is vital to human growth and community." },
+  { id:"UP",abbr:"UP",name:"Universal Participation",color:"#5a9b6a",baseAngle:225,w:{AEBL:3,DMAL:1,AC:2},desc:"All stakeholders commit to both facilitate and participate in transformational processes." },
+  { id:"IA",abbr:"IA",name:"Interdisciplinary Approach",color:"#2e7a6a",baseAngle:285,w:{AEBL:1,DMAL:1,AC:2},desc:"Understanding and changing the world is a fundamentally interdisciplinary pursuit." },
+];
+
+const COMP = [
+  { id:"CC",name:"Core Creativity",subtitle:"Process-Based Critical & Creative Thinking",color:"#f4a460",w:{AEBL:1,DMAL:2,AC:3},desc:"Foundational connections, critical engagement with and evaluation of ideas, rigorous creative solutions.",skills:[
+    {name:"Critical Process",w:{AEBL:1,DMAL:1,AC:1},desc:"The ability to formulate and propose multiple creative solutions, test them through critical interrogation, iteratively revise, and synthesize and respond to feedback."},
+    {name:"Conceptual Foundation",w:{AEBL:1,DMAL:2,AC:3},desc:"The ability to abstract conceptual challenges and embed clear concepts into proposals for novel solutions."},
+    {name:"Investigation",w:{AEBL:1,DMAL:1,AC:2},desc:"The process of forming a critical and profound understanding of the information, data, and human resources required for a nuanced approach to problems."},
+    {name:"Context Orientation",w:{AEBL:1,DMAL:2,AC:1},desc:"The ability to critically understand the historical, political, economic, and cultural context in relation to a problem or challenge."},
+    {name:"Humanistic Outlook",w:{AEBL:1,DMAL:2,AC:1},desc:"An intentional ethos of incorporating multiple perspectives and viewpoints in both the conceptual content and process of creative work."},
+    {name:"Interdisciplinary Synthesis",w:{AEBL:1,DMAL:1,AC:2},desc:"The ability to recognize the interdependence of knowledge and draw from multiple subjects for integration into work."},
+    {name:"Critical Communication",w:{AEBL:1,DMAL:2,AC:1},desc:"Clearly and effectively express concepts and proposals both for process growth and communication to a broader audience."},
+    {name:"Delight",w:{AEBL:1,DMAL:1,AC:1},desc:"The cultivation of a mindset that problems, however frustrating, complex, or challenging, can be approached with curiosity, playfulness, and passion."},
+  ]},
+  { id:"HS",name:"Human & Societal Growth",subtitle:"Social Emotional, Social Justice & Equity",color:"#e64a19",w:{AEBL:3,DMAL:1,AC:2},desc:"Mindsets and skills used to center personal and group development and cultural accountability.",skills:[
+    {name:"Engagement",w:{AEBL:1,DMAL:1,AC:1},desc:"The full commitment to the process of learning and growth supported by authentic interest and investment."},
+    {name:"Self Awareness & Identity",w:{AEBL:3,DMAL:1,AC:1},desc:"The abilities to understand one's own emotions, thoughts, and values and how they influence behavior."},
+    {name:"Social Awareness",w:{AEBL:2,DMAL:2,AC:1},desc:"The abilities to understand the perspectives of and empathize with others, including those from diverse backgrounds."},
+    {name:"Collaborative Decision Making",w:{AEBL:1,DMAL:1,AC:1},desc:"The abilities to collaboratively make caring and constructive choices about lines of inquiry and social interactions."},
+    {name:"Self Efficacy",w:{AEBL:3,DMAL:1,AC:2},desc:"A belief in one's capacity to execute behaviors necessary to produce specific performance attainments."},
+    {name:"Diversity",w:{AEBL:3,DMAL:1,AC:1},desc:"Ability to express comfort and joy with human diversity, use accurate language for human differences."},
+    {name:"Justice",w:{AEBL:3,DMAL:2,AC:1},desc:"Ability to recognize that power and privilege influence relationships on interpersonal, intergroup and institutional levels."},
+    {name:"Action",w:{AEBL:2,DMAL:2,AC:1},desc:"Demonstrate empowerment and the skills to act, with others or alone, against prejudice and/or discriminatory actions."},
+  ]},
+  { id:"GS",name:"Global Skills",subtitle:"Tools for Creation and Communication",color:"#c62828",w:{AEBL:2,DMAL:3,AC:1},desc:"Technical and relational skills needed to manifest solutions and communicate process, intention, and anticipated outcomes.",skills:[
+    {name:"Visual Communication",w:{AEBL:1,DMAL:2,AC:1},desc:"The ability to express complex ideas through varied visual representation."},
+    {name:"Documentation",w:{AEBL:1,DMAL:1,AC:2},desc:"The process of building a record of thought processes, critical synthesis, and decision making."},
+    {name:"Media Proficiency",w:{AEBL:2,DMAL:3,AC:1},desc:"The ability to effectively employ multi-media communication tools in the service of an idea."},
+    {name:"Prototyping",w:{AEBL:1,DMAL:3,AC:2},desc:"The ability to transition from thought to reality through simulation of a future production outcome."},
+    {name:"Integrated Knowledge",w:{AEBL:1,DMAL:1,AC:1},desc:"The practical knowledge of and ability to draw from multiple areas of subject knowledge for integration into work."},
+    {name:"Social Activation",w:{AEBL:3,DMAL:2,AC:1},desc:"The ability to identify, marshall, and inspire support from community members at every level."},
+    {name:"Persuasive Proficiency",w:{AEBL:2,DMAL:2,AC:1},desc:"The ability to effectively and persuasively communicate the intent and projected outcomes of work."},
+    {name:"Critical Collaboration",w:{AEBL:1,DMAL:1,AC:1},desc:"The specific practice of giving and receiving critical feedback both with mentors and within a collaborative."},
+  ]},
+];
+
+/* ─── DIAGRAM GEOMETRY ─── */
+
+const SVG_W = 760, SVG_H = 620, CX = 450, CY = SVG_H/2;
+const toR = d => ((d-90)*Math.PI)/180;
+const px = (r,d) => CX + r*Math.cos(toR(d));
+const py = (r,d) => CY + r*Math.sin(toR(d));
+function piePath(r,s,e) { if(e<s)e+=360; const l=(e-s)>180?1:0; return `M ${CX} ${CY} L ${px(r,s)} ${py(r,s)} A ${r} ${r} 0 ${l} 1 ${px(r,e)} ${py(r,e)} Z`; }
+
+const GP_Z = [{s:300,e:420},{s:180,e:300},{s:60,e:180}];
+const R_GP = 195, R_LP = 140, R_CS = 28;
+const COMP_R = [218, 240, 264];
+const BADGE_ORDER = [2, 1, 0];
+const BADGE_Y = [CY - COMP_R[2], CY - COMP_R[1], CY - COMP_R[0]];
+const BADGE_RIGHT = CX - COMP_R[2] - 4;
+const BADGE_LEFT = 12;
+const BADGE_H = 22;
+
+function angleDist(a,b) { return ((a-b+540)%360)-180; }
+function lerpAngle(from,to,t) { return (from + angleDist(to,from)*t + 360)%360; }
+
+function getLPPos(i, selGP) {
+  const lp = LP[i], base = lp.baseAngle;
+  if (selGP === null) return { angle:base, radius:R_LP, size:28, opacity:1 };
+  const gp = GP[selGP], w = lp.w[gp.id], gc = gp.center;
+  if (w===1) return { angle:lerpAngle(base,gc,0.35), radius:R_LP*0.78, size:36, opacity:1 };
+  if (w===2) return { angle:lerpAngle(base,gc,-0.08), radius:R_LP*1.15, size:26, opacity:0.65 };
+  return { angle:lerpAngle(base,gc,-0.15), radius:R_LP*1.4, size:18, opacity:0.25 };
+}
+
+function getLPPosForLP(i, selLP) {
+  const lp = LP[i];
+  if (selLP===null) return { angle:lp.baseAngle, radius:R_LP, size:28, opacity:1 };
+  if (selLP===i) return { angle:lp.baseAngle, radius:R_LP, size:42, opacity:1 };
+  const near = Math.abs(angleDist(lp.baseAngle, LP[selLP].baseAngle)) < 100;
+  if (near) return { angle:lp.baseAngle, radius:R_LP, size:30, opacity:0.7 };
+  return { angle:lp.baseAngle, radius:R_LP*1.2, size:18, opacity:0.22 };
+}
+
+const COMP_ARCS = [{ci:0,s:310,e:410},{ci:1,s:50,e:180},{ci:2,s:180,e:310}];
+
+function mkDots() {
+  const d = [];
+  COMP_ARCS.forEach(a => {
+    const sk = COMP[a.ci].skills, span = a.e - a.s, step = span/sk.length;
+    sk.forEach((_,i) => d.push({ ci:a.ci, si:i, baseAngle:(a.s+step*(i+0.5))%360, r:COMP_R[a.ci], name:sk[i].name }));
+  });
+  return d;
+}
+
+function getDotPos(dot, selGP) {
+  if (selGP === null) return { angle: dot.baseAngle, r: dot.r, size: 5, opacity: 0.5 };
+  const gp = GP[selGP], gc = gp.center;
+  const skill = COMP[dot.ci].skills[dot.si];
+  const w = skill.w[gp.id];
+  if (w===1) return { angle: lerpAngle(dot.baseAngle, gc, 0.3), r: dot.r, size: 7, opacity: 1 };
+  if (w===2) return { angle: lerpAngle(dot.baseAngle, gc, 0.05), r: dot.r, size: 5, opacity: 0.5 };
+  return { angle: lerpAngle(dot.baseAngle, gc, -0.1), r: dot.r, size: 3.5, opacity: 0.2 };
+}
+
+function TriIcon({ size, hl }) {
+  const r=size/2, cols=[GP[0].color,GP[1].color,GP[2].color], gray="#c8c4bc";
+  const angs=[{s:300,e:420},{s:180,e:300},{s:60,e:180}];
+  const _px=(rr,d)=>r+rr*Math.cos(toR(d)), _py=(rr,d)=>r+rr*Math.sin(toR(d));
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{flexShrink:0}}>
+      {angs.map((a,i)=>{
+        let s=a.s,e=a.e; if(e<s)e+=360; const l=(e-s)>180?1:0;
+        return <path key={i} d={`M ${r} ${r} L ${_px(r-1,a.s)} ${_py(r-1,a.s)} A ${r-1} ${r-1} 0 ${l} 1 ${_px(r-1,e)} ${_py(r-1,e)} Z`}
+          fill={hl===i?cols[i]:gray} opacity={hl===i?1:0.35} stroke="white" strokeWidth={1}/>;
+      })}
+    </svg>
+  );
+}
+
+/* ─── DIAGRAM COMPONENT ─── */
+
+function LFDiagram() {
+  const [sec,setSec]=useState("overview");
+  const [sGP,setGP]=useState(null);
+  const [sLP,setLP]=useState(null);
+  const [sC,setSC]=useState(null);
+  const [sSk,setSk]=useState(null);
+  const [hover,setHover]=useState(null);
+  const dots = useMemo(mkDots,[]);
+
+  const rst=useCallback(()=>{setGP(null);setLP(null);setSC(null);setSk(null);setHover(null)},[]);
+  const tog=useCallback(s=>{rst();setSec(p=>p===s?null:s)},[rst]);
+  const cGP=useCallback(i=>{setGP(i);setLP(null);setSC(null);setSk(null);setSec("gp")},[]);
+  const cLP=useCallback(i=>{setLP(i);setGP(null);setSC(null);setSk(null);setSec("lp")},[]);
+  const cComp=useCallback(i=>{setSC(i);setSk(null);setGP(null);setLP(null);setSec("comp")},[]);
+  const cSk=useCallback((ci,si)=>{setSC(ci);setGP(null);setLP(null);setSk(p=>(p===si&&sC===ci)?null:si);setSec("comp")},[sC]);
+  const cCS=useCallback(()=>{rst();setSec("overview")},[rst]);
+  const clickBg=useCallback(()=>{rst();setSec("overview")},[rst]);
+
+  const isComp=sec==="comp";
+
+  const lpPos = LP.map((_,i)=>{
+    if(sGP!==null) return getLPPos(i,sGP);
+    if(sLP!==null) return getLPPosForLP(i,sLP);
+    if(isComp) return {angle:LP[i].baseAngle,radius:R_LP,size:28,opacity:0.1};
+    return {angle:LP[i].baseAngle,radius:R_LP,size:28,opacity:1};
+  });
+
+  const dotPos = dots.map(d=>{
+    if(sGP!==null) return getDotPos(d,sGP);
+    if(sC!==null) return { angle:d.baseAngle, r:d.r, size: sC===d.ci?7:3, opacity: sC===d.ci?1:0.12 };
+    if(isComp) return { angle:d.baseAngle, r:d.r, size:6, opacity:0.75 };
+    return { angle:d.baseAngle, r:d.r, size:5, opacity:0.5 };
+  });
+
+  const gpO=i=>{if(sGP!==null)return sGP===i?1:0.04;if(sec==="lp"||isComp)return 0.04;return 1};
+  const aO=ci=>{if(sC!==null)return sC===ci?1:0.1;if(isComp)return 0.6;if(sGP!==null){const w=COMP[ci].w[GP[sGP].id];return w===1?1:w===2?0.5:0.15}return 0.25};
+
+  const sBox={border:`1px solid ${C.rule}`,marginBottom:-1,background:C.white};
+  const sHead=open=>({width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center",padding:"0.65rem 0.85rem",fontFamily:F.mono,fontSize:"0.78rem",fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:C.ink,background:"none",borderBottom:open?`1px solid ${C.rule}`:"none"});
+  const sCont={padding:"0.85rem",background:C.panelBg};
+
+  return (
+    <div style={{background:C.groundWarm}}>
+      <div className="lf-root" style={{display:"flex",maxWidth:1440,margin:"0 auto"}}>
+
+        {/* LEFT PANEL */}
+        <div className="lf-panel" style={{width:440,minWidth:380,flexShrink:0,padding:"0 1.5rem 2rem",overflowY:"auto",display:"flex",flexDirection:"column"}}>
+
+          <button onClick={cCS} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"0.7rem 0.85rem",margin:"1.25rem 0 0.5rem",background:C.orange,color:"white",fontFamily:F.mono,fontSize:"0.76rem",fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",width:"100%"}}>
+            Citizen Schools Learning Framework
+            <span style={{fontSize:"1.2rem",fontWeight:300}}>{sec==="overview"?"−":"+"}</span>
+          </button>
+
+          {sec==="overview"&&(
+            <div style={{padding:"0.85rem",background:C.panelBg,border:`1px solid ${C.rule}`,borderTop:"none",marginBottom:"0.5rem",fontSize:"0.9rem",lineHeight:1.7,color:C.inkLight}}>
+              <p style={{marginBottom:"0.7rem"}}>Citizen Schools promotes <strong style={{color:GP[0].color}}>Authentic Experience Based Learning</strong>, supported by <strong style={{color:GP[1].color}}>Diverse Mentorship Across Levels</strong> and <strong style={{color:GP[2].color}}>Activated Community Engagement</strong> as a powerful and sustainable approach to education that can ensure that all students have experiences and relationships that ignite curiosity, build confidence, and help them develop into the next generation of leaders.</p>
+              <p style={{marginBottom:"0.5rem"}}>The Learning Framework functionally provides:</p>
+              <ul style={{paddingLeft:"1.4rem",marginBottom:"0.85rem",fontSize:"0.88rem"}}>
+                <li style={{marginBottom:"0.3rem"}}>A set of <strong>clear parameters</strong> to help develop programs and content.</li>
+                <li style={{marginBottom:"0.3rem"}}>A well-articulated set of principles that reflects organizational <strong>philosophy, values,</strong> and pedagogical <strong>theory.</strong></li>
+                <li>A tool to ensure <strong>alignment and consistency</strong> across all programs.</li>
+              </ul>
+              <p style={{fontSize:"0.86rem",color:C.inkMuted}}>The Learning Framework consists of:</p>
+            </div>
+          )}
+
+          {/* GP */}
+          <div style={sBox}>
+            <button onClick={()=>tog("gp")} style={sHead(sec==="gp")}>
+              <span>Guiding Principles</span>
+              <span style={{fontSize:"1.1rem",fontWeight:300,color:C.inkMuted}}>{sec==="gp"?"−":"+"}</span>
+            </button>
+            {sec==="gp"&&<div style={sCont}>
+              <p style={{fontSize:"0.86rem",color:C.inkMuted,lineHeight:1.55,marginBottom:"1rem"}}>What we do to drive innovations in education and our areas of expertise that define our programs.</p>
+              {GP.map((gp,i)=>{const act=sGP===i;return(
+                <div key={gp.id} style={{marginBottom:"0.85rem",cursor:"pointer"}} onClick={()=>cGP(i)}>
+                  <div style={{display:"flex",alignItems:"center",gap:"0.6rem"}}>
+                    <TriIcon size={32} hl={i}/>
+                    <span style={{fontFamily:F.body,fontSize:"0.86rem",fontWeight:700,color:gp.color,textTransform:"uppercase",letterSpacing:"0.04em",opacity:sGP!==null&&!act?0.3:1,transition:"opacity 0.25s"}}>{gp.name}</span>
+                  </div>
+                  {act&&<div style={{marginTop:"0.35rem",paddingLeft:"2.6rem",borderLeft:`3px solid ${C.rule}`,marginLeft:"1rem"}}>
+                    <p style={{fontWeight:600,fontStyle:"italic",fontSize:"0.9rem",color:C.ink,marginBottom:"0.3rem"}}>{gp.tagline}</p>
+                    <p style={{fontSize:"0.86rem",color:C.inkLight,lineHeight:1.6}}>{gp.desc}</p>
+                  </div>}
+                </div>
+              )})}
+            </div>}
+          </div>
+
+          {/* LP */}
+          <div style={sBox}>
+            <button onClick={()=>tog("lp")} style={sHead(sec==="lp")}>
+              <span>Learning Paradigms</span>
+              <span style={{fontSize:"1.1rem",fontWeight:300,color:C.inkMuted}}>{sec==="lp"?"−":"+"}</span>
+            </button>
+            {sec==="lp"&&<div style={sCont}>
+              <p style={{fontSize:"0.86rem",color:C.inkMuted,lineHeight:1.55,marginBottom:"1rem"}}>How we approach programmatic engagement and the values that underpin that approach.</p>
+              {LP.map((lp,i)=>{const act=sLP===i;const op=sLP!==null&&!act?(Math.abs(angleDist(lp.baseAngle,LP[sLP].baseAngle))<100?0.55:0.25):1;return(
+                <div key={lp.id} style={{marginBottom:"0.55rem",cursor:"pointer",opacity:op,transition:"opacity 0.25s"}} onClick={()=>cLP(i)}>
+                  <div style={{display:"flex",alignItems:"center",gap:"0.55rem"}}>
+                    <span style={{width:20,height:20,borderRadius:"50%",flexShrink:0,background:lp.color}}/>
+                    <span style={{fontSize:"0.88rem",fontWeight:act?700:500,color:C.ink}}>{lp.name}</span>
+                  </div>
+                  {act&&<div style={{paddingLeft:"2.2rem",marginTop:"0.25rem"}}><p style={{fontSize:"0.86rem",color:C.inkLight,lineHeight:1.6}}>{lp.desc}</p></div>}
+                </div>
+              )})}
+            </div>}
+          </div>
+
+          {/* COMP */}
+          <div style={sBox}>
+            <button onClick={()=>tog("comp")} style={sHead(sec==="comp")}>
+              <span>Competencies</span>
+              <span style={{fontSize:"1.1rem",fontWeight:300,color:C.inkMuted}}>{sec==="comp"?"−":"+"}</span>
+            </button>
+            {sec==="comp"&&<div style={sCont}>
+              <p style={{fontSize:"0.86rem",color:C.inkMuted,lineHeight:1.55,marginBottom:"1rem"}}>Modes of engagement that promote process based learning, contextualization, and practical tools for immersion in ideas.</p>
+              {COMP.map((cat,ci)=>{const act=sC===ci;return(
+                <div key={cat.id} style={{marginBottom:"0.75rem"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"0.5rem",cursor:"pointer",opacity:sC!==null&&!act?0.3:1,transition:"opacity 0.25s"}} onClick={()=>cComp(ci)}>
+                    <span style={{width:18,height:18,borderRadius:"50%",flexShrink:0,background:cat.color}}/>
+                    <span style={{fontSize:"0.88rem",fontWeight:act?700:500,color:C.ink}}>{cat.name}</span>
+                  </div>
+                  {act&&<div style={{paddingLeft:"2rem",marginTop:"0.3rem"}}>
+                    <p style={{fontFamily:F.mono,fontSize:"0.7rem",color:cat.color,letterSpacing:"0.04em",marginBottom:"0.2rem"}}>{cat.subtitle}</p>
+                    <p style={{fontSize:"0.84rem",color:C.inkLight,lineHeight:1.6,marginBottom:"0.6rem"}}>{cat.desc}</p>
+                    {sSk!==null&&<>
+                      <div style={{borderTop:`1px solid ${C.rule}`,marginBottom:"0.6rem"}}/>
+                      <div style={{padding:"0.35rem 0.5rem",borderLeft:`3px solid ${cat.color}`,background:cat.color+"0c"}}>
+                        <span style={{fontSize:"0.88rem",fontWeight:600,color:cat.color}}>{cat.skills[sSk].name}</span>
+                        <p style={{fontSize:"0.82rem",color:C.inkLight,lineHeight:1.55,marginTop:"0.2rem"}}>{cat.skills[sSk].desc}</p>
+                      </div>
+                    </>}
+                  </div>}
+                </div>
+              )})}
+            </div>}
+          </div>
+
+          <div style={{flex:1}}/>
+          <div style={{padding:"1rem 0",fontSize:"0.7rem",fontFamily:F.mono,color:C.inkMuted}}>Framework Design & Content: Andrew Marcus</div>
+        </div>
+
+        {/* RIGHT: DIAGRAM */}
+        <div className="lf-diagram" style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative",padding:"0.5rem"}}>
+          <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} style={{width:"100%",maxWidth:760,height:"auto"}}>
+            <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="transparent" onClick={clickBg}/>
+            {GP.map((gp,i)=>{
+              const z=GP_Z[i],op=gpO(i);
+              let s=z.s,e=z.e;if(e<s)e+=360;const mid=((s+e)/2)%360;
+              const lr=R_GP*0.55,fl=mid>90&&mid<270;
+              return(
+                <g key={gp.id} style={{cursor:"pointer"}} onClick={ev=>{ev.stopPropagation();cGP(i)}}>
+                  <path d={piePath(R_GP,z.s,z.e)} fill={gp.tint} stroke="rgba(255,255,255,0.7)" strokeWidth={2.5} opacity={op} style={{transition:"opacity 0.5s"}}/>
+                  <text x={px(lr,mid)} y={py(lr,mid)} fontFamily={F.display} fontSize="44" fill={gp.color} textAnchor="middle" dominantBaseline="central" opacity={op*0.2} transform={`rotate(${fl?mid+180:mid},${px(lr,mid)},${py(lr,mid)})`} style={{pointerEvents:"none",transition:"opacity 0.5s",fontStyle:"italic"}}>{gp.abbr}</text>
+                </g>
+              );
+            })}
+            {COMP_R.map((r,i)=>(
+              <circle key={`ring-${i}`} cx={CX} cy={CY} r={r} fill="none" stroke={COMP[i].color} strokeWidth={1} strokeDasharray="5 4" opacity={aO(i)} style={{transition:"opacity 0.4s"}} onClick={ev=>{ev.stopPropagation();cComp(i)}} cursor="pointer"/>
+            ))}
+            {BADGE_ORDER.map((ci,bi)=>{
+              const cat=COMP[ci],badgeY=BADGE_Y[bi],ringR=COMP_R[ci],tx=CX,ty=CY-ringR;
+              const op=isComp?(sC!==null?(sC===ci?1:0.3):1):0.55;
+              const showLeader=sC===ci;
+              return(
+                <g key={`badge-${ci}`} style={{cursor:"pointer"}} onClick={ev=>{ev.stopPropagation();cComp(ci)}}>
+                  {showLeader&&<>
+                    <line x1={BADGE_RIGHT} y1={badgeY} x2={tx} y2={ty} stroke={cat.color} strokeWidth={1.5} opacity={0.6} style={{transition:"opacity 0.4s"}}/>
+                    <circle cx={tx} cy={ty} r={4} fill={cat.color} opacity={0.8} style={{transition:"opacity 0.4s"}}/>
+                  </>}
+                  <rect x={BADGE_LEFT} y={badgeY-BADGE_H/2} width={BADGE_RIGHT-BADGE_LEFT} height={BADGE_H} rx={3} fill={cat.color} opacity={op} style={{transition:"opacity 0.4s"}}/>
+                  <text x={BADGE_LEFT+8} y={badgeY+1} fontFamily={F.mono} fontSize="10" fontWeight={600} fill="white" dominantBaseline="central" letterSpacing="0.03em" opacity={op} style={{pointerEvents:"none",transition:"opacity 0.4s"}}>{cat.name.toUpperCase()}</text>
+                </g>
+              );
+            })}
+            {dots.map((d,i)=>{
+              const p=dotPos[i],sa=sC===d.ci&&sSk===d.si,isHov=hover&&hover.t==="dot"&&hover.i===i;
+              const sz=sa?(p.size+3):isHov?(p.size+1.5):p.size;
+              return(
+                <circle key={`dot-${i}`} cx={px(p.r,p.angle)} cy={py(p.r,p.angle)} r={sz}
+                  fill={COMP[d.ci].color} stroke="none" opacity={p.opacity}
+                  style={{cursor:"pointer",transition:"all 0.5s ease"}}
+                  onClick={ev=>{ev.stopPropagation();cSk(d.ci,d.si)}}
+                  onMouseEnter={()=>setHover({t:"dot",i})} onMouseLeave={()=>setHover(null)}/>
+              );
+            })}
+            {LP.map((lp,i)=>{
+              const p=lpPos[i];
+              return <line key={`cn-${i}`} x1={CX} y1={CY} x2={px(p.radius,p.angle)} y2={py(p.radius,p.angle)} stroke={C.ink} strokeWidth={0.7} strokeDasharray="3 3" opacity={p.opacity*0.3} style={{transition:"all 0.5s ease"}}/>;
+            })}
+            {LP.map((lp,i)=>{
+              const p=lpPos[i],x=px(p.radius,p.angle),y=py(p.radius,p.angle);
+              const isHov=hover&&hover.t==="lp"&&hover.i===i,sz=isHov?p.size+3:p.size;
+              return(
+                <g key={lp.id} style={{cursor:"pointer"}} onClick={ev=>{ev.stopPropagation();cLP(i)}} onMouseEnter={()=>setHover({t:"lp",i})} onMouseLeave={()=>setHover(null)}>
+                  <circle cx={x} cy={y} r={sz} fill={lp.color} opacity={p.opacity} stroke="none" style={{transition:"all 0.5s ease"}}/>
+                  <text x={x} y={y+1} fontFamily={F.body} fontSize={p.size>24?"13":"10"} fontWeight={700} fill="white" textAnchor="middle" dominantBaseline="central" opacity={p.opacity} style={{pointerEvents:"none",transition:"all 0.5s ease"}}>{lp.abbr}</text>
+                </g>
+              );
+            })}
+            {[{s:300,e:420,c:GP[0].color},{s:180,e:300,c:GP[1].color},{s:60,e:180,c:GP[2].color}].map((a,i)=>{
+              let s=a.s,e=a.e;if(e<s)e+=360;const l=(e-s)>180?1:0;
+              return <path key={`csa-${i}`} d={`M ${px(R_CS+4,a.s)} ${py(R_CS+4,a.s)} A ${R_CS+4} ${R_CS+4} 0 ${l} 1 ${px(R_CS+4,e)} ${py(R_CS+4,e)}`} fill="none" stroke={a.c} strokeWidth={3.5}/>;
+            })}
+            <circle cx={CX} cy={CY} r={R_CS+6} fill="white" stroke={C.rule} strokeWidth={1}/>
+            <circle cx={CX} cy={CY} r={R_CS} fill={C.orange} style={{cursor:"pointer"}} onClick={ev=>{ev.stopPropagation();cCS()}}/>
+            <text x={CX} y={CY+1} fontFamily={F.body} fontSize="17" fontWeight={700} fill="white" textAnchor="middle" dominantBaseline="central" style={{pointerEvents:"none"}}>CS</text>
+          </svg>
+          {hover&&hover.t==="dot"&&(
+            <div style={{position:"absolute",bottom:10,left:"50%",transform:"translateX(-50%)",padding:"0.45rem 0.85rem",background:C.white,border:`1px solid ${C.rule}`,display:"flex",alignItems:"center",gap:"0.4rem",boxShadow:"0 2px 6px rgba(0,0,0,0.04)"}}>
+              <div style={{width:3,height:16,background:COMP[dots[hover.i].ci].color,flexShrink:0}}/>
+              <strong style={{fontSize:"0.82rem"}}>{dots[hover.i].name}</strong>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── PAGE APP ─── */
+
+function App() {
+  return (
+    <div style={{ fontFamily: F.body, color: C.ink, background: C.ground }}>
+
+      {/* ═══ HERO ═══ */}
+      <Section>
+        <Label>Case Study — Citizen Schools — National Learning Framework</Label>
+        <h1 style={{ fontFamily: F.display, fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.15, marginBottom: "2.5rem", maxWidth: 700 }}>
+          Redesigning how a national organization{" "}
+          <span style={{ color: C.accent, fontStyle: "italic" }}>understands its own work.</span>
+        </h1>
+        <Prose>
+          Citizen Schools had been running programs for over twenty years. The programming was good — often excellent — but it was driven by prescription: scripted curriculum, progress-based metrics, compliance-first training. There was no shared pedagogical language. No framework that connected what happened in a classroom in Boston to what happened in one in Houston. Each site made its own decisions about what mattered and why.
+        </Prose>
+        <Prose>
+          As Director of Learning Design, I didn't write a framework and hand it down. I led the organization through the process of building one — through workshops where staff experienced the methodology I wanted the programming to embody. Through design sessions we would later use with potential partner schools. Through collaborative development where people who had been delivering prescriptive curriculum began designing iterative, experience-based learning. The framework codified what we discovered together. It brought mentorship, community engagement, and critical creative process from aspirational language into operational architecture.
+        </Prose>
+      </Section>
+
+      {/* ═══ PROBLEM / SHIFT / METHOD ═══ */}
+      <Section dark style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1.25rem" }}>
+          {[
+            { label: "The Problem", text: "Twenty years of programming with no shared pedagogical framework. Good work happening in isolation, held together by institutional habit rather than shared design principles." },
+            { label: "The Shift", text: "From prescriptive, progress-based curriculum delivery to iterative, experience-based learning. From writing curriculum to building the conditions for innovation and critical thinking." },
+            { label: "The Method", text: "The framework wasn't delivered — it was developed. Staff experienced the methodology before codifying it. The process of building the framework demonstrated the pedagogy the framework describes." },
+          ].map((item, i) => (
+            <div key={i} style={{ flex: "1 1 240px", padding: "1.5rem 1.75rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.accent, letterSpacing: "0.06em", marginBottom: "0.5rem" }}>{item.label}</div>
+              <div style={{ fontSize: "0.92rem", color: C.darkText, lineHeight: 1.65 }}>{item.text}</div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ INTERACTIVE FRAMEWORK DIAGRAM ═══ */}
+      <LFDiagram />
+
+      {/* ═══ DESIGN INSIGHT ═══ */}
+      <Section dark>
+        <Label dark>Design Insight</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "1.5rem" }}>Why critical process comes first</h2>
+        <Prose dark>Most learning frameworks put content knowledge or social-emotional skills at the foundation. This one inverts the hierarchy. Critical creative process — the ability to formulate multiple solutions, test them, iterate, synthesize feedback — is foundational. Everything else is built on top of it.</Prose>
+        <Prose dark>This isn't philosophical. It's operational. When critical process is foundational, program design starts from <em>how people think and make</em>, not from what content needs to be delivered. Training starts from methodology, not curriculum. The framework gave a distributed national organization something it had never had: a shared basis for making coherent programming decisions across sites, populations, and contexts — without requiring centralized content control.</Prose>
+      </Section>
+
+      {/* ═══ STATS ═══ */}
+      <Section style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 2rem", fontFamily: F.mono, fontSize: "0.78rem", color: C.inkMuted }}>
+          {["3 guiding principles", "7 learning paradigms", "3 competency domains", "23 sub-skills", "20+ year organization", "First unified framework"].map(m => (
+            <span key={m} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ width: 6, height: 6, background: C.accent, borderRadius: "50%", display: "inline-block" }} />{m}
+            </span>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ SUMMARY CARDS ═══ */}
+      <Section style={{ paddingTop: "2rem", paddingBottom: "5rem" }}>
+        <div style={{ width: 40, height: 1, background: C.rule, marginBottom: "2.5rem" }} />
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+          <div style={{ flex: "1 1 250px", padding: "1.5rem 1.75rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+            <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.75rem" }}>Framework Design</div>
+            <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>Complete learning framework architecture: guiding principles, learning paradigms, and a three-domain competency model with 23 sub-skills. The first unified pedagogical foundation in the organization's history.</div>
+          </div>
+          <div style={{ flex: "1 1 250px", padding: "1.5rem 1.75rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+            <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.75rem" }}>Training Approach</div>
+            <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>Critical-process-first practitioner development. Staff experienced the methodology through workshops before it was codified — building capacity for independent program design rather than dependency on centralized curriculum.</div>
+          </div>
+          <div style={{ flex: "1 1 250px", padding: "1.5rem 1.75rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+            <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.75rem" }}>Organizational Infrastructure</div>
+            <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>Not a document — a decision-making system. Shared parameters for program development across a distributed national network, connecting mentorship, community engagement, and creative process into operational reality.</div>
+          </div>
+        </div>
+        <div style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid " + C.rule, fontFamily: F.mono, fontSize: "0.75rem", color: C.inkMuted }}>
+          Director of Learning Design — Citizen Schools
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+  <footer>
+    <div class="container">
+      <p>© 2026 Andrew Todd Marcus · Cambridge, MA</p>
+      <p>Blueprint for Creativity · Sageframe</p>
+    </div>
+  </footer>
+</html>
