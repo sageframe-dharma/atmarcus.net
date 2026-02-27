@@ -1,0 +1,17 @@
+**Slider** — Horizontal scroll with snap. Three cards sit side by side on desktop. On narrower screens they scroll left/right with momentum. Thin scrollbar appears on hover. To add a new card when you publish, you just duplicate this block inside the `writing-cards` div:
+
+```html
+<a class="writing-card" href="https://sageframe.substack.com/p/YOUR-SLUG" target="_blank" rel="noopener">
+  <div class="writing-card-img" style="background-image: url('img/YOUR-IMAGE.jpg')"></div>
+  <div class="writing-card-body">
+    <div class="writing-card-title">Your Title</div>
+    <div class="writing-card-desc">Your one-line description.</div>
+  </div>
+</a>
+```
+
+Drop the image in `public/img/`, add the card, deploy. The slider handles any number of cards — four, five, ten, doesn't matter. They just keep scrolling.
+
+**680 × 360px**
+
+That's 340 (max card width) × 180 (image height) at 2x for retina. Crop all three to exactly that and they'll be pixel-perfect with no wasted bytes.
