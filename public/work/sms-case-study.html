@@ -101,8 +101,49 @@
       .comp-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root { --color-ink: #1a1a1a; --color-ink-muted: #7a7a7a; --color-ground: #f5f2ed; --color-accent: #c45a2d; --color-rule: #d0c9be; --font-mono: 'IBM Plex Mono', 'Courier New', monospace; }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245,242,237,0.92); }
+    header .hcont { max-width: 900px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); letter-spacing: 0.02em; text-decoration: none; }
+    header nav { display: flex; gap: 2rem; }
+    header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
+    header nav a:hover { color: var(--color-ink); }
+    footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; }
+    footer .hcont { max-width: 900px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); }
+    .section-nav { border-bottom: 1px solid #d0c9be; background: rgba(245,242,237,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); position: sticky; top: 57px; z-index: 99; overflow-x: auto; }
+    .section-nav .snav-inner { max-width: 900px; margin: 0 auto; padding: 0 2rem; display: flex; }
+    .snav-link { padding: 0.9rem 0; margin-right: 1.5rem; background: transparent; border: none; border-bottom: 2px solid transparent; color: #7a7a7a; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.04em; text-transform: lowercase; white-space: nowrap; text-decoration: none; display: inline-block; transition: color 0.15s; }
+    .snav-link:hover { color: #1a1a1a; }
+    .snav-link.active { color: #1a1a1a; border-bottom-color: #c45a2d; font-weight: 500; }
+    .yt-card { position: relative; border-radius: 3px; overflow: hidden; background: #111; display: block; text-decoration: none; }
+    .yt-card img { width: 100%; display: block; opacity: 0.7; transition: opacity 0.2s; }
+    .yt-card:hover img { opacity: 0.88; }
+    .yt-card-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.9rem; }
+    .yt-play { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.65); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .yt-play::after { content: ''; width: 0; height: 0; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent white; margin-left: 4px; }
+    .yt-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: white; letter-spacing: 0.04em; }
+    @media (max-width: 640px) { header nav { gap: 1.2rem; } header nav a { font-size: 0.72rem; } }
+    @media (max-width: 700px) { .exhibits-grid { grid-template-columns: 1fr !important; } }
+  </style>
 </head>
 <body>
+  <header>
+    <div class="hcont">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+    </div>
+  </header>
 
   <!-- HERO -->
   <div class="section section--light">
@@ -147,21 +188,33 @@
     </div>
   </div>
 
+  <div class="section-nav">
+    <div class="snav-inner">
+      <a href="#platform" class="snav-link">platform</a>
+      <a href="#development" class="snav-link">development</a>
+      <a href="#system" class="snav-link">the system</a>
+      <a href="#assessment" class="snav-link">assessment</a>
+      <a href="#impact" class="snav-link">impact</a>
+      <a href="#exhibits" class="snav-link">exhibits</a>
+    </div>
+  </div>
+
   <!-- PLATFORM IN ACTION -->
-  <div class="section section--light">
+  <div id="platform" class="section section--light">
     <div class="inner">
       <div class="label">The Platform in Action</div>
       <h2>A digital sketchbook, learning management system, and portfolio tool</h2>
       <p class="prose">The Studio Management System acts as a virtual studio space — where coaches communicate intent and resources, students document their process through sketches, photographs, design research, and writing, and the entire community participates in feedback and critique. Built-in collaborative assessment tools allow students and coaches to formally evaluate progress and record success through portfolios, transcripts, and written narrative evaluation.</p>
-      <div class="video-wrap">
-        <iframe src="https://www.youtube-nocookie.com/embed/yLqrv4tG4fk?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-      </div>
+      <a href="https://www.youtube.com/watch?v=yLqrv4tG4fk" target="_blank" rel="noopener" class="yt-card" style="margin:1.5rem 0;">
+        <img src="https://img.youtube.com/vi/yLqrv4tG4fk/maxresdefault.jpg" alt="NuVu Studio platform demo" />
+        <div class="yt-card-overlay"><div class="yt-play"></div><span class="yt-label">Watch on YouTube →</span></div>
+      </a>
       <div class="img-caption">Platform demo — documentation, collaboration, assessment, and portfolio in a unified system.</div>
     </div>
   </div>
 
   <!-- ITERATIVE DEVELOPMENT -->
-  <div class="section section--dark">
+  <div id="development" class="section section--dark">
     <div class="inner">
       <div class="label label--dark">Iterative Development</div>
       <h2 class="dark">Four prototypes over six years</h2>
@@ -245,7 +298,7 @@
   </div>
 
   <!-- THE SYSTEM — NOT AN LMS -->
-  <div class="section section--light">
+  <div id="system" class="section section--light">
     <div class="inner">
       <div class="label">The System</div>
       <h2>Not an LMS — a Studio Collaboration Platform</h2>
@@ -308,7 +361,7 @@
   </div>
 
   <!-- ASSESSMENT ARCHITECTURE -->
-  <div class="section section--dark">
+  <div id="assessment" class="section section--dark">
     <div class="inner">
       <div class="label label--dark">Assessment Architecture</div>
       <h2 class="dark">Five competency domains — not grades</h2>
@@ -413,7 +466,7 @@
   </div>
 
   <!-- IMPACT -->
-  <div class="section section--light">
+  <div id="impact" class="section section--light">
     <div class="inner">
       <div class="label">Impact</div>
       <h2>A framework adopted worldwide</h2>
@@ -444,22 +497,21 @@
   </div>
 
   <!-- EXHIBITS -->
-  <div class="section section--dark" style="padding-top:3rem; padding-bottom:3rem;">
+  <div id="exhibits" class="section section--dark" style="padding-top:3rem; padding-bottom:3rem;">
     <div class="inner">
       <div class="label label--dark">Exhibits</div>
-      <div style="display:grid; gap:1.5rem; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));">
-        <div>
-          <div style="font-family:'DM Serif Display',Georgia,serif; font-size:1rem; color:#e8e2d8; margin-bottom:0.75rem;">Graduation Stories — First Full-Time Class</div>
-          <div class="video-wrap">
-            <iframe src="https://www.youtube-nocookie.com/embed/qvEflqhEPTQ?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-          </div>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:1rem; justify-content:center;">
-          <a href="https://drive.google.com/file/d/1P01DYy70ccGdwqlzMaN2DaAO-kdIjOt_/view?usp=sharing" target="_blank" class="dark-card" style="text-decoration:none; display:block;">
+      <div style="font-family:'DM Serif Display',Georgia,serif; font-size:1rem; color:#e8e2d8; margin-bottom:1.25rem;">Graduation Stories — First Full-Time Class</div>
+      <div class="exhibits-grid" style="display:grid; gap:1.5rem; grid-template-columns:1fr 1fr; align-items:stretch;">
+        <a href="https://www.youtube.com/watch?v=qvEflqhEPTQ" target="_blank" rel="noopener" class="yt-card" style="display:flex; align-items:stretch;">
+          <img src="https://img.youtube.com/vi/qvEflqhEPTQ/maxresdefault.jpg" alt="Graduation Stories — First Full-Time Class" style="width:100%; height:100%; object-fit:cover; display:block;" />
+          <div class="yt-card-overlay"><div class="yt-play"></div><span class="yt-label">Watch on YouTube →</span></div>
+        </a>
+        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+          <a href="https://drive.google.com/file/d/1P01DYy70ccGdwqlzMaN2DaAO-kdIjOt_/view?usp=sharing" target="_blank" class="dark-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:center; flex:1;">
             <div class="dark-card__title" style="margin-bottom:0.25rem;">Full Transcript — Stefano Pagani</div>
             <div style="font-size:0.85rem; color:#c45a2d;">View on Google Drive &rarr;</div>
           </a>
-          <a href="https://drive.google.com/file/d/1lq1rvbCPkceLsP2RBi1kEj3JXBu64Bqh/view?usp=sharing" target="_blank" class="dark-card" style="text-decoration:none; display:block;">
+          <a href="https://drive.google.com/file/d/1lq1rvbCPkceLsP2RBi1kEj3JXBu64Bqh/view?usp=sharing" target="_blank" class="dark-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:center; flex:1;">
             <div class="dark-card__title" style="margin-bottom:0.25rem;">NuVu School Profile</div>
             <div style="font-size:0.85rem; color:#c45a2d;">Overview, competencies, and assessment domains &rarr;</div>
           </a>
@@ -468,5 +520,27 @@
     </div>
   </div>
 
+  <footer>
+    <div class="hcont">
+      <p>© 2026 Andrew Todd Marcus · Cambridge, MA</p>
+      <p>Blueprint for Creativity · Sageframe</p>
+    </div>
+  </footer>
+
+  <script>
+    const snavLinks = document.querySelectorAll('.snav-link');
+    const snavIds = ['platform','development','system','assessment','impact','exhibits'];
+    const snavSections = snavIds.map(id => document.getElementById(id));
+    const snavObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          snavLinks.forEach(l => l.classList.remove('active'));
+          const link = document.querySelector('.snav-link[href="#' + entry.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    snavSections.forEach(s => s && snavObs.observe(s));
+  </script>
 </body>
 </html>
