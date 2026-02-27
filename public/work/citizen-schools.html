@@ -38,7 +38,7 @@
     /* DIAGRAM */
     ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0c9be;border-radius:3px}
     @media(max-width:768px){
-      .lf-root{flex-direction:column-reverse!important}
+      .lf-root{flex-direction:column-reverse!important;height:auto!important;overflow:visible!important}
       .lf-panel{width:100%!important;min-width:0!important;max-height:none!important}
       .lf-diagram{padding:1rem!important;min-height:auto!important}
     }
@@ -262,7 +262,7 @@ function LFDiagram() {
 
   return (
     <div style={{background:C.groundWarm}}>
-      <div className="lf-root" style={{display:"flex",maxWidth:1440,margin:"0 auto"}}>
+      <div className="lf-root" style={{display:"flex",maxWidth:1440,margin:"0 auto",height:700,overflow:"hidden"}}>
 
         {/* LEFT PANEL */}
         <div className="lf-panel" style={{width:440,minWidth:380,flexShrink:0,padding:"0 1.5rem 2rem",overflowY:"auto",display:"flex",flexDirection:"column"}}>
