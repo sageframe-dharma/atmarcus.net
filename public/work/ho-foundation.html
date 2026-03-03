@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Ho System: Foundations and Evidence — Position Paper</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&amp;family=IBM+Plex+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    button { font-family: inherit; }
+    a { color: inherit; }
+  </style>
+  <style>
+    :root {
+      --color-ink: #1a1a1a;
+      --color-ink-muted: #7a7a7a;
+      --color-ground: #f5f2ed;
+      --color-accent: #c45a2d;
+      --color-rule: #d0c9be;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --max-width: 1080px;
+      --gutter: clamp(1.5rem, 5vw, 4rem);
+    }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; }
+    header nav { display: flex; gap: 2rem; }
+    header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
+    header nav a:hover { color: var(--color-ink) !important; }
+    footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; }
+    footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); max-width: none; }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.25rem; width: 28px; height: 22px; position: relative; flex-shrink: 0; }
+    .nav-toggle span { display: block; width: 100%; height: 2px; background: var(--color-ink); border-radius: 1px; position: absolute; left: 0; transition: all 0.25s ease; }
+    .nav-toggle span:nth-child(1) { top: 0; }
+    .nav-toggle span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .nav-toggle span:nth-child(3) { bottom: 0; }
+    .nav-toggle.active span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+    .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; opacity: 0; transition: opacity 0.25s ease; }
+    .sheet-backdrop.visible { display: block; opacity: 1; }
+    .bottom-sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 201; background: var(--color-ground); border-top: 2px solid var(--color-accent); border-radius: 12px 12px 0 0; padding: 1.5rem 2rem 2.5rem; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); box-shadow: 0 -4px 24px rgba(0,0,0,0.12); }
+    .bottom-sheet.open { transform: translateY(0); }
+    .sheet-handle { width: 36px; height: 4px; background: var(--color-rule); border-radius: 2px; margin: 0 auto 1.5rem; }
+    .bottom-sheet nav { display: flex; flex-direction: column; gap: 0; }
+    .bottom-sheet nav a { display: block; padding: 1rem 0; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 400; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; border-bottom: 1px solid var(--color-rule); }
+    .bottom-sheet nav a:last-child { border-bottom: none; }
+    .bottom-sheet nav a:hover, .bottom-sheet nav a:active { color: var(--color-ink); }
+    @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <nav>
+      <a href="../index.html#work">work</a>
+      <a href="../index.html#approach">approach</a>
+      <a href="../index.html#consulting">consulting</a>
+      <a href="../index.html#writing">writing</a>
+      <a href="../index.html#about">about</a>
+      <a href="../index.html#contact">contact</a>
+    </nav>
+  </div>
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState } = React;
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555", darkMuted: "#999", darkText: "#c8c2b8",
+};
+
+function Label({ children, dark }) {
+  return <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>{children}</div>;
+}
+
+function Prose({ children, dark, style }) {
+  return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
+}
+
+function Section({ dark, children, style }) {
+  return <section style={{ background: dark ? C.darkBg : C.ground, padding: "5rem 2rem", ...style }}><div style={{ maxWidth: 900, margin: "0 auto" }}>{children}</div></section>;
+}
+
+function ExtLink({ href, children }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none", borderBottom: "1px solid " + C.accent + "40" }}>{children}</a>;
+}
+
+function Chip({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, letterSpacing: "0.04em", padding: "0.25rem 0.6rem", border: "1px solid " + C.rule, borderRadius: 2, whiteSpace: "nowrap" }}>{children}</span>;
+}
+
+function SubHead({ children, dark, num }) {
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1rem", marginTop: "2.5rem" }}>
+      {num && <span style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent }}>{num}</span>}
+      <h3 style={{ fontFamily: F.display, fontSize: "1.25rem", color: dark ? "#e8e2d8" : C.ink, fontWeight: 400 }}>{children}</h3>
+    </div>
+  );
+}
+
+function Cite({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.75rem", color: C.inkMuted }}>({children})</span>;
+}
+
+function CiteDark({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.75rem", color: C.darkMuted }}>({children})</span>;
+}
+
+function Callout({ children, dark }) {
+  return (
+    <div style={{ padding: "1.25rem 1.5rem", background: dark ? C.darkBgDeep : C.groundWarm, border: "1px solid " + (dark ? C.darkRule : C.rule), borderRadius: 3, marginBottom: "1.5rem", marginTop: "1.5rem" }}>
+      <div style={{ fontSize: "0.92rem", color: dark ? C.darkText : C.inkLight, lineHeight: 1.7 }}>{children}</div>
+    </div>
+  );
+}
+
+function RefItem({ children }) {
+  return <div style={{ fontSize: "0.85rem", color: C.inkLight, lineHeight: 1.6, marginBottom: "0.75rem", paddingLeft: "1.5rem", textIndent: "-1.5rem" }}>{children}</div>;
+}
+
+/* ─── APP ─── */
+
+function App() {
+  const [tocOpen, setTocOpen] = useState(false);
+
+  return (
+    <div style={{ fontFamily: F.body, color: C.ink, background: C.ground }}>
+
+      {/* ═══ HERO ═══ */}
+      <Section>
+        <Label>Position Paper — The Ho System (歩)</Label>
+        <h1 style={{ fontFamily: F.display, fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.15, marginBottom: "1rem", maxWidth: 700 }}>
+          Foundations{" "}
+          <span style={{ color: C.accent, fontStyle: "italic" }}>and Evidence</span>
+        </h1>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, marginBottom: "2.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <span>Andrew Todd Marcus</span>
+          <span>February 2026</span>
+          <span style={{ fontStyle: "italic" }}>Active — Evolving with practice</span>
+        </div>
+        <Prose>
+          This document lays out the intellectual foundations of the Ho System — the problem it addresses, the traditions it draws from, the evidence from its first pilot, and the questions that remain open. For the structural framework, templates, and practical orientation, see <ExtLink href="ho-system.html">The Ho System</ExtLink>.
+        </Prose>
+        <div style={{ marginTop: "2.5rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {["Position Paper", "Human-AI Collaboration", "Constructionism", "Reflective Practice", "Assessment", "CC BY-NC-ND 4.0"].map(t => <Chip key={t}>{t}</Chip>)}
+        </div>
+      </Section>
+
+      {/* ═══ ABSTRACT ═══ */}
+      <Section dark>
+        <Label dark>Abstract</Label>
+        <Prose dark>The Ho System (歩 — <em>ho</em>, "step") is a structured methodology for technical development in which a human practitioner maintains architectural authority while using AI as an implementation partner. It is designed to produce both <em>working systems</em> and <em>genuine understanding</em> — rejecting the false choice between "learn everything from scratch" and "let AI do it for you."</Prose>
+        <Prose dark>The methodology emerged from applied practice: a non-developer used this approach to build Kanyō, a production computer vision system deployed at Harvard's Memorial Hall for real-time falcon monitoring. The system was developed in approximately six weeks of structured sessions — not as a tutorial exercise but as functioning infrastructure now in active use.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>This document establishes the philosophical foundations, theoretical grounding, and design principles of the Ho System. It is the <em>why</em> behind the framework — the argument for why this approach exists, what it responds to, and what it makes possible.</Prose>
+      </Section>
+
+      {/* ═══ TABLE OF CONTENTS ═══ */}
+      <Section style={{ padding: "3rem 2rem" }}>
+        <button onClick={() => setTocOpen(!tocOpen)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.75rem", padding: 0, width: "100%" }}>
+          <span style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkMuted }}>Contents</span>
+          <span style={{ color: C.accent, fontSize: "1rem", transition: "transform 0.2s", transform: tocOpen ? "rotate(90deg)" : "none" }}>→</span>
+        </button>
+        {tocOpen && (
+          <div style={{ marginTop: "1.25rem", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0.75rem" }}>
+            {[
+              { num: "I", title: "The Problem Space" },
+              { num: "II", title: "Theoretical Foundations" },
+              { num: "III", title: "The Education Context" },
+              { num: "IV", title: "Design Principles" },
+              { num: "V", title: "Evidence — The Kanyō Pilot" },
+              { num: "VI", title: "Open Questions" },
+            ].map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: "0.75rem", alignItems: "baseline", padding: "0.5rem 0" }}>
+                <span style={{ fontFamily: F.mono, fontSize: "0.75rem", color: C.accent, minWidth: 24 }}>{item.num}</span>
+                <span style={{ fontSize: "0.95rem", color: C.inkLight }}>{item.title}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Section>
+
+      {/* ═══ PART I: THE PROBLEM SPACE ═══ */}
+      <Section dark>
+        <Label dark>Part I</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Problem Space</h2>
+
+        <SubHead dark num="1.1">The Collapse of the Middle</SubHead>
+        <Prose dark>Technical development in the age of generative AI has bifurcated into two inadequate modes:</Prose>
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+          {[
+            { label: "Mode A", title: "Traditional Learning Paths", text: "Multi-year curricula designed for sequential mastery. Slow, often decontextualized, and structurally inaccessible to working professionals whose primary expertise lies elsewhere." },
+            { label: "Mode B", title: "AI-Delegated Production", text: "The user describes what they want; the AI produces it. Fast, produces outputs, but the human develops little transferable understanding. The resulting systems are fragile." },
+          ].map((m, i) => (
+            <div key={i} style={{ flex: "1 1 280px", padding: "1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.accent, letterSpacing: "0.06em", marginBottom: "0.5rem" }}>{m.label}</div>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: "#e8e2d8", marginBottom: "0.5rem" }}>{m.title}</div>
+              <div style={{ fontSize: "0.88rem", color: C.darkText, lineHeight: 1.6 }}>{m.text}</div>
+            </div>
+          ))}
+        </div>
+        <Prose dark>What is missing is a middle path — one in which the human <em>genuinely learns</em> while <em>actually building</em>, using AI not as a teacher and not as a contractor, but as a <em>collaborator</em> whose implementation capacity extends the human's architectural reach. The Ho System is that middle path.</Prose>
+
+        <SubHead dark num="1.2">The Vibe Coding Problem</SubHead>
+        <Prose dark>Mode B has a name now. Andrej Karpathy coined "vibe coding" in early 2025 to describe an approach where the developer describes intent in natural language and accepts whatever the AI produces without fully understanding it. Collins Dictionary named it their Word of the Year for 2025. The evidence against unstructured AI-delegated production is now substantial and empirical:</Prose>
+        <div style={{ display: "grid", gap: "1rem", marginBottom: "1.5rem" }}>
+          {[
+            { finding: "The code is measurably worse", detail: "AI-generated code contains approximately 1.7× more defects than human-authored code across every major quality category — logic, maintainability, security, and performance. Performance inefficiencies appeared nearly eight times more often.", cite: "CodeRabbit, December 2025" },
+            { finding: "It doesn't make experienced developers faster", detail: "16 experienced open-source developers completing 246 real tasks were 19% slower with AI tools. Most striking: even after experiencing the slowdown, participants still believed AI had sped them up by 20%.", cite: "METR / Becker et al., July 2025" },
+            { finding: "Security is a systemic concern", detail: "Five AI coding platforms each built the same three applications. Across 15 apps, 69 vulnerabilities — including several rated critical. The platforms failed precisely where contextual judgment was required.", cite: "Tenzai, December 2025" },
+            { finding: "The ecosystem effects are structural", detail: "AI-mediated development disintermediates the user-maintainer relationship that sustains open-source projects. More code, less accountability, fewer people who understand what any of it does.", cite: "Koren et al., 'Vibe Coding Kills Open Source,' January 2026" },
+          ].map((item, i) => (
+            <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "1.25rem 1.5rem", background: C.darkBgDeep, borderRadius: 3, border: "1px solid " + C.darkRule }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: F.display, fontSize: "1rem", color: "#e8e2d8", marginBottom: "0.4rem" }}>{item.finding}</div>
+                <div style={{ fontSize: "0.88rem", color: C.darkText, lineHeight: 1.6 }}>{item.detail}</div>
+                <div style={{ fontFamily: F.mono, fontSize: "0.68rem", color: C.darkMuted, marginTop: "0.5rem" }}>{item.cite}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Prose dark>This is not an argument against AI in development. It is an argument against AI in development <em>without structure, without judgment, and without the human capacity to evaluate what gets produced</em>.</Prose>
+
+        <SubHead dark num="1.3">The Access-Judgment Gap</SubHead>
+        <Prose dark>The standard narrative about AI tools focuses on <em>access</em> — who can generate code, who can build applications. This framing treats the problem as a distribution problem. The Ho System is built on a different diagnosis.</Prose>
+        <Callout dark>The bottleneck isn't access to AI tools. Anyone can prompt ChatGPT. The bottleneck is <strong style={{ color: "#e8e2d8" }}>judgment</strong> — the ability to evaluate whether what was generated is correct, secure, maintainable, and aligned with design intent. That gap cannot be closed by better prompting or more powerful models. It can only be closed by structured practice.</Callout>
+        <Prose dark>The Ho System's structural answer to the overconfidence problem is the four-layer verification stack: automated tests, linting, directed self-review, and cross-agent verification. An architect who cannot verify the build is not an architect; they are an optimist with a deploy button.</Prose>
+
+        <SubHead dark num="1.4">Who This Is For</SubHead>
+        <Prose dark>The Ho System is designed for people who possess significant expertise in domains <em>adjacent to</em> software development — systems thinking, design, architecture, organizational leadership, research — but are not trained developers. People who need to build real, functional systems. People who want genuine understanding of what they build.</Prose>
+        <Callout dark>The ideal Ho practitioner is an <strong style={{ color: "#e8e2d8" }}>architect</strong> in the broad sense: someone who thinks in systems, makes structural decisions, and directs the assembly of complex artifacts. The Ho System gives that person a methodology for building technical systems that matches how they already think.</Callout>
+
+        <SubHead dark num="1.5">Why Existing Approaches Fail</SubHead>
+        <div style={{ display: "grid", gap: "1rem" }}>
+          {[
+            { name: "Bootcamps and tutorials", problem: "Teach through contrived exercises. Motivation is abstract. Transfer is weak. Implicit message: you must become a developer before you can build things." },
+            { name: "AI code generation (unstructured)", problem: "Produces results without comprehension. The human cannot distinguish good output from bad. Implicit message: understanding is unnecessary." },
+            { name: "Pair programming with AI", problem: "Closer, but lacks pedagogical structure. No progression model, no bounded scope, no mechanism for distinguishing what needs deep understanding from what can be safely opaque." },
+          ].map((item, i) => (
+            <div key={i} style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, borderRadius: 3, border: "1px solid " + C.darkRule }}>
+              <div style={{ fontFamily: F.display, fontSize: "1rem", color: "#e8e2d8", marginBottom: "0.4rem" }}>{item.name}</div>
+              <div style={{ fontSize: "0.88rem", color: C.darkText, lineHeight: 1.6 }}>{item.problem}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: "1.5rem", fontFamily: F.mono, fontSize: "0.82rem", color: C.darkMuted, fontStyle: "italic" }}>The Ho System addresses all three failures simultaneously.</div>
+      </Section>
+
+      {/* ═══ PART II: THEORETICAL FOUNDATIONS ═══ */}
+      <Section>
+        <Label>Part II</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>Theoretical Foundations</h2>
+
+        <SubHead num="2.1">Constructionism and Building to Learn</SubHead>
+        <Prose>The Ho System's deepest intellectual debt is to Seymour Papert's constructionism: the principle that people learn most powerfully when they are building artifacts that matter to them, in contexts where the building itself makes thinking visible.</Prose>
+        <Prose>In the Ho System, the artifact is not a classroom exercise. It is a production system — software that runs, serves users, processes data. The learner's relationship to this artifact is not "student completing assignment" but "architect directing construction." This distinction is not cosmetic. It changes what the learner attends to, what questions they ask, and what kind of understanding they develop.</Prose>
+
+        <SubHead num="2.2">The Zone of Proximal Development, Extended</SubHead>
+        <Prose>Vygotsky's zone of proximal development (ZPD) describes the space between what a learner can do independently and what they can do with assistance. AI as implementation partner represents a <em>qualitative expansion</em> of the ZPD. The gap between what a systems-thinking non-developer can <em>design</em> and what they can <em>build alone</em> is enormous. AI closes that gap — not by simplifying the design, but by handling implementation details the human has deliberately chosen not to master.</Prose>
+        <Callout>Crucially, the Ho System does not leave the ZPD unstructured. Each ho defines <em>which</em> aspects of the work the learner should understand deeply, which they should understand functionally, and which they can treat as opaque. This is the Tiered Understanding Model — the mechanism that prevents AI-assisted development from collapsing into AI-dependent development.</Callout>
+
+        <SubHead num="2.3">Reflective Practice and the Practitioner's Knowledge</SubHead>
+        <Prose>Donald Schön's work on reflective practice describes how professionals develop expertise through <em>reflection-in-action</em> (thinking while doing) and <em>reflection-on-action</em> (thinking about what was done). The Ho System embeds reflective practice structurally. Each ho requires a devlog — not a summary of steps taken, but an articulation of what was understood, what remains opaque, and what surprised the learner.</Prose>
+        <Prose>This structural embedding matters because the research on AI-induced cognitive offloading suggests that without it, reflection simply doesn't happen. A 2025 study by Gerlich found a significant negative correlation (r = -0.68) between frequent AI tool usage and critical thinking abilities. <Cite>Gerlich, "AI Tools in Society," January 2025</Cite></Prose>
+
+        <SubHead num="2.4">Cognitive Apprenticeship, Inverted</SubHead>
+        <Prose>Collins, Brown, and Newman's cognitive apprenticeship model identifies key features of effective learning: modeling, coaching, scaffolding, articulation, reflection, and exploration. The Ho System maps onto this framework, with a critical substitution: AI serves as the <em>implementing agent</em> whose work the learner must <em>evaluate and direct</em>, rather than a master whose work the learner must <em>imitate</em>.</Prose>
+        <Callout>In the Ho System, the learner <em>commissions</em> implementation and then must understand it well enough to accept, modify, or reject it. This requires not imitation but <strong>architectural judgment</strong> — the capacity to evaluate outputs against intentions, to identify when implementation has diverged from design, and to articulate why something is wrong even when they could not have built it themselves.</Callout>
+
+        <SubHead num="2.5">Kata, Kaizen, and the Japanese Craft Tradition</SubHead>
+        <Prose>The name 歩 (ho) is deliberately chosen. It means "step" in the sense of walking — deliberate, grounded, rhythmic forward motion. Not a leap. Not a sprint. A step.</Prose>
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+          {[
+            { jp: "型", name: "Kata", desc: "Practiced forms that encode principles. Each ho is a kata: a bounded, repeatable structure that embodies the methodology's principles regardless of content domain." },
+            { jp: "改善", name: "Kaizen", desc: "Continuous incremental improvement. The ho sequence is not a curriculum to be 'completed' but a practice of ongoing refinement." },
+            { jp: "守破離", name: "Shu-Ha-Ri", desc: "Follow the form, break from the form, transcend the form. The three stages of mastery that structure the practitioner's progression." },
+          ].map((item, i) => (
+            <div key={i} style={{ flex: "1 1 200px", padding: "1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.5rem", color: C.accent, marginBottom: "0.25rem" }}>{item.jp}</div>
+              <div style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.accent, marginBottom: "0.75rem" }}>{item.name}</div>
+              <div style={{ fontSize: "0.88rem", color: C.inkLight, lineHeight: 1.6 }}>{item.desc}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, fontStyle: "italic" }}>The choice of a Japanese term signals that this is not simply a "coding bootcamp with AI." It is a practice — something you cultivate over time, with discipline and intention.</div>
+      </Section>
+
+      {/* ═══ PART III: THE EDUCATION CONTEXT ═══ */}
+      <Section dark>
+        <Label dark>Part III</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Education Context</h2>
+
+        <SubHead dark num="3.1">The Skills Inversion</SubHead>
+        <Prose dark>For most of the history of technical education, the hierarchy was clear: first learn the technical skills, then apply judgment. AI inverts this hierarchy. When implementation can be generated on demand, the scarce resource is no longer the ability to write code — it is the ability to evaluate, direct, and decide.</Prose>
+        <Callout dark>The skills that were traditionally taught last (systems thinking, architectural judgment, tradeoff analysis, reflective self-assessment) are now the skills that matter first. The skills that were traditionally taught first (syntax, language mechanics, algorithmic implementation) are increasingly delegatable.</Callout>
+
+        <SubHead dark num="3.2">The Deskilling Evidence</SubHead>
+        <Prose dark>The urgency is not theoretical. A growing body of research documents measurable cognitive decline when AI tools are used without structured engagement:</Prose>
+        <div style={{ display: "grid", gap: "1rem", marginBottom: "1.5rem" }}>
+          {[
+            { finding: "Frequent AI users exhibited significantly diminished critical thinking abilities, with cognitive offloading as the primary mechanism. Younger users (17–25) were most affected.", cite: "Gerlich, 2025 — 666 UK participants" },
+            { finding: "Endoscopists who routinely used AI assistance performed measurably worse when the technology was unavailable — detection rate for precancerous lesions dropped from 28.4% to 22.4%. The skill didn't wait patiently in the background. It atrophied.", cite: "The Lancet Gastroenterology & Hepatology, 2025" },
+            { finding: "More than 80% of AP teachers agree that AI makes students overly dependent on technology for basic tasks. Meanwhile, 69% of high school students reported using ChatGPT for assignments.", cite: "College Board, 2025" },
+          ].map((item, i) => (
+            <div key={i} style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, borderRadius: 3, border: "1px solid " + C.darkRule }}>
+              <div style={{ fontSize: "0.88rem", color: C.darkText, lineHeight: 1.6 }}>{item.finding}</div>
+              <div style={{ fontFamily: F.mono, fontSize: "0.68rem", color: C.darkMuted, marginTop: "0.5rem" }}>{item.cite}</div>
+            </div>
+          ))}
+        </div>
+
+        <SubHead dark num="3.3">What Education Should Become</SubHead>
+        <Prose dark>If AI handles implementation with increasing competence, what should education develop?</Prose>
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+          {[
+            { name: "Judgment", desc: "The ability to evaluate outputs against intentions. To distinguish 'it works' from 'it's good.'" },
+            { name: "Process", desc: "The ability to decompose complex problems into manageable, sequenced work. To maintain coherence across a project arc." },
+            { name: "Self-Assessment", desc: "The ability to honestly calibrate what you understand and what you don't. The tiered understanding model is a direct response to the 'illusion of competence.'" },
+            { name: "Iteration", desc: "The ability to build, evaluate, revise, and improve. To develop comfort with incompleteness." },
+          ].map((item, i) => (
+            <div key={i} style={{ flex: "1 1 200px", padding: "1.25rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.display, fontSize: "1rem", color: "#e8e2d8", marginBottom: "0.5rem" }}>{item.name}</div>
+              <div style={{ fontSize: "0.85rem", color: C.darkText, lineHeight: 1.6 }}>{item.desc}</div>
+            </div>
+          ))}
+        </div>
+        <Prose dark>The Ho System doesn't teach technical skills as a prerequisite to building. It develops judgment, process, and self-assessment <em>through</em> building — with the technical skills acquired as a necessary byproduct of doing real work.</Prose>
+
+        <SubHead dark num="3.4">Open Knowledge, Facilitated Practice</SubHead>
+        <Callout dark>
+          <strong style={{ color: "#e8e2d8" }}>The methodology should be freely accessible.</strong> The structural framework, templates, evidence, and design principles are published openly under Creative Commons licensing. If the argument is that judgment matters more than access, then restricting access to the methodology would be self-contradicting.
+          <br /><br />
+          <strong style={{ color: "#e8e2d8" }}>Mastery requires facilitation.</strong> Designing good ho sequences, calibrating difficulty to learner stage, reading devlogs diagnostically, adapting the methodology to new domains — these are facilitation skills that develop through mentorship and practice. This is where the value exchange happens: not in the knowledge, but in the cultivation of judgment.
+        </Callout>
+      </Section>
+
+      {/* ═══ PART IV: DESIGN PRINCIPLES ═══ */}
+      <Section>
+        <Label>Part IV</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>Design Principles</h2>
+        <div style={{ display: "grid", gap: "1rem" }}>
+          {[
+            { num: "4.1", name: "Production Over Exercise", text: "Ho projects build real systems, not tutorial applications. Authentic motivation changes how the learner engages with difficulty, evaluates tradeoffs, and retains understanding." },
+            { num: "4.2", name: "Architecture Before Implementation", text: "Every ho begins by establishing the systemic purpose of the work before any code is written. The plan precedes the build." },
+            { num: "4.3", name: "Bounded Ambiguity", text: "Each ho has clear objectives but the path is not fully prescribed. Controlled ambiguity — enough uncertainty to require thought, not so much as to produce paralysis." },
+            { num: "4.4", name: "Honest Self-Assessment Over External Validation", text: "The Ho System does not grade. It asks the learner to grade themselves — and provides the structure to make that self-assessment meaningful. A learner who can honestly evaluate their own comprehension is better positioned than one who performs for an external evaluator." },
+            { num: "4.5", name: "Cumulative Competence, Not Isolated Skills", text: "Skills developed in earlier hos are exercised in later ones. Understanding compounds. The project arc — the complete sequence from orientation to production — is the unit of learning, not the individual session." },
+            { num: "4.6", name: "Process Visibility as Transferable Output", text: "Devlogs, commit histories, and understanding reflections are not private notes — they are public-facing evidence of a way of working. Every project arc produces evidence of how the methodology works." },
+          ].map((p, i) => (
+            <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent, minWidth: 30, marginTop: "0.15rem" }}>{p.num}</div>
+              <div>
+                <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.5rem" }}>{p.name}</div>
+                <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>{p.text}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ PART V: EVIDENCE ═══ */}
+      <Section dark>
+        <Label dark>Part V</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>
+          Evidence — The Kanyō Pilot
+          <span style={{ fontFamily: F.mono, fontSize: "1rem", color: C.darkMuted, marginLeft: "0.5rem" }}>観鷹</span>
+        </h2>
+
+        <SubHead dark num="5.1">Context</SubHead>
+        <Prose dark>Kanyō (観鷹 — "contemplating falcons") is a computer vision system for real-time monitoring of peregrine falcons at Harvard's Memorial Hall. It was the first project developed using the Ho System, serving simultaneously as real infrastructure and as a test of the methodology.</Prose>
+        <Prose dark>The developer (the author) is not a software engineer by training. Background: MIT M.Arch, 25+ years in education leadership and systems design. Prior programming experience: minimal. The project was built from zero to production deployment in approximately six weeks of structured ho sessions.</Prose>
+
+        <SubHead dark num="5.2">What Was Built</SubHead>
+        <Prose dark>A full detection pipeline using YOLOv8 with configurable confidence thresholds. Visit detection with debounce-based event merging. Clip extraction with hardware-accelerated encoding. A FastAPI backend serving real-time data. A React frontend for live observation. Professional project structure with testing, documentation, and deployment infrastructure.</Prose>
+        <div style={{ background: C.darkBgDeep, padding: "2rem", borderRadius: 3, margin: "0.5rem 0 2rem 0", border: "1px solid " + C.darkRule }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "1.5rem 1rem" }}>
+            {[
+              { val: "19", label: "Ho Documents" },
+              { val: "6", label: "Weeks" },
+              { val: "272", label: "Passing Tests" },
+              { val: "Production", label: "Status" },
+            ].map((it, i) => (
+              <div key={i} style={{ textAlign: "center", flex: "1 1 80px" }}>
+                <div style={{ fontFamily: F.display, fontSize: "1.75rem", color: C.accent }}>{it.val}</div>
+                <div style={{ fontFamily: F.mono, fontSize: "0.7rem", color: C.darkMuted, letterSpacing: "0.06em", marginTop: "0.3rem" }}>{it.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.darkMuted, fontStyle: "italic", marginBottom: "2rem" }}>This is not a prototype. It is functioning infrastructure in active use.</div>
+
+        <SubHead dark num="5.3">What the Pilot Demonstrated</SubHead>
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap", marginBottom: "2rem" }}>
+          {[
+            { title: "Tiered understanding works", text: "The developer achieved Tier 2 understanding of Python, config management, testing, API design — while maintaining Tier 1 treatment of YOLOv8 internals, CSS, and React tooling. The methodology directed attention to the right things." },
+            { title: "Production from non-developers", text: "The codebase meets professional standards — not because the developer became a professional engineer, but because the methodology embedded those practices from session one." },
+            { title: "AI without dependency", text: "If AI tools were removed, the developer could maintain, debug, and extend the system. New features would be slower, not impossible. The Ho System produces people who used AI, not people who depend on it." },
+            { title: "Devlogs are genuinely valuable", text: "Months later, the devlogs serve as functional reference material — operational documentation of how the system works, not just 'what I did' summaries." },
+          ].map((item, i) => (
+            <div key={i} style={{ flex: "1 1 200px", padding: "1.25rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.display, fontSize: "1rem", color: "#e8e2d8", marginBottom: "0.5rem" }}>{item.title}</div>
+              <div style={{ fontSize: "0.85rem", color: C.darkText, lineHeight: 1.6 }}>{item.text}</div>
+            </div>
+          ))}
+        </div>
+
+        <SubHead dark num="5.4">What Was Learned About the Methodology</SubHead>
+        <Prose dark>The Kanyō pilot also revealed areas where the methodology needed refinement:</Prose>
+        <div style={{ display: "grid", gap: "0.75rem" }}>
+          {[
+            "Early hos were too long and too tightly prescribed. Structure should bound the session, not fill it.",
+            "The shu-to-ha transition was more gradual and domain-specific than initially modeled — the developer was simultaneously at different stages for different technologies.",
+            "Reflection quality varied dramatically. Early devlogs were performative summaries. Later devlogs were genuine decision records. The template evolved accordingly.",
+          ].map((item, i) => (
+            <div key={i} style={{ padding: "1rem 1.25rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3, fontSize: "0.88rem", color: C.darkText, lineHeight: 1.6 }}>
+              {item}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ PART VI: OPEN QUESTIONS ═══ */}
+      <Section>
+        <Label>Part VI</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>Open Questions</h2>
+        <div style={{ display: "grid", gap: "1rem" }}>
+          {[
+            { num: "6.1", name: "Generalizability", text: "Can the Ho structure transfer to non-software domains? The underlying principles are domain-agnostic, but the specific structure is software-native. What does a ho look like for writing, research, organizational design, or physical fabrication?" },
+            { num: "6.2", name: "Multi-Learner Contexts", text: "The pilot involved a single learner. How does the Ho System work with groups? Does the architectural role remain with one person, or can it be distributed?" },
+            { num: "6.3", name: "Assessment and Credentialing", text: "Could a portfolio of devlogs, working systems, and understanding reflections serve as a credible alternative to traditional credentials? Devlogs cannot be generated by AI in the way that code can." },
+            { num: "6.4", name: "AI Model Evolution", text: "If AI becomes better at architectural reasoning, does the human role shift? The Ho System's position is that architectural authority must remain human — not because AI can't reason architecturally, but because the human must develop the judgment to evaluate whether the architecture is right." },
+            { num: "6.5", name: "Relationship to Formal Education", text: "The Ho System develops precisely the judgment, process, and self-assessment skills that formal education increasingly recognizes as essential but struggles to teach through traditional means. More complementary than alternative." },
+          ].map((q, i) => (
+            <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "flex-start", padding: "1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent, minWidth: 30, marginTop: "0.15rem" }}>{q.num}</div>
+              <div>
+                <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.5rem" }}>{q.name}</div>
+                <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>{q.text}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ REFERENCES ═══ */}
+      <Section dark>
+        <Label dark>References</Label>
+        <div style={{ maxWidth: 700 }}>
+          {[
+            'Becker, J. et al. (2025). "Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity." arXiv:2507.09089. July 2025.',
+            'Budzyń, K. et al. (2025). "Endoscopist deskilling risk after exposure to artificial intelligence in colonoscopy." The Lancet Gastroenterology & Hepatology, 10(10). August 2025.',
+            'CodeRabbit. (2025). "State of AI vs Human Code Generation Report." December 2025.',
+            'Collins, A., Brown, J.S., & Newman, S.E. (1989). "Cognitive Apprenticeship." In Resnick (Ed.), Knowing, Learning, and Instruction.',
+            'The College Board. (2025). AI in Education Report. October 2025.',
+            'Gerlich, M. (2025). "AI Tools in Society: Impacts on Cognitive Offloading and the Future of Critical Thinking." Societies, 15(1). January 2025.',
+            'Greengard, S. (2025). "The AI Deskilling Paradox." Communications of the ACM. November 2025.',
+            'Karpathy, A. (2025). Introduction of the term "vibe coding." February 2025.',
+            'Koren, M. et al. (2026). "Vibe Coding Kills Open Source." CEPR Discussion Paper No. 21145. January 2026.',
+            'Lee, H. et al. (2025). "The Impact of Generative AI on Critical Thinking." CHI \'25. April 2025.',
+            'Papert, S. (1991). Situating Constructionism. In Harel & Papert (Eds.), Constructionism.',
+            'Schön, D. (1983). The Reflective Practitioner. Basic Books.',
+            'Tenzai. (2025). Security assessment of AI coding platforms. December 2025.',
+            'Vygotsky, L.S. (1978). Mind in Society. Harvard University Press.',
+            'World Economic Forum. (2025). Future of Jobs Report 2025.',
+            'World Economic Forum & European Commission/OECD. (2025). AI Literacy Framework (AILit).',
+          ].map((ref, i) => (
+            <div key={i} style={{ fontSize: "0.82rem", color: C.darkText, lineHeight: 1.6, marginBottom: "0.75rem", paddingLeft: "1.5rem", textIndent: "-1.5rem" }}>{ref}</div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ CLOSING ═══ */}
+      <Section style={{ padding: "3rem 2rem" }}>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, fontStyle: "italic", lineHeight: 1.7 }}>
+          This is a living document. It will evolve as the Ho System is applied to new projects, tested with new learners, and refined through practice. The framework documents contain the structural specification; this paper contains the argument for why it exists.
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, marginTop: "1.5rem" }}>— ATM, February 2026</div>
+        <div style={{ marginTop: "2rem", padding: "1.25rem 1.5rem", background: C.groundWarm, border: "1px solid " + C.rule, borderRadius: 3 }}>
+          <div style={{ fontSize: "0.82rem", color: C.inkMuted, lineHeight: 1.6 }}>
+            © 2026 Andrew Todd Marcus · <ExtLink href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</ExtLink>
+            <br />For consulting, training, or commercial use: <ExtLink href="mailto:andrew@blueprintforcreativity.com">andrew@blueprintforcreativity.com</ExtLink>
+          </div>
+        </div>
+        <div style={{ marginTop: "1.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <ExtLink href="ho-system.html">← The Ho System — Framework & Case Study</ExtLink>
+          <ExtLink href="https://github.com/sageframe-no-kaji/ho-system">GitHub Repository ↗</ExtLink>
+        </div>
+      </Section>
+
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+  <footer>
+    <div class="container">
+      <p>© 2026 Andrew Todd Marcus · Cambridge, MA</p>
+      <p>Blueprint for Creativity · Sageframe</p>
+    </div>
+  </footer>
+  <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const sheet = document.getElementById('bottomSheet');
+    const backdrop = document.getElementById('sheetBackdrop');
+    function openSheet() { sheet.classList.add('open'); backdrop.classList.add('visible'); toggle.classList.add('active'); toggle.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+    function closeSheet() { sheet.classList.remove('open'); backdrop.classList.remove('visible'); toggle.classList.remove('active'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+    toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
+    backdrop.addEventListener('click', closeSheet);
+    sheet.querySelectorAll('nav a').forEach(a => a.addEventListener('click', closeSheet));
+  </script>
+</body>
+</html>
