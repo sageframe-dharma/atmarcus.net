@@ -129,11 +129,11 @@
     .writing-slider { position: relative; margin-bottom: 2rem; }
     .slider-btn { display: none; }
     @media (hover: hover) {
-      .slider-btn { display: flex; align-items: center; justify-content: center; position: absolute; top: calc(50% - 0.25rem); transform: translateY(-50%); z-index: 2; width: 2rem; height: 2.5rem; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease; color: var(--color-ink); font-size: 1.1rem; line-height: 1; padding: 0; }
-      .slider-btn-prev { left: 0; }
-      .slider-btn-next { right: 0; }
-      .writing-slider:hover .slider-btn { opacity: 0.18; }
-      .slider-btn:hover { opacity: 0.55 !important; }
+      .slider-btn { display: flex; align-items: center; justify-content: center; position: absolute; top: calc(50% - 0.25rem); transform: translateY(-50%); z-index: 2; width: 3rem; height: 4rem; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease; color: var(--color-ink); font-size: 2.2rem; line-height: 1; padding: 0; }
+      .slider-btn-prev { left: -0.5rem; }
+      .slider-btn-next { right: -0.5rem; }
+      .writing-slider:hover .slider-btn { opacity: 0.35; }
+      .slider-btn:hover { opacity: 0.75 !important; }
     }
     .writing-cards { display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 0.5rem; scrollbar-width: thin; scrollbar-color: var(--color-rule) transparent; }
     .writing-cards::-webkit-scrollbar { height: 4px; }
@@ -357,7 +357,7 @@
       <h2 class="reveal">On systems thinking, AI collaboration, and building things you actually understand.</h2>
       <p class="reveal">Published on Substack. On the discipline of working with AI, the design of organizational infrastructure, and what it means to build at the edge of your own competence.</p>
       <div class="writing-slider reveal">
-        <button class="slider-btn slider-btn-prev" aria-label="Previous">&#8249;</button>
+        <button class="slider-btn slider-btn-prev" aria-label="Previous">&#171;</button>
         <div class="writing-cards">
           <a class="writing-card" href="https://sageframe.substack.com/p/three-hours?r=1b4mpz" target="_blank" rel="noopener">
             <div class="writing-card-img" style="background-image: url('img/threehours.png')"></div>
@@ -388,7 +388,7 @@
             </div>
           </a>
         </div>
-        <button class="slider-btn slider-btn-next" aria-label="Next">&#8250;</button>
+        <button class="slider-btn slider-btn-next" aria-label="Next">&#187;</button>
       </div>
       <a class="writing-cta reveal" href="https://sageframe.substack.com" target="_blank" rel="noopener">All essays on Substack <span>→</span></a>
     </div>
