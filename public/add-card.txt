@@ -1,4 +1,4 @@
-**Slider** — Horizontal scroll with snap. Three cards sit side by side on desktop. On narrower screens they scroll left/right with momentum. Thin scrollbar appears on hover. To add a new card when you publish, you just duplicate this block inside the `writing-cards` div:
+**Slider** — Horizontal scroll with snap. Three cards sit side by side on desktop. On narrower screens they scroll left/right with momentum. Thin scrollbar appears on hover. To add a new card when you publish, insert this block at the VERY TOP (beginning) of the `writing-cards` div — newest post always goes first on the left:
 
 ```html
 <a class="writing-card" href="https://sageframe.substack.com/p/YOUR-SLUG" target="_blank" rel="noopener">

@@ -127,6 +127,14 @@
     .writing h2 { margin-bottom: 0.75rem; }
     .writing > .container > p { margin-bottom: 2rem; }
     .writing-slider { position: relative; margin-bottom: 2rem; }
+    .slider-btn { display: none; }
+    @media (hover: hover) {
+      .slider-btn { display: flex; align-items: center; justify-content: center; position: absolute; top: calc(50% - 0.25rem); transform: translateY(-50%); z-index: 2; width: 2rem; height: 2.5rem; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease; color: var(--color-ink); font-size: 1.1rem; line-height: 1; padding: 0; }
+      .slider-btn-prev { left: 0; }
+      .slider-btn-next { right: 0; }
+      .writing-slider:hover .slider-btn { opacity: 0.18; }
+      .slider-btn:hover { opacity: 0.55 !important; }
+    }
     .writing-cards { display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 0.5rem; scrollbar-width: thin; scrollbar-color: var(--color-rule) transparent; }
     .writing-cards::-webkit-scrollbar { height: 4px; }
     .writing-cards::-webkit-scrollbar-track { background: transparent; }
@@ -349,19 +357,13 @@
       <h2 class="reveal">On systems thinking, AI collaboration, and building things you actually understand.</h2>
       <p class="reveal">Published on Substack. On the discipline of working with AI, the design of organizational infrastructure, and what it means to build at the edge of your own competence.</p>
       <div class="writing-slider reveal">
+        <button class="slider-btn slider-btn-prev" aria-label="Previous">&#8249;</button>
         <div class="writing-cards">
-          <a class="writing-card" href="https://sageframe.substack.com/p/walking-without-google-maps" target="_blank" rel="noopener">
-            <div class="writing-card-img" style="background-image: url('img/walking-crop.jpg')"></div>
+          <a class="writing-card" href="https://sageframe.substack.com/p/three-hours?r=1b4mpz" target="_blank" rel="noopener">
+            <div class="writing-card-img" style="background-image: url('img/threehours.png')"></div>
             <div class="writing-card-body">
-              <div class="writing-card-title">Walking Without Google Maps</div>
-              <div class="writing-card-desc">Why the most important skill for the AI age has nothing to do with AI.</div>
-            </div>
-          </a>
-          <a class="writing-card" href="https://sageframe.substack.com/p/a-condition-of-the-dash" target="_blank" rel="noopener">
-            <div class="writing-card-img" style="background-image: url('img/dash-crop.jpg')"></div>
-            <div class="writing-card-body">
-              <div class="writing-card-title">A Condition of the Dash;</div>
-              <div class="writing-card-desc">On being accused of machinery, the em-dash as a life choice, and the difference between AI slop and paying attention.</div>
+              <div class="writing-card-title">Three Hours</div>
+              <div class="writing-card-desc">278 tests, 99% coverage, and a production release before the kids wake up.</div>
             </div>
           </a>
           <a class="writing-card" href="https://sageframe.substack.com/p/i-built-a-computer-vision-system" target="_blank" rel="noopener">
@@ -371,14 +373,22 @@
               <div class="writing-card-desc">The methodology behind building a production system without knowing how to code—and why vibe coding is a worse problem than most people realize.</div>
             </div>
           </a>
-          <a class="writing-card" href="https://sageframe.substack.com/p/three-hours?r=1b4mpz" target="_blank" rel="noopener">
-            <div class="writing-card-img" style="background-image: url('img/threehours.png')"></div>
+          <a class="writing-card" href="https://sageframe.substack.com/p/a-condition-of-the-dash" target="_blank" rel="noopener">
+            <div class="writing-card-img" style="background-image: url('img/dash-crop.jpg')"></div>
             <div class="writing-card-body">
-              <div class="writing-card-title">Three Hours</div>
-              <div class="writing-card-desc">278 tests, 99% coverage, and a production release before the kids wake up.</div>
+              <div class="writing-card-title">A Condition of the Dash;</div>
+              <div class="writing-card-desc">On being accused of machinery, the em-dash as a life choice, and the difference between AI slop and paying attention.</div>
+            </div>
+          </a>
+          <a class="writing-card" href="https://sageframe.substack.com/p/walking-without-google-maps" target="_blank" rel="noopener">
+            <div class="writing-card-img" style="background-image: url('img/walking-crop.jpg')"></div>
+            <div class="writing-card-body">
+              <div class="writing-card-title">Walking Without Google Maps</div>
+              <div class="writing-card-desc">Why the most important skill for the AI age has nothing to do with AI.</div>
             </div>
           </a>
         </div>
+        <button class="slider-btn slider-btn-next" aria-label="Next">&#8250;</button>
       </div>
       <a class="writing-cta reveal" href="https://sageframe.substack.com" target="_blank" rel="noopener">All essays on Substack <span>→</span></a>
     </div>
@@ -442,6 +452,12 @@
     toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
     backdrop.addEventListener('click', closeSheet);
     sheet.querySelectorAll('nav a').forEach(a => a.addEventListener('click', closeSheet));
+
+    // Writing slider arrows
+    const sliderCards = document.querySelector('.writing-cards');
+    const scrollAmt = 325;
+    document.querySelector('.slider-btn-prev').addEventListener('click', () => sliderCards.scrollBy({ left: -scrollAmt, behavior: 'smooth' }));
+    document.querySelector('.slider-btn-next').addEventListener('click', () => sliderCards.scrollBy({ left: scrollAmt, behavior: 'smooth' }));
   </script>
 </body>
 </html>
