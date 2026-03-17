@@ -1,0 +1,13 @@
+{
+  "name": "atmarcus-net",
+  "version": "1.0.0",
+  "description": "atmarcus.net personal website",
+  "scripts": {
+    "build": "npx @11ty/eleventy",
+    "dev": "npx @11ty/eleventy --serve"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "rss-parser": "^3.13.0"
+  }
+}
