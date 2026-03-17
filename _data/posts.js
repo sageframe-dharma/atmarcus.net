@@ -9,7 +9,6 @@ module.exports = async function() {
   const feed = await parser.parseURL('https://sageframe.substack.com/feed');
 
   return feed.items
-    .slice(0, 6)
     .map(item => ({
       title: item.title,
       url: item.link,
