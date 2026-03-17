@@ -1,0 +1,24 @@
+# Private
+/private
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+_site/
+dist/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
