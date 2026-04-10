@@ -15,7 +15,7 @@
   <style>
     :root { --color-ink: #1a1a1a; --color-ink-light: #4a4a4a; --color-ink-muted: #7a7a7a; --color-ground: #f5f2ed; --color-ground-warm: #ebe6dd; --color-accent: #c45a2d; --color-rule: #d0c9be; --color-white: #faf8f4; --font-display: 'DM Serif Display', Georgia, serif; --font-body: 'IBM Plex Sans', -apple-system, sans-serif; --font-mono: 'IBM Plex Mono', 'Courier New', monospace; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scroll-padding-top: 6rem; }
     body { font-family: var(--font-body); color: var(--color-ink); background: var(--color-ground); line-height: 1.7; }
     a { color: var(--color-accent); text-decoration: none; } a:hover { color: var(--color-ink); }
     header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); background: rgba(245,242,237,0.92); }
@@ -31,6 +31,12 @@
     .bottom-sheet nav { display: flex; flex-direction: column; gap: 0; width: 100%; }
     .bottom-sheet nav a { display: block; padding: 1rem 0; font-family: var(--font-mono); font-size: 0.9rem; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; border-bottom: 1px solid var(--color-rule); margin-left: 0; }
     .bottom-sheet nav a:last-child { border-bottom: none; }
+    .section-nav { border-top: 2px solid #c45a2d; border-bottom: 1px solid #d0c9be; background: rgba(245,242,237,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); position: sticky; top: 57px; z-index: 99; overflow-x: auto; }
+    .section-nav .snav-inner { max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.5rem,5vw,4rem); display: flex; align-items: center; }
+    .snav-label { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #c45a2d; margin-right: 1.5rem; white-space: nowrap; }
+    .snav-link { padding: 0.9rem 0; margin-right: 1.5rem; background: transparent; border: none; border-bottom: 2px solid transparent; color: #7a7a7a; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400; letter-spacing: 0.04em; text-transform: lowercase; white-space: nowrap; text-decoration: none; display: inline-block; transition: color 0.15s; }
+    .snav-link:hover { color: #1a1a1a; }
+    .snav-link.active { color: #1a1a1a; border-bottom-color: #c45a2d; font-weight: 500; }
     @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } }
   </style>
 </head>
@@ -65,6 +71,20 @@
       <a href="../index.html#contact">contact</a>
     </nav>
   </div>
+
+  <div class="section-nav">
+    <div class="snav-inner">
+      <span class="snav-label">Jump to</span>
+      <a href="#claim" class="snav-link">claim</a>
+      <a href="#framework" class="snav-link">framework</a>
+      <a href="#methodology" class="snav-link">methodology</a>
+      <a href="#empirical" class="snav-link">empirical</a>
+      <a href="#instruments" class="snav-link">instruments</a>
+      <a href="#glassroom" class="snav-link">glassroom</a>
+      <a href="#next" class="snav-link">what's next</a>
+    </div>
+  </div>
+
   <div id="root"></div>
   <script type="text/babel">
 const { useState } = React;
@@ -92,8 +112,8 @@ function Prose({ children, dark, style }) {
   return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
 }
 
-function Section({ dark, children, style }) {
-  return <section style={{ background: dark ? C.darkBg : C.ground, color: dark ? C.darkText : C.ink, padding: "clamp(3rem, 8vh, 5rem) 0", ...style }}><div style={wrap}>{children}</div></section>;
+function Section({ dark, children, style, id }) {
+  return <section id={id} style={{ background: dark ? C.darkBg : C.ground, color: dark ? C.darkText : C.ink, padding: "clamp(3rem, 8vh, 5rem) 0", ...style }}><div style={wrap}>{children}</div></section>;
 }
 
 function Chip({ children, color }) {
@@ -148,7 +168,7 @@ function App() {
       </div>
 
       {/* ═══ THE CLAIM ═══ */}
-      <Section dark>
+      <Section dark id="claim">
         <Label dark>The Foundational Claim</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem", lineHeight: 1.25 }}>The next territory in human–AI collaboration is somatic, relational, and contemplative.</h2>
         <Prose dark>The AI's model of you is linguistic, statistical, and structural. It is a very good model. It catches your rhythms, your habits of thought, your way of arriving at an idea. But it has no access to the thing that makes you you: your body, your practice, your relationships, your twenty-five years of sitting still and paying attention.</Prose>
@@ -161,7 +181,7 @@ function App() {
       </Section>
 
       {/* ═══ THE FRAMEWORK ═══ */}
-      <Section>
+      <Section id="framework">
         <Label>Diagnostic Framework</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Destructive Interference</h2>
         <Prose>An original diagnostic taxonomy identifying seven named classes of structural failure in AI-influenced creative writing: Pre-emptive Evaluation, Performed Urgency, The Throat-Clear, The Balanced Hedge, The Significance Stamp, The Mirror Summary, and The Emotional Instruction.</Prose>
@@ -180,7 +200,7 @@ function App() {
       </Section>
 
       {/* ═══ THE METHODOLOGY ═══ */}
-      <Section dark>
+      <Section dark id="methodology">
         <Label dark>Production Methodology</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem" }}>The Ho System (歩)</h2>
         <Prose dark>A structured methodology for human-AI collaborative development. Not prompting — the development of judgment. The Ho System addresses the core bottleneck of the AI era: access to tools is universal, but the capacity to evaluate, direct, and maintain authority over AI-assisted work is not.</Prose>
@@ -201,7 +221,7 @@ function App() {
       </Section>
 
       {/* ═══ THE EMPIRICAL QUESTION ═══ */}
-      <Section>
+      <Section id="empirical">
         <Label>Empirical Research</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Voice Identity Compression</h2>
         <Prose>Can 10,000 tokens of prose representing a writer's voice be compressed to 500 tokens of structured notation without losing generative fidelity?</Prose>
@@ -220,7 +240,7 @@ function App() {
       </Section>
 
       {/* ═══ THE INSTRUMENTS ═══ */}
-      <Section dark>
+      <Section dark id="instruments">
         <Label dark>Practitioner Instruments</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1rem" }}>Tools for self-knowledge in AI collaboration</h2>
         <Prose dark style={{ color: "#d8d2c8" }}>The sycophancy problem has been studied from the AI's side — models tend to agree with their users. The reciprocal problem — users tend to lose evaluative sharpness when surrounded by agreement — has not been instrumentalized. These tools address the human side.</Prose>
@@ -252,7 +272,7 @@ function App() {
       </Section>
 
       {/* ═══ GLASSROOM — APPLIED RESEARCH ═══ */}
-      <Section>
+      <Section id="glassroom">
         <Label>Applied Research</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Glassroom — EdTech Accountability Infrastructure</h2>
         <Prose>An open-source tool that scrapes Google Classroom at the student level — every assignment, every attachment, every empty field — and aggregates it into a single dashboard with CSV export and PDF downloads. The first tool that produces student-level implementation variance data for Google Classroom. No published research has examined this variance at the implementation level. Glassroom is the first instrument that makes it visible.</Prose>
@@ -272,7 +292,7 @@ function App() {
       </Section>
 
       {/* ═══ GENERALIZATION ═══ */}
-      <Section>
+      <Section id="next">
         <Label>What's Next</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>From pilot study to field</h2>
         <Prose>Everything described on this page was developed through intensive single-practitioner research. Someone had to go first. The frameworks are structural — they describe properties of large language models and human cognitive tendencies, not one person's idiosyncratic experience. But that claim must be tested, not assumed.</Prose>
@@ -332,6 +352,21 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
     backdrop.addEventListener('click', closeSheet);
     sheet.querySelectorAll('a').forEach(a => a.addEventListener('click', closeSheet));
+
+    // Section nav scroll tracking
+    const snavLinks = document.querySelectorAll('.snav-link');
+    const snavIds = ['claim','framework','methodology','empirical','instruments','glassroom','next'];
+    const snavSections = snavIds.map(id => document.getElementById(id));
+    const snavObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          snavLinks.forEach(l => l.classList.remove('active'));
+          const link = document.querySelector('.snav-link[href="#' + entry.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    snavSections.forEach(s => s && snavObs.observe(s));
   </script>
 </body>
 </html>
