@@ -79,7 +79,7 @@ const C = {
   ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
   rule: "#d0c9be", white: "#faf8f4",
   darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555",
-  darkMuted: "#999", darkText: "#c8c2b8",
+  darkMuted: "#999", darkText: "#d8d2c8",
 };
 
 const wrap = { maxWidth: 1080, margin: "0 auto", padding: "0 clamp(1.5rem, 5vw, 4rem)" };
@@ -222,35 +222,52 @@ function App() {
       {/* ═══ THE INSTRUMENTS ═══ */}
       <Section dark>
         <Label dark>Practitioner Instruments</Label>
-        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem" }}>Tools for self-knowledge in AI collaboration</h2>
-        <Prose dark>The sycophancy problem has been studied from the AI's side — models tend to agree with their users. The reciprocal problem — users tend to lose evaluative sharpness when surrounded by agreement — has not been instrumentalized. These tools address the human side.</Prose>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1rem" }}>Tools for self-knowledge in AI collaboration</h2>
+        <Prose dark style={{ color: "#d8d2c8" }}>The sycophancy problem has been studied from the AI's side — models tend to agree with their users. The reciprocal problem — users tend to lose evaluative sharpness when surrounded by agreement — has not been instrumentalized. These tools address the human side.</Prose>
 
-        <ResearchItem title="Sutra — Writing Environment" status="in development" links={[]}>
-          A macOS writing environment where every piece of writing is a version-controlled repository, and revision history — branching, comparison, annotation — is the native experience of writing. The design hypothesis: making the trail of your own thinking visible and navigable counteracts the tendency to lose track of your own positions during sustained collaboration. Architecture complete.
-        </ResearchItem>
-        <ResearchItem title="Shodo (書道) — Conversation Intelligence" status="in development" links={[{ label: "GitHub", href: "https://github.com/sageframe-no-kaji/shodo" }]}>
-          AI conversation history as searchable, synthesizable knowledge. Not retrieval — pattern finding. Tracing intellectual threads, decision patterns, and evolving thinking across hundreds of conversations. The design hypothesis: surfacing the meta-patterns of your own collaboration enables self-knowledge inaccessible from within any single conversation.
-        </ResearchItem>
-        <ResearchItem title="Kinhin (経行) — Practitioner Progression" status="in development" links={[]}>
-          Structured tracking of practitioner growth across projects, skills, and reflective practices. The design hypothesis: having a progression baseline independent of the AI's assessment of your growth provides the ground truth necessary for evaluating the collaboration honestly.
-        </ResearchItem>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Sutra</div>
+              <StatusChip status="in development" />
+            </div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>A writing environment where every piece is a version-controlled repository. Revision history — branching, comparison, annotation — is the native experience. Making the trail of your own thinking visible counteracts the tendency to lose track of your positions during sustained collaboration. Architecture complete.</p>
+          </div>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Shodo (書道)</div>
+              <StatusChip status="in development" />
+            </div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>AI conversation history as searchable, synthesizable knowledge. Not retrieval — pattern finding. Tracing intellectual threads, decision patterns, and evolving thinking across hundreds of conversations. Surfacing meta-patterns inaccessible from within any single conversation.</p>
+            <div style={{ marginTop: "0.75rem" }}><ExtLink href="https://github.com/sageframe-no-kaji/shodo">GitHub</ExtLink></div>
+          </div>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Kinhin (経行)</div>
+              <StatusChip status="in development" />
+            </div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>Structured tracking of practitioner growth across projects, skills, and reflective practices. A progression baseline independent of the AI's assessment of your growth — the ground truth necessary for evaluating the collaboration honestly.</p>
+          </div>
+        </div>
       </Section>
 
       {/* ═══ GLASSROOM — APPLIED RESEARCH ═══ */}
       <Section>
         <Label>Applied Research</Label>
-        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Glassroom — EdTech Accountability</h2>
-        <Prose>An open-source tool that scrapes Google Classroom at the student level — every assignment, every attachment, every empty field — and aggregates it into a single dashboard with CSV export and PDF downloads. The first tool that produces student-level implementation variance data for Google Classroom.</Prose>
-        <Prose>Built because my daughter has an IEP that requires teachers to post materials digitally. Within one school, Glassroom revealed that teacher implementation ranged from 140 well-structured assignments with weekly organization to 61 assignments with zero due dates, zero descriptions, and no actionable instructions. Google Classroom permits both and makes neither visible.</Prose>
-        <Prose>The tool anchors a broader project: a position paper (<em>The Empty Container</em>) arguing that Google Classroom's structural emptiness creates unauditable accountability gaps that harm vulnerable students. Pursuing a research collaboration with Harvard Graduate School of Education for the first multi-site empirical implementation audit, using Glassroom as the research instrument.</Prose>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Glassroom — EdTech Accountability Infrastructure</h2>
+        <Prose>An open-source tool that scrapes Google Classroom at the student level — every assignment, every attachment, every empty field — and aggregates it into a single dashboard with CSV export and PDF downloads. The first tool that produces student-level implementation variance data for Google Classroom. No published research has examined this variance at the implementation level. Glassroom is the first instrument that makes it visible.</Prose>
+        <Prose>Built while doing IEP advocacy for a student whose accommodation plan required teachers to post materials digitally. Within one school, Glassroom revealed that teacher implementation ranged from 140 well-structured assignments with weekly organization to 61 assignments with zero due dates, zero descriptions, and no actionable instructions. Google Classroom permits both and makes neither visible.</Prose>
+        <Prose>The tool anchors a broader research project. A position paper — <em>The Empty Container</em> — argues that Google Classroom's lack of structural requirements creates accountability gaps that harm vulnerable students, particularly those with IEPs, and that the platform fails to meet the Universal Design for Learning standards endorsed by federal law. I am pursuing a research collaboration with Harvard Graduate School of Education to conduct the first multi-site empirical implementation audit of Google Classroom, using Glassroom as the research instrument.</Prose>
+        <Prose>Through Blueprint for Creativity, this work also has a consulting application: district implementation audits, UDL-aligned standards design, and teacher training — built on 25 years of learning systems design, including the assessment infrastructure I built at NuVu Studio and ARCK Boston.</Prose>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
           <StatusChip status="shipped" />
           <Chip>open source</Chip>
-          <Chip>position paper</Chip>
+          <Chip>position paper written</Chip>
           <Chip>Harvard GSE collaboration in pursuit</Chip>
         </div>
         <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
           <ExtLink href="https://github.com/sageframe-no-kaji/glassroom">GitHub repository</ExtLink>
+          <ExtLink href="judgment-at-scale.html">Judgment at Scale — position paper</ExtLink>
         </div>
       </Section>
 
@@ -279,48 +296,11 @@ function App() {
         <Prose style={{ marginTop: "2rem", fontWeight: 500, color: C.ink }}>This research program is already producing results without institutional support. Funding and collaboration would accelerate and formalize work that is underway — not initiate something speculative.</Prose>
       </Section>
 
-      {/* ═══ WRITING & PUBLICATION ═══ */}
-      <Section dark>
-        <Label dark>Writing & Publication</Label>
-        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1rem" }}>The research in public</h2>
-        <Prose dark>The body of published writing is not separate from the research — it is evidence of the practices under investigation. Each piece is an act of sustained human-AI collaboration with visible attention to voice integrity, structural judgment, and authorial identity.</Prose>
-
-        {/* Position Papers & Foundational Documents */}
-        <div style={{ fontFamily: F.mono, fontSize: "0.75rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: C.darkMuted, paddingBottom: "0.75rem", borderBottom: "1px solid " + C.darkRule, marginTop: "2rem", marginBottom: "1rem" }}>Position Papers & Foundational Documents</div>
-
-        <WritingRef title="Ho System Foundations" desc="The complete methodology for structured human-AI collaborative development. Four-document project chain, session structure, progressive mastery model." href="https://atmarcus.net/work/ho-foundations" />
-        <WritingRef title="Judgment at Scale" desc="Position paper: how standardized accountability systems eliminated the capacity for critical thinking that AI-era work now demands. Student in the Loop framework." href="https://atmarcus.net/work/judgment-at-scale" />
-        <WritingRef title="The Empty Container" desc="Position paper: Google Classroom's structural emptiness creates unauditable accountability gaps that harm vulnerable students — particularly those with IEPs." href="#" />
-
-        {/* Published Essays */}
-        <div style={{ fontFamily: F.mono, fontSize: "0.75rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: C.darkMuted, paddingBottom: "0.75rem", borderBottom: "1px solid " + C.darkRule, marginTop: "2.5rem", marginBottom: "1rem" }}>Published Essays — Constructive Interference</div>
-
-        <WritingRef title="The Fourth Boundary" desc="The foundational claim. Somatic cognition, relational understanding, and why the next territory in human-AI collaboration is contemplative." href="https://sageframe.substack.com/p/the-fourth-boundary" />
-        <WritingRef title="The Same Lever" desc="AI as the first educational technology that amplifies for everyone simultaneously. A manifesto." href="https://sageframe.substack.com/p/the-same-lever" />
-        <WritingRef title="Thinking Outside the Skull" desc="The extended mind thesis applied to AI collaboration. Clark, Chalmers, and the question of where you end." href="https://sageframe.substack.com/p/thinking-outside-the-skull" />
-        <WritingRef title="Bad Vibes" desc="A critique of deploying powerful AI tools without process or human judgment." href="https://sageframe.substack.com/p/bad-vibes" />
-        <WritingRef title="Prompting, Not Programming" desc="Defending structured human-AI collaboration as a rigorous practice distinct from both traditional coding and thoughtless prompting." href="https://sageframe.substack.com/p/prompting-not-programming" />
-        <WritingRef title="Three Hours" desc="Shipping production software in three hours. Proof that structured methodology compresses time." href="https://sageframe.substack.com/p/three-hours" />
-        <WritingRef title="A Condition of the Dash" desc="On voice, authorship, and being accused of machinery. The em-dash as a lens on what it means to write with AI." href="https://sageframe.substack.com/p/a-condition-of-the-dash" />
-        <WritingRef title="Walking Without Google Maps" desc="Two Camino de Santiago crossings as a lens on navigating with intent but without predetermined outcomes." href="https://sageframe.substack.com/p/walking-without-google-maps" />
-        <WritingRef title="Your Machines Are Not Strangers" desc="Six parables about memory, care, and the systems we tend in the dark." href="https://sageframe.substack.com/p/your-machines-are-not-strangers" />
-        <WritingRef title="Precedential Thinking" desc="A coined term. The teachable discipline of understanding what exists before building something new." href="https://sageframe.substack.com/p/precedential-thinking" />
-
-        {/* Forthcoming */}
-        <div style={{ fontFamily: F.mono, fontSize: "0.75rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: C.darkMuted, paddingBottom: "0.75rem", borderBottom: "1px solid " + C.darkRule, marginTop: "2.5rem", marginBottom: "1rem" }}>Forthcoming</div>
-
-        <WritingRef title="Destructive Interference" desc="The diagnostic framework in full. Seven classes of structural failure in AI-influenced writing, with mechanisms, tests, and examples." href="#" />
-        <WritingRef title="The Amateur's Laboratory" desc="Voice compression, amateur science, and the return of cross-disciplinary experimentation. The empirical research question." href="#" />
-
-        <div style={{ marginTop: "2rem" }}>
-          <ExtLink href="https://sageframe.substack.com">All essays on Constructive Interference</ExtLink>
-        </div>
-      </Section>
-
       {/* ═══ CONTACT ═══ */}
       <Section>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1rem" }}>Let's talk about this work.</h2>
         <Prose>I'm looking for institutional context — a role, a lab, a fellowship, a collaboration — where this research is valued, funded, and connected to a larger mission. If you're working on how humans maintain judgment and identity in AI collaboration, or if you think you should be, I'd welcome the conversation.</Prose>
+        <Prose style={{ fontSize: "0.92rem", color: C.inkMuted }}>The full body of published writing — including essays beyond those referenced above — is on <a href="https://sageframe.substack.com" target="_blank" rel="noopener" style={{ color: C.accent }}>Constructive Interference</a>.</Prose>
         <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
           <ExtLink href="mailto:andrew@atmarcus.net">Email</ExtLink>
           <ExtLink href="https://linkedin.com/in/atmarcus">LinkedIn</ExtLink>
