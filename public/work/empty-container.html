@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Empty Container — Position Paper</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&amp;family=IBM+Plex+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    button { font-family: inherit; }
+    a { color: inherit; }
+  </style>
+  <style>
+    :root {
+      --color-ink: #1a1a1a;
+      --color-ink-muted: #7a7a7a;
+      --color-ground: #f5f2ed;
+      --color-accent: #c45a2d;
+      --color-rule: #d0c9be;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --max-width: 1080px;
+      --gutter: clamp(1.5rem, 5vw, 4rem);
+    }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; }
+    header nav { display: flex; gap: 2rem; }
+    header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
+    header nav a:hover { color: var(--color-ink) !important; }
+    footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; }
+    footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); max-width: none; }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.25rem; width: 28px; height: 22px; position: relative; flex-shrink: 0; }
+    .nav-toggle span { display: block; width: 100%; height: 2px; background: var(--color-ink); border-radius: 1px; position: absolute; left: 0; transition: all 0.25s ease; }
+    .nav-toggle span:nth-child(1) { top: 0; }
+    .nav-toggle span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .nav-toggle span:nth-child(3) { bottom: 0; }
+    .nav-toggle.active span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+    .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; opacity: 0; transition: opacity 0.25s ease; }
+    .sheet-backdrop.visible { display: block; opacity: 1; }
+    .bottom-sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 201; background: var(--color-ground); border-top: 2px solid var(--color-accent); border-radius: 12px 12px 0 0; padding: 1.5rem 2rem 2.5rem; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); box-shadow: 0 -4px 24px rgba(0,0,0,0.12); }
+    .bottom-sheet.open { transform: translateY(0); }
+    .sheet-handle { width: 36px; height: 4px; background: var(--color-rule); border-radius: 2px; margin: 0 auto 1.5rem; }
+    .bottom-sheet nav { display: flex; flex-direction: column; gap: 0; }
+    .bottom-sheet nav a { display: block; padding: 1rem 0; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 400; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; border-bottom: 1px solid var(--color-rule); }
+    .bottom-sheet nav a:last-child { border-bottom: none; }
+    .bottom-sheet nav a:hover, .bottom-sheet nav a:active { color: var(--color-ink); }
+    @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } }
+    /* Side nav - quiet wayfinding */
+    .side-nav { position: fixed; left: calc(50vw - 500px); top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+    .side-nav.visible { opacity: 1; pointer-events: auto; }
+    .side-nav a { font-family: var(--font-mono); font-size: 0.62rem; color: var(--color-rule); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; display: block; padding: 0.15rem 0; }
+    .side-nav a:hover, .side-nav a.active { color: var(--color-accent); }
+    @media (max-width: 1100px) { .side-nav { display: none; } }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#research">research</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <nav>
+      <a href="../index.html#work">work</a>
+      <a href="../index.html#research">research</a>
+      <a href="../index.html#approach">approach</a>
+      <a href="../index.html#consulting">consulting</a>
+      <a href="../index.html#writing">writing</a>
+      <a href="../index.html#about">about</a>
+      <a href="../index.html#contact">contact</a>
+    </nav>
+  </div>
+
+  <!-- Side navigation -->
+  <nav class="side-nav" id="sideNav">
+    <a href="#s1">1</a>
+    <a href="#s2">2</a>
+    <a href="#s3">3</a>
+    <a href="#s4">4</a>
+    <a href="#s5">5</a>
+    <a href="#s6">6</a>
+    <a href="#s7">7</a>
+    <a href="#s8">8</a>
+    <a href="#s9">9</a>
+    <a href="#refs">ref</a>
+  </nav>
+
+  <div id="root"></div>
+  <script type="text/babel">
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555", darkMuted: "#999", darkText: "#c8c2b8",
+};
+
+function Label({ children, dark }) {
+  return <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>{children}</div>;
+}
+
+function Prose({ children, dark, style }) {
+  return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
+}
+
+function Section({ dark, children, style, id }) {
+  return <section id={id} style={{ background: dark ? C.darkBg : C.ground, padding: "5rem 2rem", ...style }}><div style={{ maxWidth: 900, margin: "0 auto" }}>{children}</div></section>;
+}
+
+function SubHead({ children, dark, num }) {
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1rem", marginTop: "2.5rem" }}>
+      {num && <span style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent }}>{num}</span>}
+      <h3 style={{ fontFamily: F.display, fontSize: "1.25rem", color: dark ? "#e8e2d8" : C.ink, fontWeight: 400 }}>{children}</h3>
+    </div>
+  );
+}
+
+function ExtLink({ href, children }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none", borderBottom: "1px solid " + C.accent + "40" }}>{children}</a>;
+}
+
+function Chip({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, letterSpacing: "0.04em", padding: "0.25rem 0.6rem", border: "1px solid " + C.rule, borderRadius: 2, whiteSpace: "nowrap" }}>{children}</span>;
+}
+
+function Callout({ children, dark }) {
+  return (
+    <div style={{ padding: "1.25rem 1.5rem", background: dark ? C.darkBgDeep : C.groundWarm, border: "1px solid " + (dark ? C.darkRule : C.rule), borderRadius: 3, marginBottom: "1.5rem", marginTop: "1.5rem" }}>
+      <div style={{ fontSize: "0.92rem", color: dark ? C.darkText : C.inkLight, lineHeight: 1.7 }}>{children}</div>
+    </div>
+  );
+}
+
+function DataTable({ dark }) {
+  const headers = ["Metric", "Class A (ELA)", "Class B (Social Studies)", "Class C (Math)", "Class D (Science)"];
+  const rows = [
+    ["Total assignments", "140", "61", "40", "78"],
+    ["Organized by week", "Yes (Week 1–25)", "No (\"No topic\")", "No", "Partial"],
+    ["Due dates set", "102 (73%)", "0 (0%)", "0 (0%)", "Partial"],
+    ["Category tags", "Yes", "No", "No", "No"],
+    ["Assignments with attachments", "120 (86%)", "53 (87%)", "1 (3%)", "44 (56%)"],
+    ["Assignments graded", "32", "0", "0", "8"],
+    ["Assignments still \"Assigned\"", "~35", "40", "39", "45"],
+    ["Descriptions provided", "0", "0", "0", "0"],
+  ];
+  const cellBase = { padding: "0.6rem 0.75rem", fontSize: "0.82rem", lineHeight: 1.5, borderBottom: "1px solid " + (dark ? C.darkRule : C.rule) };
+  return (
+    <div style={{ overflowX: "auto", marginBottom: "1.5rem", marginTop: "1.5rem" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: F.mono }}>
+        <thead>
+          <tr>
+            {headers.map((h, i) => (
+              <th key={i} style={{ ...cellBase, fontWeight: 500, textAlign: "left", color: dark ? "#e8e2d8" : C.ink, fontSize: "0.72rem", letterSpacing: "0.04em" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, ri) => (
+            <tr key={ri}>
+              {row.map((cell, ci) => (
+                <td key={ci} style={{ ...cellBase, color: ci === 0 ? (dark ? "#e8e2d8" : C.ink) : (dark ? C.darkText : C.inkLight), fontWeight: ci === 0 ? 500 : 400 }}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div style={{ fontFamily: F.body, color: C.ink, background: C.ground }}>
+
+      {/* ═══ HERO ═══ */}
+      <Section>
+        <Label>Position Paper</Label>
+        <h1 style={{ fontFamily: F.display, fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.15, marginBottom: "1rem", maxWidth: 700 }}>
+          The Empty{" "}
+          <span style={{ color: C.accent, fontStyle: "italic" }}>Container</span>
+        </h1>
+        <div style={{ fontFamily: F.body, fontSize: "1.05rem", color: C.inkLight, marginBottom: "1.5rem", fontStyle: "italic", maxWidth: 660 }}>
+          How Google Classroom's Design Failures Create Accountability Gaps That Harm Vulnerable Students
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, marginBottom: "2.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <span>Andrew Todd Marcus</span>
+          <span>April 2026</span>
+        </div>
+        <Prose>
+          Google Classroom is used by over 150 million students and educators worldwide and functions as the de facto learning management system in the majority of American K–12 schools. It is not a learning management system. It lacks the structural features — curriculum sequencing, assessment architecture, consistency enforcement, cross-class visibility, parent-facing dashboards — that define an LMS. It is a file-sharing platform with an assignment submission layer, adopted at scale because it is free and embedded in the Google Workspace ecosystem that school districts already use.
+        </Prose>
+        <Prose>
+          This paper presents what may be the first published empirical implementation audit of Google Classroom at the individual student level — measuring not whether the platform is effective in the abstract, but how it is actually used by teachers within a single school and what that variance means for a student who depends on it. Data was collected through Glassroom, an open-source tool that automates the extraction and structuring of Google Classroom content using browser automation. Within a single school in a district spending over $40,000 per student per year, a single student's classes ranged from 140 well-structured assignments with weekly organization and due dates to 61 assignments with zero due dates, zero descriptions, and no actionable instructions. The platform neither prevents this disparity nor makes it visible.
+        </Prose>
+        <Prose>
+          For the 7.9 million students receiving special education services under IDEA Part B (CRS, 2026), this opacity has legal significance. IEP accommodations that require teachers to "provide home copies of classwork and slides via Google Classroom" are unverifiable without tools that do not exist within the platform. Research consistently finds that IEPs are treated as compliance documents rather than individualization tools — that teams approach them "more like a form than an individually constructed document" (Kurth et al., 2022) — and that a third of stated student needs go unaddressed by goals or services (Kurth et al., 2025). Google Classroom's structural emptiness compounds this failure: even when an IEP mandates digital delivery of materials, the platform provides no mechanism to verify that the mandate has been met.
+        </Prose>
+        <Callout>
+          <strong>The central argument:</strong> School districts adopting Google Classroom as their primary learning platform have a responsibility to establish and enforce minimum standards for its use, to provide transparency mechanisms for families, and to audit teacher implementation — particularly for students whose legal protections depend on the platform's content.
+        </Callout>
+        <div style={{ marginTop: "2rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {["Position Paper", "Google Classroom", "Special Education", "IEP Compliance", "EdTech", "Universal Design for Learning"].map(t => <Chip key={t}>{t}</Chip>)}
+        </div>
+      </Section>
+
+      {/* ═══ SECTION 1: THE PLATFORM AND ITS ADOPTION ═══ */}
+      <Section dark id="s1">
+        <Label dark>Section 1</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Platform and Its Adoption</h2>
+        <Prose dark>Google Classroom launched in 2014 as a front-end to Google's existing productivity suite. Its adoption in K–12 education has been rapid and near-total. Chromebooks dominate the global education device market, accounting for 60% of all laptops and tablets purchased for US K–12 classrooms by 2018 (Futuresource Consulting, 2018). Over 150 million students and educators use Google Workspace for Education globally (Google, 2022). Google Classroom is the default learning platform in American public education.</Prose>
+        <Prose dark>The adoption pathway was not pedagogical. The New York Times documented Google's sales strategy: the company targeted teachers who could influence administrators, offered Chromebooks at prices no competitor could match ($149 per device), and provided the software ecosystem for free (Singer, 2017). Chromebook sales in K–12 jumped tenfold between 2012 and 2013. By 2018, Chromebooks accounted for 60% of all laptops and tablets purchased for US K–12 classrooms (Futuresource Consulting, 2018). The ecosystem lock-in was the product. The pedagogy was incidental.</Prose>
+        <Prose dark>A peer-reviewed paper in <em>TechTrends</em> conducted a technoethical audit of Google's education practices and found that the company extracts behavioral data from students, builds psychographic profiles without adequate parental consent, and uses its education market dominance to stifle alternatives (Krutka, Heath, &amp; Staudt Willet, 2021). A 2025 complaint filed with the Federal Trade Commission alleges that Google builds "intimate, dynamic behavioral and psychographic profiles" of students through Chromebooks, in potential violation of the Children's Online Privacy Protection Act (NCOSE, 2025).</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>Google Classroom's features are well documented. What is less discussed — and more consequential — is what it lacks. Google Classroom did not create the failures documented in this paper. The institutional dysfunction — the compliance orientation, the avoidance of quality evaluation, the failure to individualize — predates the platform by decades. What Google Classroom created is the conditions under which those failures become invisible and unaccountable. A platform with no minimum standard becomes a system with no minimum standard.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 2: WHAT GOOGLE CLASSROOM IS NOT ═══ */}
+      <Section id="s2">
+        <Label>Section 2</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>What Google Classroom Is Not</h2>
+
+        <SubHead num="2.1">Missing LMS Functionality</SubHead>
+        <Prose>The University of Notre Dame's Academic Technologies group assessed Google Classroom against standard LMS criteria and found it lacking a gradebook, tests and quizzes, discussion forums, a lesson builder, a calendar, and support for the Learning Tools Interoperability (LTI) standard (Notre Dame Academic Technologies, 2017). These are not advanced features. They are baseline functionality that platforms like Canvas, Moodle, and Blackboard have provided for decades.</Prose>
+        <Prose>A qualitative study of twelve higher education teachers who had implemented Google Classroom for at least one semester found that teachers perceived it as "only a facilitation tool that can be used for document management and basic classroom management, without having a significant impact on teaching methodologies" (Azhar &amp; Iqbal, 2021). The platform's own users describe it not as a learning environment but as a filing system.</Prose>
+
+        <SubHead num="2.2">Missing Structural Requirements</SubHead>
+        <Prose>More critically for the argument of this paper, Google Classroom lacks:</Prose>
+        <Prose><strong>Structural requirements for teachers.</strong> There are no required fields when creating an assignment. A teacher can post a title with no description, no instructions, no attachments, no due date, and no rubric. The platform records this as a valid assignment.</Prose>
+        <Prose><strong>Consistency enforcement across a school or district.</strong> There is no mechanism for administrators to establish or audit minimum standards for how teachers use the platform. Each teacher's Classroom page is an independent, unreviewed space.</Prose>
+        <Prose><strong>Cross-class visibility for students and families.</strong> A student enrolled in six classes must navigate to each class individually to see their assignments. There is no unified dashboard, no "what's due this week" view, no way to compare the quality or quantity of content across classes.</Prose>
+        <Prose><strong>Parent-facing accountability.</strong> Parents can access their child's Classroom data by logging in as the student, but there is no parent view, no notification system for incomplete or unstructured assignments, and no way to see the full picture without manually clicking into every class and every assignment.</Prose>
+        <Prose><strong>Accommodation verification.</strong> For students with IEPs that mandate specific accommodations through the platform, there is no mechanism for verifying that the accommodation is being implemented. The platform cannot distinguish between a teacher who posts comprehensive materials and a teacher who posts an empty title.</Prose>
+        <Prose>These omissions are not technical limitations. They are design choices. Google Classroom was designed as a lightweight tool for teachers who were already organized. It was not designed to ensure that all teachers meet a minimum standard, nor to provide transparency to the families and administrators who depend on it.</Prose>
+
+        <SubHead num="2.3">The SAMR Diagnosis</SubHead>
+        <Prose>Research across COVID-era emergency remote learning studies and EdTech implementation research consistently finds that Google Classroom operates almost exclusively at the Substitution level of the SAMR model (Puentedura, 2006): worksheets become Google Docs, hand-ins become digital submissions, and the existing workflow is digitized without transformation (EdWeek Research Center, 2021; RAND Corporation, 2021). The dominant pattern is linear and non-iterative:</Prose>
+        <Callout>Post → Complete → Submit → Grade</Callout>
+        <Prose>Not:</Prose>
+        <Callout>Iterate → Critique → Revise → Reflect</Callout>
+        <Prose>This is not an accident of teacher behavior. It is an artifact of platform design. Google Classroom's architecture — an assignment stream with a submission button — encodes the Substitution-level workflow. There are no built-in tools for iteration, peer critique, revision cycles, or process documentation. The platform does not support transformation because it was not designed to.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 3: THE ABSENCE OF IMPLEMENTATION AUDITS ═══ */}
+      <Section dark id="s3">
+        <Label dark>Section 3</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Absence of Implementation Audits</h2>
+        <Prose dark>No published study identified in this review has examined how teachers actually use Google Classroom at the implementation level — measuring the quality, completeness, and consistency of what is posted, class by class, within a single school or district.</Prose>
+        <Prose dark>The existing research on Google Classroom asks a narrower question: is the platform more effective than no platform at all? Studies consistently find that it is (Sudaryani, Rukmini, &amp; Ardiasih, 2023; Shaharanee, Jamil, &amp; Rodzi, 2016; Basilaia, 2020). This is a bar so low it tells us almost nothing about the quality of what teachers actually provide through the platform. The studies that do exist are predominantly small-scale, perception-based, or conducted during the emergency conditions of COVID-era remote learning. They establish that the platform functions. They do not examine whether what is delivered through it is sufficient.</Prose>
+        <Prose dark>The gap in the literature is not whether Google Classroom "works." The gap is whether what teachers post through it is sufficient for students to learn — particularly students who cannot supplement the platform's content with in-person instruction because they are absent, on medical leave, or receiving instruction remotely under an IEP.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>This paper presents what may be the first empirical data addressing that gap.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 4: THE VARIANCE ═══ */}
+      <Section id="s4">
+        <Label>Section 4</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>The Variance: Empirical Evidence</h2>
+
+        <SubHead num="4.1">Method</SubHead>
+        <Prose>To measure the actual content and structure of Google Classroom as experienced by a student, I built Glassroom — an open-source tool that uses browser automation (Playwright) to extract every assignment from every class into a structured database. The Google Classroom API is blocked by most school districts; Glassroom uses the same browser session a student would use, extracting the data the platform itself refuses to aggregate.</Prose>
+        <Prose>For each assignment, Glassroom captures: title, full description text, due date, posted date, teacher name, points possible, status (Assigned, Turned in, Graded, Missing, Done), whether submission is required, grade if assigned, all attachment URLs and titles, and week/topic grouping. Each record is keyed by assignment URL for idempotent re-runs. First-seen and last-modified timestamps create an audit trail. All Google Docs, Slides, and Sheets attachments are downloaded as PDFs via Google's export URL pattern.</Prose>
+
+        <SubHead num="4.2">Data</SubHead>
+        <Prose>The following data was collected from a public school district spending over $40,000 per student per year. Four classes, one student, one school year.</Prose>
+        <DataTable />
+
+        <SubHead num="4.3">Analysis</SubHead>
+        <Prose><strong>Description fields are universally empty.</strong> No teacher in this school uses Google Classroom's description field. All instructional content, when it exists, is placed in attached documents. The platform's primary text field for communicating assignment instructions serves no function in practice.</Prose>
+        <Prose><strong>The variance in structural completeness is extreme.</strong> Class A provides weekly organization, due dates on 73% of assignments, category tags, and attached documents on 86% of assignments. Class B provides none of these structural elements — zero due dates across 61 assignments, no week organization, and assignment titles meaningless without in-class context. Class C provides almost no attached materials at all — 1 attachment across 40 assignments. The platform treats all four classes identically.</Prose>
+        <Prose><strong>Attachment presence does not indicate instructional completeness.</strong> Class B has attachments on 87% of assignments — a number that might suggest adequate content. Examination of the downloaded PDFs reveals that many attachments are empty templates, curriculum documents from external publishers that assume in-class context, or student-facing documents with no instructions. The presence of a file is not the presence of instruction.</Prose>
+        <Prose><strong>Grading patterns correlate with structural completeness.</strong> Class A has graded 32 assignments. Classes B and C have graded zero. The teacher who structures assignments is the teacher who evaluates them. The teacher who posts titles without content does not return feedback.</Prose>
+        <Prose><strong>The student experience is fragmented and opaque.</strong> A student navigating these four classes encounters four entirely different systems — one organized by week with clear expectations, one organized by vague unit names with no deadlines, one with almost no digital content, and one somewhere between. The platform provides no mechanism for the student, the family, or the administration to see this fragmentation.</Prose>
+        <Callout>The core mechanism is this: the platform defines the minimum standard. If the platform has no minimum, the system has no minimum. Google Classroom enforces nothing — no required fields, no structural consistency, no visibility. The variance documented above — observed in a single school, but enabled by platform architecture that is identical everywhere Google Classroom is deployed — is not teacher inconsistency. It is the absence of system-level constraints, made structural by a platform that encodes no expectations.</Callout>
+      </Section>
+
+      {/* ═══ SECTION 5: THE ACCOUNTABILITY GAP ═══ */}
+      <Section dark id="s5">
+        <Label dark>Section 5</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Accountability Gap</h2>
+
+        <SubHead dark num="5.1">The IEP Compliance Landscape</SubHead>
+        <Prose dark>The scale of special education in America is substantial. In the 2023–2024 school year, approximately 7.9 million children ages 3 through 21 received educational services under Part B of IDEA — roughly 15.9% of all public school students (Congressional Research Service, 2026). Each of these students has an Individualized Education Program — a legal document specifying required services and accommodations.</Prose>
+        <Prose dark>The research on IEP quality is unambiguous and damning.</Prose>
+        <Prose dark>A national-sample study of IEPs for students with complex support needs found that <strong>nearly a third of stated student needs were not addressed by goals or supplementary aids and services</strong> (Kurth et al., 2025). The study found "a large amount of variation in alignment" but neither educational placement nor type of student need predicted whether a need was actually addressed in the IEP. A related study by the same research group found that IEP teams treat the document "more like a form than an individually constructed document" and that the efficiency of online IEP forms comes "as a loss of individualization" (Kurth et al., 2022). Despite the Supreme Court's clarification in <em>Endrew F. v. Douglas County School District</em> (2017) that an IEP should be "a carefully designed document that thoroughly considers the child's present levels, disability, and potential for growth," the evidence suggests the opposite is happening in practice.</Prose>
+        <Prose dark>A review of 126 IEPs for students with social, emotional, or behavioral needs found them "somewhat compliant" but failing to "comprehensively address student needs or align across areas, violating the spirit of" IDEA (Hott et al., 2019). Woods et al. (2024), writing in <em>Language, Speech, and Hearing Services in Schools</em>, argue that IEP data have been used to document procedural compliance while ignoring substantive quality — that districts have "simply 'checked the boxes'" rather than ensuring that IEPs function as tools for individualized education.</Prose>
+        <Prose dark>The distinction between procedural and substantive compliance is the structural heart of the problem. Procedural compliance means the meeting was held, the forms were filed, the required team members were present. Substantive compliance means the IEP actually addresses the child's actual needs and produces actual educational benefit. A district can be procedurally flawless — every box checked, every deadline met, every signature obtained — and substantively bankrupt. The system rewards the former and rarely examines the latter.</Prose>
+
+        <SubHead dark num="5.2">Consequences for Vulnerable Students</SubHead>
+        <Prose dark>This variance has consequences that scale with the vulnerability of the student.</Prose>
+        <Prose dark>For a typically developing student attending school daily, the emptiness of Class B's Classroom page is mitigated by in-person instruction. The student receives assignments verbally, completes work in class, and the platform's deficiencies are invisible.</Prose>
+        <Prose dark>For a student on medical leave, with an IEP, the platform is the only interface to the curriculum. Every empty field is a wall. A title without instructions is an assignment that cannot be completed. A due date that was never set is a deadline that cannot be met. An attachment that assumes in-class context is a document that communicates nothing.</Prose>
+
+        <SubHead dark num="5.3">The IEP Accommodation Gap</SubHead>
+        <Prose dark>The student whose data is presented above has an IEP that includes the following accommodations, signed by the school district:</Prose>
+        <div style={{ marginBottom: "1.5rem" }}>
+          {[
+            "Provide home copies of in-class student notes, classwork, and student-facing slides, either digitally (e.g., Google Classroom) or on paper.",
+            "A home-school communication log (weekly or more frequently as needed) will be developed and updated by the team.",
+            "The IEP team will develop an action plan for missed work while the student is absent due to documented medical condition for three or more days.",
+            "The student will not be penalized academically due to absences, tardies, or missed classes.",
+          ].map((item, i) => (
+            <div key={i} style={{ padding: "0.75rem 1rem", marginBottom: "0.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3, fontSize: "0.92rem", color: C.darkText, lineHeight: 1.6, fontStyle: "italic" }}>"{item}"</div>
+          ))}
+        </div>
+        <Prose dark>The IEP mandates these accommodations. Google Classroom is named as the delivery mechanism. Google Classroom has no way to verify whether any of them have been implemented. The causal chain is: IEP requires X → platform is the designated means of delivery → platform cannot verify X → compliance is unverifiable by design.</Prose>
+        <Prose dark>The Glassroom data shows that in Class B, none of these accommodations were implemented through the platform. No home copies of notes or slides were provided. No communication log was maintained. No action plan for missed work was reflected in the assignment structure. The student received a failing grade in the class — an academic penalty for absence, in direct contradiction of the IEP.</Prose>
+
+        <SubHead dark num="5.4">The Parent Experience</SubHead>
+        <Prose dark>The research on parent experience in special education confirms that this case is not exceptional.</Prose>
+        <Prose dark>McKenna and Brigham (2024), in a qualitative study of parents of students with emotional and behavioral disabilities, found that parents who perceived "a lack of transparency regarding procedures and support options, an unwillingness or inability by schools to provide services, and failing to implement the agreed upon IEP reported high levels of stress and a general mistrust of educators." Parents who reported positive experiences "also discussed overcoming significant challenges to achieve them." The system rewards parents who escalate, fight, document, and advocate relentlessly — and those parents still describe the process as traumatic. Parents who trust the system, who lack resources to fight, who are consumed by the medical and emotional realities of raising a child with disabilities, receive whatever the system defaults to. The platform's empty fields are part of what that default looks like.</Prose>
+
+        <SubHead dark num="5.5">Legal Framework</SubHead>
+        <Prose dark>Under IDEA, schools must provide a Free Appropriate Public Education (FAPE) to eligible students. The Supreme Court held in <em>Endrew F. v. Douglas County School District</em> (2017) that schools must offer individualized programming that enables "appropriate progress" — a standard above mere token advancement. Section 504 of the Rehabilitation Act requires that students with disabilities receive educational services designed to meet their individual needs "as adequately as the needs of nondisabled students are met."</Prose>
+        <Prose dark>A platform that cannot verify whether IEP accommodations are being implemented is a platform that cannot support FAPE compliance. When that platform is the primary interface between a medically absent student and the curriculum, its structural deficiencies risk becoming procedural violations.</Prose>
+
+        <SubHead dark num="5.6">The Universal Design for Learning Argument: This Is Not a Special Education Problem</SubHead>
+        <Prose dark>The accommodations in this student's IEP — post complete materials digitally, include instructions, set due dates, communicate with the family — are not exotic requirements. They are basic instructional design. They are what the Universal Design for Learning framework identifies as good practice for every student.</Prose>
+        <Prose dark>UDL, developed by the Center for Applied Special Technology (CAST) in collaboration with Harvard University, is named by name in the Every Student Succeeds Act (ESSA), which encourages states and districts to use federal funding to expand its adoption (ESSA, 2015). UDL's three principles — multiple means of engagement, representation, and action/expression — all point toward the same structural commitment: make the curriculum accessible at the design stage, not as an afterthought.</Prose>
+        <Prose dark>The standard analogy is the curb cut. Posting complete assignments to Google Classroom is a curb cut. A teacher who posts an assignment with a clear title, instructions, attached materials, and a due date serves the student with an IEP who can't take notes. That same post also serves the student who was absent for a dentist appointment, the student who was confused in class, the parent trying to help with homework, and the tutor hired to provide supplemental support. Out-of-school tutoring — a service families pay for and increasingly depend on — is functionally impossible when the platform doesn't contain enough information for the tutor to know what the student is learning.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>A platform that required teachers to fill in an instructions field, attach relevant materials, and set a due date before publishing an assignment would not be imposing a special education accommodation. It would be implementing the minimum standard that UDL defines as good practice for all learners. Every competing LMS offers required fields. Google Classroom does not. The result is that the baseline standard the federal government endorses through ESSA is unenforceable on the platform that the vast majority of school districts use.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 6: THE INSTITUTIONAL CONTEXT ═══ */}
+      <Section id="s6">
+        <Label>Section 6</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>The Institutional Context: Why Districts Don't Audit</h2>
+        <Prose>The failure to audit Google Classroom implementation is not an isolated oversight. It reflects an institutional pattern — documented extensively in a companion paper (<ExtLink href="judgment-at-scale.html">Marcus, 2026a</ExtLink>) — in which accountability systems have been designed to measure outputs rather than quality. Two decades of standards-based accountability policy produced school systems trained to count (test scores, completion rates, login metrics) rather than evaluate (whether what was posted was sufficient for a student to learn from). Google Classroom is the perfect tool for a system that does not want to look closely.</Prose>
+        <Prose>Districts spend significant resources on educational technology — but on platforms that produce data for the compliance machine, not platforms that improve teaching quality. Programs like iReady cost approximately $30 per student per subject per year, plus mandatory professional development at $2,000 per session (Curriculum Associates, 2024). A review of iReady's research base noted that its effectiveness studies are largely conducted by parties associated with the publisher (Johns Hopkins School of Education, 2016). Districts spend tens of thousands of dollars annually on it because it produces diagnostic data that accountability frameworks demand.</Prose>
+        <Prose>Districts will pay for iReady. They will not pay for tools, training, or oversight that improve the quality of what teachers post to Google Classroom. They will not audit whether their free LMS is being used in a way that serves students. They will not establish minimum standards for assignment structure. The system spends money on anything that produces a number and nothing on anything that requires judgment.</Prose>
+        <Prose>The teacher variance documented in this paper — one teacher posting 140 well-structured assignments, another posting 61 empty titles — is also a form of institutional cognitive offloading. When a system provides a tool that produces the appearance of compliance without the substance of quality, the system stops examining the substance. The cognitive offloading research that documents this pattern at the individual level (Gerlich, 2025) operates identically at the institutional level: the district adopts the platform, posts the logins, counts the submissions, and never examines whether anything was taught.</Prose>
+        <Prose>Special education teacher burnout compounds the problem. Wong et al. (2017) found that special education teacher burnout is directly associated with teaching practice and student engagement, which in turn affects student IEP outcomes. Burned-out teachers produce worse results for the students who need the most. The system exhausts the professionals it depends on, then fails to notice when the exhaustion degrades service to the most vulnerable students — because the platform that should make the degradation visible was designed to make nothing visible at all.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 7: WHAT PURPOSEFUL DESIGN LOOKS LIKE ═══ */}
+      <Section dark id="s7">
+        <Label dark>Section 7</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>What Purposeful Design Looks Like</h2>
+        <Prose dark>The claim that a learning platform must enforce structure is not theoretical. Platforms that embed pedagogical accountability exist and have been deployed at scale. The point of the following example is not that every platform should replicate this design. It is that platforms <em>can</em> encode expectations — and that when they do, the variance documented in this paper does not occur. The choice to enforce nothing is a design decision, not an inevitability.</Prose>
+        <Prose dark>The Studio Management System (SMS), designed over six years at NuVu Studio, demonstrates a fundamentally different approach. The platform serves as a digital studio space — curriculum delivery, process documentation, collaborative assessment, and portfolio generation in a single ecosystem.</Prose>
+        <Prose dark>The platform's design embeds expectations:</Prose>
+        <Prose dark><strong>Process is required, not optional.</strong> Students document their work iteratively — sketches, research, photographs, writing — not just final submissions. Teachers provide resources and project framing through structured fields, not freeform posting. The tool requires substance because the fields demand it.</Prose>
+        <Prose dark><strong>Feedback is bidirectional.</strong> Students and teachers evaluate progress through built-in assessment tools. Narrative evaluation replaces numerical grading as the primary record of achievement. The platform makes the quality of feedback visible to students, families, and administrators.</Prose>
+        <Prose dark><strong>The portfolio is the primary artifact.</strong> Assessment is based on documented growth, not snapshot performance. A student's work is visible across projects, collaborators, and time — not siloed by class period.</Prose>
+        <Prose dark><strong>The tool shaped the pedagogy.</strong> By requiring documentation, reflection, and iterative work, the platform changed how teachers taught and how students learned. Teachers who used the SMS could not post an empty title and walk away. The platform would not let them.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>Applying the SAMR framework: the SMS operates at the Modification and Redefinition levels by design. It does not digitize existing workflows. It creates new ones — collaborative assessment, process documentation, portfolio-driven evaluation — that would not exist without the platform. Google Classroom operates at the Substitution level because it was designed as a substitute, not a transformation.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 8: GLASSROOM ═══ */}
+      <Section id="s8">
+        <Label>Section 8</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>Glassroom: Making the Invisible Visible</h2>
+        <Prose>Google Classroom has no audit layer. Districts cannot see what teachers post. Parents cannot see across classes. Administrators cannot enforce minimum standards. The platform's opacity is not a bug — it is the architecture. Glassroom exists because that architecture creates an accountability vacuum, and someone has to fill it. Glassroom is not just a tool. It is an audit layer for a system that lacks one — infrastructure that should exist inside the platform but doesn't, built from the outside because the inside was designed to be empty.</Prose>
+        <Prose>The tool uses browser automation (Playwright) to log in as the student, navigate every selected class, and extract every assignment with full metadata. It stores the data in a local database, downloads all Google Docs and Slides as PDFs, and presents everything in a dashboard sortable by class, status, and due date. All data exports to CSV. All data stays on the parent's machine. No data is transmitted to any external server.</Prose>
+        <Prose>Glassroom was built as a parent tool. Its secondary function as a research instrument is a consequence of its design. When a parent runs Glassroom across multiple classes, the variance documented in Section 4 becomes visible in seconds. Empty fields are data. A class with zero due dates across sixty-one assignments is a class that was never structured for the student the platform claims to serve. That data, exported and timestamped, becomes evidence — in IEP meetings, in BSEA hearings, in conversations with administrators who have never seen what their teachers' Classroom pages actually look like.</Prose>
+        <div style={{ marginTop: "1rem", marginBottom: "2rem" }}>
+          <ExtLink href="https://github.com/sageframe-no-kaji/glassroom">Glassroom is open source and available on GitHub &nearr;</ExtLink>
+        </div>
+
+        <SubHead num="8.1">Proposed Study</SubHead>
+        <Prose>The data presented in this paper represents a single student in a single school. It demonstrates the feasibility of the method and the existence of the variance. A multi-site study is needed to quantify the scope.</Prose>
+        <Prose><strong>Research question:</strong> What is the variance in teacher implementation quality within Google Classroom, and how does that variance correlate with student outcomes, IEP compliance, and district oversight practices?</Prose>
+        <Prose><strong>Method:</strong> Recruit 50–100 parents across multiple districts through special education advocacy networks. Parents run Glassroom on their child's account with informed consent. Data is anonymized before analysis — no student names, teacher names, or district identifiers. Metrics include: assignment count per class, percentage with due dates, percentage with descriptions, percentage with attachments, status distribution, week/topic organization, and attachment content quality (assessed via qualitative analysis of downloaded PDFs).</Prose>
+        <Prose><strong>Proposed measures:</strong> Within-student variance (how different are a single student's classes?), within-school variance (how different are teachers in the same building?), across-district variance (do some districts enforce standards while others don't?), IEP vs. non-IEP comparison (do classes serving students with IEPs show different implementation patterns?), and attachment content analysis (do posted materials contain real instructional content, or empty templates?).</Prose>
+      </Section>
+
+      {/* ═══ SECTION 9: RECOMMENDATIONS ═══ */}
+      <Section dark id="s9">
+        <Label dark>Section 9</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>Recommendations</h2>
+        <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
+          {[
+            { title: "For school districts.", text: "Districts that adopt Google Classroom as their primary learning platform should establish and enforce minimum standards for its use, aligned with UDL principles already endorsed by ESSA. These standards should include required fields for all assignments (description or instructions, due date for graded work, and attached materials where applicable), minimum posting frequency per class, and accommodation-specific requirements for students with IEPs. Compliance should be audited through administrative access, not assumed." },
+            { title: "For IEP teams.", text: "IEP accommodations that reference Google Classroom should specify measurable implementation criteria. \"Provide home copies of classwork via Google Classroom\" is unenforceable as written. The accommodation should specify what constitutes a complete posting and how compliance will be verified." },
+            { title: "For families and advocates.", text: "Until platforms and districts provide built-in transparency, families of students with IEPs and medical absences should independently verify what teachers are posting. Tools like Glassroom make this possible. The data produced — timestamped, structured, exportable — is admissible and persuasive in educational dispute resolution." },
+            { title: "For researchers.", text: "The absence of implementation audit data for the most widely used educational platform in America is itself a finding. The tool and methodology presented here offer a replicable, scalable approach to filling that gap." },
+            { title: "For Google.", text: "Add a parent dashboard with cross-class visibility. Add required fields for assignments — at minimum, an instructions field and a due date — as the default, with the option to override. Add administrative audit tools. Add accommodation tracking. These features exist in every competing LMS. Their absence in the most widely used educational platform in America is a design choice, not a constraint. Make a different choice." },
+          ].map((item, i) => (
+            <div key={i} style={{ padding: "1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.5rem", color: "#e8e2d8" }}>{item.title}</div>
+              <div style={{ fontSize: "0.92rem", color: C.darkText, lineHeight: 1.65 }}>{item.text}</div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ REFERENCES ═══ */}
+      <Section id="refs">
+        <Label>References</Label>
+        <div style={{ maxWidth: 700 }}>
+          {[
+            'Azhar, K., & Iqbal, N. (2021). Effectiveness of Google Classroom: Teachers\u2019 Perceptions. Prizren Social Science Journal, 2(2), 52\u201366.',
+            'Basilaia, G. (2020). Replacing the Classic Learning Form at Universities as an Immediate Response to the COVID-19 Virus Infection in Georgia. International Journal for Research in Applied Science and Engineering Technology, 8(3), 101\u2013108.',
+            'CAST. (2024). Universal Design for Learning Guidelines version 3.0.',
+            'Congressional Research Service. (2026). The Individuals with Disabilities Education Act (IDEA), Part B: Key Statutory and Regulatory Provisions. Congress.gov.',
+            'Curriculum Associates. (2024). iReady Personalized Instruction pricing and program documentation.',
+            'EdWeek Research Center. (2021). Technology in Education Survey.',
+            'Endrew F. v. Douglas County School District, 580 U.S. ___ (2017).',
+            'Every Student Succeeds Act (ESSA), Pub. L. No. 114-95 (2015).',
+            'Futuresource Consulting. (2018). U.S. K\u201312 education device market share data.',
+            'Gerlich, M. (2025). AI tools in society: Impacts on cognitive offloading and the future of critical thinking. Societies, 15(1), 6.',
+            'Google. (2022). Google Workspace for Education usage statistics. The Keyword.',
+            'Hott, B. L., et al. (2019). Are Rural Students Receiving FAPE? A Descriptive Review of IEPs for Students with Social, Emotional, or Behavioral Needs. The Journal of Special Education, 55(3), 163\u2013173.',
+            'Johns Hopkins School of Education. (2016). Review of iReady research methodology and publisher affiliations.',
+            'Krutka, D. G., Heath, M. K., & Staudt Willet, K. B. (2021). Don\u2019t Be Evil: Should We Use Google in Schools? TechTrends, 65, 421\u2013431.',
+            'Kurth, J. A., et al. (2022). An Investigation of IEP Quality Associated With Special Education Placement. Exceptionality. ERIC ED627856.',
+            'Kurth, J. A., et al. (2025). Quality of IEPs for Students with Complex Support Needs: Is There Alignment Across IEP Components? Exceptionality, 33(1).',
+            'Marcus, A. T. (2026a). Judgment at Scale: A Position Paper on the Structural Deficit That AI Exposed but Did Not Create. atmarcus.net.',
+            'McKenna, J. W., & Brigham, F. J. (2024). Special Education Experiences of Parents/Guardians of Children with Emotional and Behavioral Disabilities. Child Care in Practice, 31(3), 354\u2013379.',
+            'NCOSE. (2025). FTC complaint regarding Google Chromebook data harvesting and COPPA violations.',
+            'Notre Dame Academic Technologies. (2017). Google Classroom LMS functionality assessment.',
+            'Puentedura, R. (2006). Transformation, Technology, and Education.',
+            'RAND Corporation. (2021). EdTech implementation research: LMS usage patterns in K\u201312.',
+            'Shaharanee, I. N. M., Jamil, J. M., & Rodzi, A. S. S. M. (2016). Google Classroom as a tool for active learning. AIP Conference Proceedings, 1761(1), 020069.',
+            'Singer, N. (2017, May 13). How Google Took Over the Classroom. The New York Times.',
+            'Sudaryani, H., Rukmini, D., & Ardiasih, L. S. (2023). Students\u2019 Perceptions on Benefits and Challenges in Using Google Classroom. Jurnal Pendidikan Bahasa Inggris Undiksha, 11(1), 24\u201332.',
+            'Wong, V. W., Ruble, L. A., Yu, Y., & McGrew, J. H. (2017). Too Stressed to Teach? Teaching Quality, Student Engagement, and IEP Outcomes. Exceptional Children, 83(4), 412\u2013427.',
+            'Woods, A. D., Ireland, M. C., Murphy, K. A., & Lancaster, H. S. (2024). Go Beyond Compliance: Use Individualized Education Programs to Answer Strategic Questions and Improve Programs. Language, Speech, and Hearing Services in Schools, 55(2), 249\u2013258.',
+          ].map((ref, i) => (
+            <div key={i} style={{ fontSize: "0.82rem", color: C.inkLight, lineHeight: 1.6, marginBottom: "0.75rem", paddingLeft: "1.5rem", textIndent: "-1.5rem" }}>{ref}</div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ CLOSING ═══ */}
+      <Section dark style={{ padding: "3rem 2rem" }}>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.darkText, fontStyle: "italic", lineHeight: 1.7 }}>
+          This paper is a companion to <ExtLink href="judgment-at-scale.html">Judgment at Scale</ExtLink>, which provides the broader evidentiary foundation for the argument that institutions systematically eliminated the capacity for independent judgment — and that AI revealed the deficit rather than creating it. The present paper documents what that deficit looks like at the level of a single student, a single platform, and a single school year.
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.darkMuted, marginTop: "1.5rem" }}>&mdash; ATM, April 2026</div>
+        <div style={{ marginTop: "2rem", padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 3 }}>
+          <div style={{ fontSize: "0.82rem", color: C.darkMuted, lineHeight: 1.6 }}>
+            &copy; 2026 Andrew Todd Marcus &middot; <ExtLink href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</ExtLink>
+          </div>
+        </div>
+        <div style={{ marginTop: "1.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <ExtLink href="judgment-at-scale.html">&larr; Judgment at Scale</ExtLink>
+          <ExtLink href="https://sageframe.substack.com">Constructive Interference &nearr;</ExtLink>
+        </div>
+      </Section>
+
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Andrew Todd Marcus &middot; Cambridge, MA</p>
+      <p>Blueprint for Creativity &middot; Sageframe</p>
+    </div>
+  </footer>
+  <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const sheet = document.getElementById('bottomSheet');
+    const backdrop = document.getElementById('sheetBackdrop');
+    function openSheet() { sheet.classList.add('open'); backdrop.classList.add('visible'); toggle.classList.add('active'); toggle.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+    function closeSheet() { sheet.classList.remove('open'); backdrop.classList.remove('visible'); toggle.classList.remove('active'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+    toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
+    backdrop.addEventListener('click', closeSheet);
+    sheet.querySelectorAll('nav a').forEach(a => a.addEventListener('click', closeSheet));
+
+    // Side nav scroll tracking — wait for React/Babel to render
+    function initSideNav() {
+      const s1 = document.getElementById('s1');
+      if (!s1) { setTimeout(initSideNav, 100); return; }
+
+      const sideNav = document.querySelector('.side-nav');
+      const sideLinks = document.querySelectorAll('.side-nav a');
+      const sections = ['s1','s2','s3','s4','s5','s6','s7','s8','s9','refs'].map(id => document.getElementById(id));
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+          if (s && s.getBoundingClientRect().top <= 200) current = s.id;
+        });
+        sideLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+        // Show/hide based on s1 position
+        if (s1.getBoundingClientRect().top > window.innerHeight * 0.8) {
+          sideNav.classList.remove('visible');
+        } else {
+          sideNav.classList.add('visible');
+        }
+      }, { passive: true });
+    }
+    initSideNav();
+  </script>
+</body>
+</html>
