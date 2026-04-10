@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judgment at Scale — Position Paper</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&amp;family=IBM+Plex+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    button { font-family: inherit; }
+    a { color: inherit; }
+  </style>
+  <style>
+    :root {
+      --color-ink: #1a1a1a;
+      --color-ink-muted: #7a7a7a;
+      --color-ground: #f5f2ed;
+      --color-accent: #c45a2d;
+      --color-rule: #d0c9be;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --max-width: 1080px;
+      --gutter: clamp(1.5rem, 5vw, 4rem);
+    }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245, 242, 237, 0.92); }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; }
+    header nav { display: flex; gap: 2rem; }
+    header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; }
+    header nav a:hover { color: var(--color-ink) !important; }
+    footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; }
+    footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); max-width: none; }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.25rem; width: 28px; height: 22px; position: relative; flex-shrink: 0; }
+    .nav-toggle span { display: block; width: 100%; height: 2px; background: var(--color-ink); border-radius: 1px; position: absolute; left: 0; transition: all 0.25s ease; }
+    .nav-toggle span:nth-child(1) { top: 0; }
+    .nav-toggle span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .nav-toggle span:nth-child(3) { bottom: 0; }
+    .nav-toggle.active span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+    .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; opacity: 0; transition: opacity 0.25s ease; }
+    .sheet-backdrop.visible { display: block; opacity: 1; }
+    .bottom-sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 201; background: var(--color-ground); border-top: 2px solid var(--color-accent); border-radius: 12px 12px 0 0; padding: 1.5rem 2rem 2.5rem; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); box-shadow: 0 -4px 24px rgba(0,0,0,0.12); }
+    .bottom-sheet.open { transform: translateY(0); }
+    .sheet-handle { width: 36px; height: 4px; background: var(--color-rule); border-radius: 2px; margin: 0 auto 1.5rem; }
+    .bottom-sheet nav { display: flex; flex-direction: column; gap: 0; }
+    .bottom-sheet nav a { display: block; padding: 1rem 0; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 400; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; border-bottom: 1px solid var(--color-rule); }
+    .bottom-sheet nav a:last-child { border-bottom: none; }
+    .bottom-sheet nav a:hover, .bottom-sheet nav a:active { color: var(--color-ink); }
+    @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } }
+    /* Side nav - quiet wayfinding */
+    .side-nav { position: fixed; left: clamp(0.5rem, 2vw, 1.5rem); top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
+    .side-nav a { font-family: var(--font-mono); font-size: 0.62rem; color: var(--color-rule); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s; display: block; padding: 0.15rem 0; }
+    .side-nav a:hover, .side-nav a.active { color: var(--color-accent); }
+    @media (max-width: 1280px) { .side-nav { display: none; } }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#research">research</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <nav>
+      <a href="../index.html#work">work</a>
+      <a href="../index.html#research">research</a>
+      <a href="../index.html#approach">approach</a>
+      <a href="../index.html#consulting">consulting</a>
+      <a href="../index.html#writing">writing</a>
+      <a href="../index.html#about">about</a>
+      <a href="../index.html#contact">contact</a>
+    </nav>
+  </div>
+
+  <!-- Side navigation -->
+  <nav class="side-nav" id="sideNav">
+    <a href="#s1">1</a>
+    <a href="#s2">2</a>
+    <a href="#s3">3</a>
+    <a href="#s4">4</a>
+    <a href="#s5">5</a>
+    <a href="#s6">6</a>
+    <a href="#s7">7</a>
+    <a href="#s8">8</a>
+    <a href="#refs">ref</a>
+  </nav>
+
+  <div id="root"></div>
+  <script type="text/babel">
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555", darkMuted: "#999", darkText: "#c8c2b8",
+};
+
+function Label({ children, dark }) {
+  return <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>{children}</div>;
+}
+
+function Prose({ children, dark, style }) {
+  return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
+}
+
+function Section({ dark, children, style, id }) {
+  return <section id={id} style={{ background: dark ? C.darkBg : C.ground, padding: "5rem 2rem", ...style }}><div style={{ maxWidth: 900, margin: "0 auto" }}>{children}</div></section>;
+}
+
+function SubHead({ children, dark, num }) {
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1rem", marginTop: "2.5rem" }}>
+      {num && <span style={{ fontFamily: F.mono, fontSize: "0.78rem", color: C.accent }}>{num}</span>}
+      <h3 style={{ fontFamily: F.display, fontSize: "1.25rem", color: dark ? "#e8e2d8" : C.ink, fontWeight: 400 }}>{children}</h3>
+    </div>
+  );
+}
+
+function ExtLink({ href, children }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "none", borderBottom: "1px solid " + C.accent + "40" }}>{children}</a>;
+}
+
+function Chip({ children }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted, letterSpacing: "0.04em", padding: "0.25rem 0.6rem", border: "1px solid " + C.rule, borderRadius: 2, whiteSpace: "nowrap" }}>{children}</span>;
+}
+
+function Callout({ children, dark }) {
+  return (
+    <div style={{ padding: "1.25rem 1.5rem", background: dark ? C.darkBgDeep : C.groundWarm, border: "1px solid " + (dark ? C.darkRule : C.rule), borderRadius: 3, marginBottom: "1.5rem", marginTop: "1.5rem" }}>
+      <div style={{ fontSize: "0.92rem", color: dark ? C.darkText : C.inkLight, lineHeight: 1.7 }}>{children}</div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div style={{ fontFamily: F.body, color: C.ink, background: C.ground }}>
+
+      {/* ═══ HERO ═══ */}
+      <Section>
+        <Label>Position Paper</Label>
+        <h1 style={{ fontFamily: F.display, fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.15, marginBottom: "1rem", maxWidth: 700 }}>
+          Judgment{" "}
+          <span style={{ color: C.accent, fontStyle: "italic" }}>at Scale</span>
+        </h1>
+        <div style={{ fontFamily: F.body, fontSize: "1.05rem", color: C.inkLight, marginBottom: "1.5rem", fontStyle: "italic", maxWidth: 660 }}>
+          A Position Paper on the Structural Deficit That AI Exposed but Did Not Create
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, marginBottom: "2.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <span>Andrew Todd Marcus</span>
+          <span>April 2026</span>
+        </div>
+        <Prose>
+          This paper provides the evidentiary foundation for the argument made in <ExtLink href="https://sageframe.substack.com/p/the-same-lever"><em>The Same Lever</em></ExtLink> (Marcus, 2026). Every major claim in that manifesto — that institutions systematically eliminated the capacity for independent judgment, that AI revealed rather than created this deficit, that the gap is epistemological rather than technical, and that the consequences extend beyond education into organizational resilience and democratic governance — is sourced, cited, and analyzed here.
+        </Prose>
+        <Prose>This is not a proposal. It is a diagnosis.</Prose>
+        <Callout>
+          <strong>The central claim:</strong> AI did not create a crisis of judgment. It entered a system that had already deprioritized and de-trained that capacity across education, professional development, and institutional governance. What AI changes is the speed at which that deficit becomes visible and the scale at which it becomes consequential.
+        </Callout>
+        <div style={{ marginTop: "2rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {["Position Paper", "AI Governance", "Cognitive Offloading", "Education Policy", "Institutional Design"].map(t => <Chip key={t}>{t}</Chip>)}
+        </div>
+      </Section>
+
+      {/* ═══ SECTION 1: COGNITIVE OFFLOADING ═══ */}
+      <Section dark id="s1">
+        <Label dark>Section 1</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Cognitive Offloading Evidence</h2>
+        <Prose dark>The research base on AI tool usage and critical thinking capacity has grown rapidly since 2024, and it converges on a finding that should alarm anyone responsible for institutional decision-making at any scale.</Prose>
+
+        <SubHead dark num="1.1">The Core Studies</SubHead>
+        <Prose dark>Gerlich (2025), studying 666 participants across age groups and educational backgrounds in the UK, found a strong positive correlation between AI tool usage and cognitive offloading (r = +0.72) and a strong negative correlation between cognitive offloading and critical thinking scores (r = −0.75). AI tool usage was the strongest observed predictor. Younger participants (ages 17–25) showed the highest dependency and the lowest critical thinking performance. Educational attainment served as a buffer: participants with higher education maintained stronger critical thinking even with frequent AI use — indicating that the capacity to critically evaluate AI output is learnable but must be deliberately developed.</Prose>
+        <Prose dark>A randomized controlled trial at the university level provides stronger causal evidence. Students assigned to use ChatGPT as a study aid scored significantly lower on surprise retention tests administered 45 days after learning (57.5% correct) compared to those who studied using traditional methods (68.5% correct), with a medium-to-large effect size (Cohen's d = 0.68). The researchers attribute this to reduced cognitive effort during initial encoding: ChatGPT provides not just information retrieval but synthesis, analysis, and problem-solving capabilities, enabling a more extreme form of offloading than search engines alone. Weaker initial encoding produces steeper forgetting curves (Barcaui, 2025).</Prose>
+        <Prose dark>A study of 580 Chinese university students found that AI dependence negatively predicted critical thinking, with cognitive fatigue partially mediating the relationship. Information literacy buffered the negative effect — but also amplified cognitive fatigue when AI reliance was high. Even literate users suffer when the tools do too much of the cognitive work (Tian, 2025).</Prose>
+        <Prose dark>Microsoft Research (Lee et al., 2025), surveying knowledge workers, found an inverse correlation between confidence in AI and the exercise of critical thinking: the more workers trusted AI outputs, the less they engaged in independent evaluation. Self-confidence, conversely, predicted greater critical engagement.</Prose>
+        <Prose dark>Bastani et al. (2024), in a study with Turkish high school students, found that those using ChatGPT for practice answered 48% more problems correctly but scored 17% lower on subsequent assessments without AI access. AI enhanced procedural execution while undermining deeper learning — a pattern that becomes dangerous at scale when procedural output appears indistinguishable from genuine understanding.</Prose>
+        <Prose dark>An Auburn University study (2024) of undergraduate creative thinking found that AI-supported students scored better on fluency, flexibility, and elaboration — but showed cognitive fixation and lower creative confidence. They leaned on AI suggestions instead of generating their own (Habib et al., 2024).</Prose>
+        <Prose dark>Jose et al. (2025), writing in <em>Frontiers in Education</em>, call it "the cognitive paradox of AI in education": AI makes students better at the easy parts — recall, synthesis, generating plausible output — while the harder capacities atrophy. Evaluation, independent analysis, the ability to judge whether something is actually good. Bloom's Taxonomy maps the same hierarchy. Current deployments automate the bottom and abandon the top.</Prose>
+
+        <SubHead dark num="1.2">What the Evidence Means</SubHead>
+        <Prose dark>The pattern across these studies is consistent. People produce more and understand less. The mechanism is cognitive offloading: reasoning is performed by the tool, and therefore not practiced by the human. The capacity decays.</Prose>
+        <Prose dark>This is not an argument against AI. It is an argument about what happens when AI is deployed without structured practice in evaluation, iteration, and critique — without, in other words, the deliberate development of the judgment that makes AI useful rather than corrosive.</Prose>
+        <Prose dark>The buffer is real. Education mitigates the effect. Structured critical engagement mitigates the effect. The question is whether the institutions responsible for developing that engagement are doing so, or whether they are deploying AI tools into environments that were already designed to suppress exactly the capacities those tools demand.</Prose>
+        <Callout dark>
+          None of this originated with AI. The deficit was structural before the first chatbot logged on. What AI changed is the speed at which that deficit becomes visible and the scale at which it becomes consequential. A student who cannot evaluate a textbook answer is disadvantaged. A student who cannot evaluate an AI-generated answer — fluent, confident, and potentially wrong — is defenseless. The difference is not the student. It is the tool's capacity to produce convincing output without any underlying comprehension, deployed into a system that never developed the human capacity to compensate.
+        </Callout>
+      </Section>
+
+      {/* ═══ SECTION 2: INSTITUTIONAL RESPONSE ═══ */}
+      <Section id="s2">
+        <Label>Section 2</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>The Institutional Response: Panic, Then Compliance</h2>
+
+        <SubHead num="2.1">Detection as Failure Mode</SubHead>
+        <Prose>The institutional response to AI in education followed a predictable sequence: prohibition, then detection, then shallow adoption. Each stage reproduced the underlying problem.</Prose>
+        <Prose>AI text detectors assess statistical patterns in word choice and sentence structure — the surface features of output, not the quality of thinking behind it. Sadasivan et al. (2023, University of Maryland, published in <em>Transactions on Machine Learning Research</em>) proved mathematically that for advanced language models, even the best possible detector performs only marginally better than a coin flip. The constraint is mathematical, not technological: language models are trained to make their output statistically indistinguishable from human text. The better they get at this — which is the explicit objective of every dollar spent on training — the worse every detector performs. The ceiling on detection accuracy drops on a schedule. Without cooperation from the model itself, such as watermarking, the text contains no provable evidence of its origin (Sadasivan et al., 2023; Silva, 2026). OpenAI built a detector and shut it down after a 26% accuracy rate.</Prose>
+        <Prose>Research has shown that these tools disproportionately flag ESL writers, whose reliance on common vocabulary and familiar syntactic patterns mimics the low-perplexity output that detectors associate with AI generation (Liang et al., 2023). The equity implications mirror those of the standardized testing regimes that created the capacity deficit in the first place.</Prose>
+        <Prose>MIT Sloan's Teaching &amp; Learning Technologies group published guidance titled "AI Detectors Don't Work," recommending instead: process statements, scaffolded assignments, reflective documentation, open dialogue (MIT Sloan, 2025). The alternative they describe is, in substance, the process-based, judgment-centered pedagogy that this paper argues is the missing infrastructure.</Prose>
+        <Prose>The detection dead end is not a digression. It is a case study: when institutions attempt to evaluate cognition by measuring surface features of output, the evaluation fails. The people most harmed are those the system was ostensibly designed to protect.</Prose>
+
+        <SubHead num="2.2">Shallow Adoption</SubHead>
+        <Prose>A 2025 survey found that 87% of principals believe AI threatens students' critical thinking development (EdWeek, 2025). Meanwhile, 84% of students report using AI tools for schoolwork — up from 79% months earlier (College Board, 2025). The gap between institutional anxiety and institutional action defines the current moment.</Prose>
+        <Prose>The dominant adoption pattern — use AI to make presentations, to do research, to differentiate instruction — leaves the underlying structure untouched. It does not require rethinking what education is, what learning looks like, or what students are being asked to do. It takes existing systems and makes them faster. Speed without evaluation is not progress. It is amplification of whatever the system was already doing — and what the system was already doing, as the following section documents, was suppressing the exact capacities AI now demands.</Prose>
+        <Prose>This pattern is not unique to education. In each domain where AI has been adopted at speed, the same structure appears: output accelerates, but the system's capacity to evaluate that output does not. In software engineering, Google's DORA research indicates that increasing deployment speed without corresponding improvements in system design — testing, observability, deployment safety — correlates with higher failure rates and instability, not better performance (DORA, 2025). Studies of AI-assisted coding tools suggest that while developers complete tasks significantly faster, the evidence on code quality is mixed, with large-scale analysis finding increased defects and vulnerabilities in AI-generated code (Cotroneo, Improta, &amp; Liguori, 2025). In education, more assignments are completed. In software, more code is shipped. In organizations, more decisions are made. In none of these cases does the acceleration itself improve the quality of what is produced — because evaluative capacity was never built into the system, and evaluative infrastructure was never part of the design.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 3: SYSTEMIC ROOTS ═══ */}
+      <Section dark id="s3">
+        <Label dark>Section 3</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Systemic Roots: How Prescriptive Accountability Hollowed Out Judgment</h2>
+        <Prose dark>To understand why AI produces these effects so quickly, it is necessary to examine the system it entered.</Prose>
+        <Prose dark>The current crisis of judgment did not emerge with ChatGPT. It was built over decades by design choices in educational policy, professional training, and institutional accountability that systematically traded the development of higher-order thinking for the measurement of predetermined outcomes.</Prose>
+
+        <SubHead dark num="3.1">Curriculum Narrowing Under NCLB and Its Successors</SubHead>
+        <Prose dark>The No Child Left Behind Act of 2001 fundamentally restructured American education around high-stakes standardized testing. Five years in, the Center on Education Policy found that 62% of all districts — and 75% of districts with schools identified as needing improvement — had increased time spent on language arts and math in elementary schools: a 47% increase in language arts and a 37% increase in math. These increases came directly at the expense of science, social studies, art, music, physical education, and recess (McMurrer, 2007).</Prose>
+        <Prose dark>The narrowing was not evenly distributed. Berliner (2011) documented that curriculum narrowing intensified as the socioeconomic level of schools decreased. The students most at risk received the most impoverished cognitive diet. Teachers in schools categorized as needing improvement asked 16% more closed questions than teachers in non-categorized schools — a measurable suppression of open-ended inquiry (Srikantaiah, Zhang, &amp; Swayhoover, 2008).</Prose>
+        <Prose dark>Cunningham (2019) described standardized testing as "epistemological erasure" — the systemic elimination of ways of knowing that did not fit the measurement framework.</Prose>
+        <Prose dark>What was eliminated or reduced: arts education, social studies, science inquiry, physical education, recess, open-ended discussion, project-based work, interdisciplinary learning, and the professional discretion of teachers to design learning experiences responsive to their students' actual needs.</Prose>
+        <Prose dark>What was substituted: test preparation, drill-and-practice on isolated skills, multiple-choice response training, and fragmented content delivery aligned to tested standards.</Prose>
+        <Prose dark>Two decades of this produced a generation — now entering the workforce — whose educational experience was shaped by systems designed to produce testable outcomes rather than independent judgment. These are the same people now being asked to work productively with AI. The systems did not fail to produce judgment accidentally. They were optimized to produce something else.</Prose>
+
+        <SubHead dark num="3.2">The Educator Inside the System</SubHead>
+        <Prose dark>The damage was not confined to students. The RAND Corporation's 2024 State of the American Teacher survey found that teachers' well-being is consistently worse than that of comparable working adults. Twice as many teachers report frequent job-related stress or burnout; three times as many report difficulty coping. Teachers work an average of nine hours more per week than comparable workers while earning approximately $18,000 less in base pay (RAND, 2024).</Prose>
+        <Prose dark>These conditions do not develop judgment. They develop survival strategies within compliance frameworks. When deviation from the framework is treated as failure, the professionals inside the system learn not to deviate.</Prose>
+
+        <SubHead dark num="3.3">Writing as a Case in Point</SubHead>
+        <Prose dark>The last time the United States administered a national writing assessment to high school seniors was 2011. The results: 73% of twelfth graders scored below proficient. Only 27% could write at the level the assessment defined as "solid academic performance and competency over challenging subject matter." No future national writing assessments appear in current NAEP plans.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>The country stopped measuring whether students can write. The last time it measured, the results were bad. And the systems that produced those results — the five-paragraph essay, the rubric-driven prompt, the standardized response format — trained students to produce writing that could be <em>scored</em>, not writing that required <em>thinking</em>. AI-generated prose is the logical terminus of that trajectory: fluent, structured, compliant, and empty.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 4: EMPTY PLATFORM ═══ */}
+      <Section id="s4">
+        <Label>Section 4</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>The Empty Platform: A Case Study in Institutional Design Failure</h2>
+        <Prose>The pattern documented above — systems designed to count rather than evaluate, adopted by institutions that mistake compliance for quality — is not abstract. It is visible in the most widely used educational platform in America.</Prose>
+        <Prose>Google Classroom is used by over 150 million students and educators worldwide. It functions as the de facto learning management system in the majority of American K–12 schools, adopted at scale because it was free and embedded in the Chromebook ecosystem that dominates US school district device purchasing (EdWeek Market Brief, 2025).</Prose>
+        <Prose>It is not a learning management system. A University of Notre Dame assessment found it lacking a gradebook, tests and quizzes, discussion forums, a lesson builder, a calendar, and support for Learning Tools Interoperability (Notre Dame Academic Technologies, 2017). A qualitative study of twelve higher education teachers found they perceived it as "only a facilitation tool that can be used for document management and basic classroom management, without having a significant impact on teaching methodologies" (Azhar &amp; Iqbal, 2021).</Prose>
+        <Prose>Google Classroom has no required fields when creating an assignment. A teacher can post a title with no description, no instructions, no attachments, no due date, and no rubric. The platform records this as a valid assignment. There is no mechanism for administrators to establish or audit minimum standards. There is no cross-class visibility for students or families. There is no accommodation verification for students with IEPs whose legal protections depend on the platform's content.</Prose>
+        <Prose>An empirical implementation audit found extreme variance within a single student's experience at a single school in a district spending over $40,000 per student per year. One class had 140 assignments with weekly organization, due dates on 73% of them, and attached documents. Another had 61 assignments with zero due dates, zero descriptions, and titles meaningless without in-class context. A third had 40 assignments with one attachment across all of them. The platform treated all classes identically. The district had no mechanism to see the difference (Marcus, 2026b).</Prose>
+        <Prose>This matters for the present argument because Google Classroom is the institutional equivalent of the cognitive offloading documented in Section 1. When a system provides a tool that produces the appearance of compliance without the substance of quality, the system stops examining the substance. The platform counts logins, counts submissions, counts completion rates. It does not evaluate whether what was posted was sufficient for a student to learn from. The system was trained to count, not to evaluate. Google Classroom is the perfect tool for a system that does not want to look closely.</Prose>
+        <Prose>The full case study, including data tables, legal analysis under IDEA and <em>Endrew F. v. Douglas County</em>, and a Universal Design for Learning reframe, is presented in a companion paper (Marcus, 2026c).</Prose>
+      </Section>
+
+      {/* ═══ SECTION 5: WORKFORCE GAP ═══ */}
+      <Section dark id="s5">
+        <Label dark>Section 5</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Workforce Gap: What the Economy Demands vs. What Institutions Produce</h2>
+        <Prose dark>The 2025 World Economic Forum Future of Jobs Report identifies the five most critical workforce skills through 2030: analytical thinking, creative thinking, resilience/flexibility/agility, motivation/self-awareness, and curiosity/lifelong learning (WEF, 2025). Three of the five — analytical thinking, creative thinking, and resilience — are capacities that prescriptive training systems were not designed to develop and that two decades of accountability policy actively suppressed.</Prose>
+        <Prose dark>A meta-analysis of 66 empirical studies confirms that project-based learning produces significant gains in creative thinking, problem-solving, and learning motivation (Zhao et al., 2023). The evidence is established.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>The mismatch is structural. Employers need workers who can define problems, not just execute solutions. Who can evaluate AI output, not just generate it. Who can iterate under uncertainty, not just perform against rubrics. The result is a skills gap that is not primarily about technical knowledge (which can be taught relatively quickly) but about epistemological capacity (which takes sustained, structured practice to develop).</Prose>
+      </Section>
+
+      {/* ═══ SECTION 6: ORGANIZATIONAL PATTERN ═══ */}
+      <Section id="s6">
+        <Label>Section 6</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>The Organizational Pattern: Automation Bias and the Governance Gap</h2>
+        <Prose>The cognitive offloading documented in individuals and the compliance architectures documented in education reproduce themselves in organizations adopting AI.</Prose>
+
+        <SubHead num="6.1">Automation Bias at Scale</SubHead>
+        <Prose>Automation bias — the tendency to trust automated recommendations more than they warrant — is well documented in healthcare and aviation. A 2025 systematic review of 35 peer-reviewed studies found that non-specialists, who stand to gain the most from AI decision support, are the most susceptible to over-reliance. The most protective factors are domain expertise and professional experience — the accumulated judgment that comes from structured practice in evaluation (Romeo &amp; Conti, 2025).</Prose>
+        <Prose>Alon-Barkat and Busuioc (2023), studying automation bias in public sector decision-making, found that introducing algorithmic tools did not fully supplant human judgment — most respondents overrode algorithmic predictions. But their warning is significant: "automatic deference to algorithmic advice could become more prevalent as decision-makers become increasingly exposed to AI algorithms in the practice of public organizations."</Prose>
+        <Prose>This is the organizational version of cognitive offloading. The mechanism is the same: when the tool handles reasoning, the human stops practicing reasoning. The difference is scale. When this happens to a student, the student loses comprehension. When it happens to an organization, the organization loses the capacity to evaluate what it is doing.</Prose>
+        <Prose>The consequences are already visible in production. Amazon's internal AI coding tool was linked to production outages severe enough to generate an internal petition. A generative AI platform released without content governance produced thousands of nonconsensual sexual images per hour. AI chatbots deployed in clinical healthcare settings provided recommendations that contradicted established medical evidence. In each case, the failure was not the AI. It was the absence of evaluative infrastructure — the human judgment, the process, the governance structures required to determine whether what the tool produced was acceptable before it shipped (Marcus, 2026d).</Prose>
+
+        <SubHead num="6.2">The Governance Failure</SubHead>
+        <Prose>Gartner projected that at least 50% of generative AI projects would be abandoned after proof of concept by the end of 2025, most often because the underlying process was never fit for purpose (Gartner, 2024). Technology is rarely the constraint.</Prose>
+        <Prose>A 2026 analysis published by ISACA frames the problem with precision: AI has become a "Decision Influence Layer" across organizations. No regulator, court, or oversight body will accept "the model did it" as an explanation for a governance failure (Shende, 2026).</Prose>
+        <Prose>Organizations that asked "how can AI make this process faster?" saw incremental gains at best. Organizations that asked "what decision are we actually trying to support, and what information is needed?" often ended up redesigning the workflow entirely. The distinction matters because it is the distinction between tool adoption and judgment development.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 7: GOVERNANCE IMPLICATIONS ═══ */}
+      <Section dark id="s7">
+        <Label dark>Section 7</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", color: "#e8e2d8", marginBottom: "2rem" }}>The Governance Implications: Judgment as Civic Infrastructure</h2>
+        <Prose dark>The cognitive offloading documented in individuals, the compliance architectures documented in education, and the automation bias documented in organizations are not separate phenomena. They are expressions of the same structural failure at different scales. At the individual level, this appears as cognitive offloading — reasoning performed by the tool, therefore not practiced by the human. At the institutional level, it appears as the replacement of evaluation with measurement.</Prose>
+
+        <SubHead dark num="7.1">AI as a Form of Governance</SubHead>
+        <Prose dark>Henry Farrell, writing in the <em>Annual Review of Political Science</em>, argues that political scientists should understand AI not merely as a technology that affects governance but potentially as a form of governance in its own right (Farrell, 2025). Markets, bureaucracy, and democracy each make complex human relations tractable by compressing information — with some loss. AI does the same. The question is not whether AI will participate in governance but what information gets lost in the compression and who bears the cost.</Prose>
+        <Prose dark>Farrell and colleagues, writing in <em>Science</em>, argue that large AI models generate representations that <em>feel</em> complete while being structurally lossy (Farrell, Gopnik, Shalizi, &amp; Evans, 2025). Citizens, professionals, and institutions that lack the capacity to evaluate those representations will mistake them for understanding.</Prose>
+
+        <SubHead dark num="7.2">The Democratic Capacity Deficit</SubHead>
+        <Prose dark>The 2025 Carnegie California AI Survey found that only 8% of respondents were "very confident" in their ability to distinguish real from AI-generated content online. Fifty-seven percent reported being "very concerned" about the influence of deepfakes and AI-generated content in elections (George &amp; Klaus, 2026).</Prose>
+        <Prose dark>The <em>Journal of Democracy</em> framed this as "the AI democracy dilemma": whether AI will strengthen democratic judgment or produce a political system in which approval is manufactured, public debate is hollowed out, and citizens have no meaningful voice (Altman, 2026).</Prose>
+        <Prose dark>That capacity is exactly what the educational and professional systems documented in this paper have failed to develop.</Prose>
+
+        <SubHead dark num="7.3">Institutional Cognitive Offloading</SubHead>
+        <Prose dark>Organizations measure deployment timelines rather than decision quality. School districts measure Classroom logins rather than learning outcomes. Governments measure AI adoption rates rather than whether citizens can evaluate what the systems produce.</Prose>
+        <Callout dark>
+          The central substitution is simple and pervasive: the replacement of the question <em>"is this good?"</em> with the question <em>"is this happening?"</em>
+        </Callout>
+        <Prose dark>Judgment cannot be automated because judgment is not computation. It is the capacity to decide what matters — to weigh competing values, to evaluate evidence, to recognize when confidence is warranted and when it is not, to distinguish fluent output from genuine understanding.</Prose>
+        <Prose dark style={{ marginBottom: 0 }}>The research is unambiguous about the existence of the deficit. The research is equally clear that the capacity is there. It has always been there. It must be developed through practice. Whether the institutions responsible for that development are willing to do the work — to tolerate the ambiguity, support the iteration, assess the process rather than the product, and invest in the people rather than the tools — is not a research question. It is a political one.</Prose>
+      </Section>
+
+      {/* ═══ SECTION 8: WHAT THE RESEARCH POINTS TOWARD ═══ */}
+      <Section id="s8">
+        <Label>Section 8</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "1.8rem", marginBottom: "2rem" }}>What the Research Points Toward</h2>
+        <Prose>The evidence converges on several findings that carry direct implications for institutional design.</Prose>
+        <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
+          {[
+            { title: "Judgment capacity is learnable.", text: "Gerlich\u2019s most consequential finding is not that AI usage correlates with reduced critical thinking \u2014 it is that educational attainment buffers the effect. The automation bias literature finds that domain expertise and professional experience are the strongest protective factors. The capacity is not innate. It is developed through structured practice." },
+            { title: "The capacity develops through iteration, not instruction.", text: "The meta-analyses of project-based learning document gains in creative thinking, problem-solving, and motivation \u2014 not through content delivery but through iterative, critique-driven engagement with genuine problems. The difference between revision (improving toward a known standard) and iteration (transforming understanding through repeated engagement) maps directly onto the difference between compliance-based training and judgment development." },
+            { title: "Process documentation makes judgment visible and assessable.", text: "When the final product is the only thing assessed, AI has already won \u2014 because AI produces final-looking products effortlessly. Assessment must evaluate the quality of the thinking that produced the output. Portfolio-based assessment systems have been doing this at scale in studio-based programs for decades. The infrastructure exists. It has been treated as niche rather than foundational." },
+            { title: "AI output is material for critique, not answers to accept.", text: "The distinction between consuming AI output and evaluating it is the distinction between cognitive offloading and cognitive engagement. Every interaction with AI is an opportunity for evaluative practice \u2014 if the learner or professional is trained to treat it that way and if the institutional environment supports that stance rather than rewarding compliance." },
+            { title: "The pipeline is direct.", text: "If education systems do not develop evaluative capacity, the organizations that employ their graduates will not have it. If organizations do not practice it, the governance structures that depend on informed judgment will not have it either. The classroom that teaches compliance produces the professional who accepts defaults, who becomes the citizen who defers to fluent output without evaluation." },
+          ].map((item, i) => (
+            <div key={i} style={{ padding: "1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 3 }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", marginBottom: "0.5rem" }}>{item.title}</div>
+              <div style={{ fontSize: "0.92rem", color: C.inkLight, lineHeight: 1.65 }}>{item.text}</div>
+            </div>
+          ))}
+        </div>
+        <Callout>
+          Breaking that pipeline requires intervening at the source — not with AI tools, not with AI literacy curricula, but with the sustained, structured, uncomfortable practice of exercising judgment under genuine uncertainty. Institutions that do not deliberately build evaluative infrastructure will not merely fall behind. They will lose the capacity to determine whether what they are doing is working at all.
+        </Callout>
+      </Section>
+
+      {/* ═══ REFERENCES ═══ */}
+      <Section dark id="refs">
+        <Label dark>References</Label>
+        <div style={{ maxWidth: 700 }}>
+          {[
+            'Almeida, F., et al. (2025). Comparative study between Moodle, Canvas, and Google Classroom. International Journal of Research and Innovation in Social Science.',
+            'Alon-Barkat, S., & Busuioc, M. (2023). Human\u2013AI Interactions in Public Sector Decision Making. Journal of Public Administration Research and Theory, 33(1), 153\u2013169.',
+            'Altman, D. (2026). The AI democracy dilemma. Journal of Democracy, 37(1), 32\u201344.',
+            'American Bar Association. (2023). A past, present, and future look at No Child Left Behind. ABA Human Rights Magazine.',
+            'Azhar, K., & Iqbal, N. (2021). Effectiveness of Google Classroom: Teachers\u2019 Perceptions. Prizren Social Science Journal, 2(2), 52\u201366.',
+            'Barcaui, A. (2025). ChatGPT as a cognitive crutch: Evidence from a randomized controlled trial on knowledge retention. Social Sciences & Humanities Open, 12, 102287.',
+            'Bastani, H., et al. (2024). Generative AI can harm learning. SSRN.',
+            'Berliner, D. C. (2011). Rational responses to high-stakes testing. Cambridge Journal of Education, 41(3), 287\u2013302.',
+            'College Board. (2025). New research: Majority of high school students use generative AI for schoolwork.',
+            'Cotroneo, D., Improta, C., & Liguori, P. (2025). Human-written vs. AI-generated code. arXiv:2508.21634.',
+            'Cunningham, J. (2019). Missing the mark: Standardized testing as epistemological erasure. Power and Education, 11(1), 97\u2013108.',
+            'DORA. (2025). Accelerate State of DevOps Report. Google Cloud.',
+            'EdWeek. (2025). Teachers worry AI will impede students\u2019 critical thinking skills.',
+            'Farrell, H. (2025). AI as Governance. Annual Review of Political Science, 28(1), 375\u2013392.',
+            'Farrell, H., Gopnik, A., Shalizi, C., & Evans, J. (2025). Large AI models are cultural and social technologies. Science, 387(6739), 1153\u20131156.',
+            'Gartner. (2024). At least 50% of generative AI projects will be abandoned after proof of concept by the end of 2025.',
+            'George, R., & Klaus, I. (2026). AI and democracy: Mapping the intersections. Carnegie Endowment for International Peace.',
+            'Gerlich, M. (2025). AI tools in society: Impacts on cognitive offloading and the future of critical thinking. Societies, 15(1), 6.',
+            'Habib, S., et al. (2024). Impact of AI tools on divergent thinking in undergraduate students. Computers and Education: Artificial Intelligence.',
+            'Jose, J., et al. (2025). The cognitive paradox of AI in education. Frontiers in Education.',
+            'Krutka, D. G., Heath, M. K., & Staudt Willet, K. B. (2021). Don\u2019t Be Evil: Should We Use Google in Schools? TechTrends, 65, 421\u2013431.',
+            'Lee, H.-P., et al. (2025). The impact of generative AI on critical thinking. CHI \u201925. ACM / Microsoft Research.',
+            'Liang, W., et al. (2023). GPT detectors are biased against non-native English writers. Patterns, 4(7).',
+            'Marcus, A. T. (2026). The Same Lever. Constructive Interference (Substack).',
+            'Marcus, A. T. (2026b). Google Gave Schools an Empty Lot. The Schools Called It a Classroom.',
+            'Marcus, A. T. (2026c). The Empty Container: Google Classroom\u2019s Design Failures and Accountability Gaps.',
+            'Marcus, A. T. (2026d). Bad Vibes. Constructive Interference (Substack).',
+            'McMurrer, J. (2007). Choices, changes, and challenges: Curriculum and instruction in the NCLB era. Center on Education Policy.',
+            'MIT Sloan Teaching & Learning Technologies. (2025). AI detectors don\u2019t work. Here\u2019s what to do instead.',
+            'Notre Dame Academic Technologies. (2017). Google Classroom LMS functionality assessment.',
+            'Pickering, S. D., Hansen, M. E., & Sunahara, Y. (2025). Democracy by algorithm? Parliamentary Affairs.',
+            'RAND Corporation. (2024). Findings from the 2024 State of the American Teacher survey.',
+            'Romeo, G., & Conti, D. (2025). Exploring automation bias in human\u2013AI collaboration. AI & Society.',
+            'Sadasivan, V. S., et al. (2023). Can AI-generated text be reliably detected? Transactions on Machine Learning Research.',
+            'Shende, J. (2026). AI Answers Are Becoming Business Decisions. ISACA.',
+            'Silva, D. W. (2026). AI Learned to Write Like You. Detection Is Mathematically Impossible. Substack.',
+            'Singer, N. (2017). How Google Took Over the Classroom. The New York Times.',
+            'Srikantaiah, D., et al. (2008). Lessons from the classroom. Center on Education Policy.',
+            'Tian, J. (2025). Learners\u2019 AI dependence and critical thinking. Acta Psychologica, 255, 104706.',
+            'World Economic Forum. (2025). The Future of Jobs Report 2025.',
+            'Zhao, Y., et al. (2023). Impact of project-based learning on student learning effects. Frontiers in Psychology, 14.',
+          ].map((ref, i) => (
+            <div key={i} style={{ fontSize: "0.82rem", color: C.darkText, lineHeight: 1.6, marginBottom: "0.75rem", paddingLeft: "1.5rem", textIndent: "-1.5rem" }}>{ref}</div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ CLOSING ═══ */}
+      <Section style={{ padding: "3rem 2rem" }}>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, fontStyle: "italic", lineHeight: 1.7 }}>
+          This paper is a companion to <ExtLink href="https://sageframe.substack.com/p/the-same-lever">The Same Lever</ExtLink>, published on Constructive Interference. The manifesto makes the argument. This paper provides the evidence.
+        </div>
+        <div style={{ fontFamily: F.mono, fontSize: "0.82rem", color: C.inkMuted, marginTop: "1.5rem" }}>&mdash; ATM, April 2026</div>
+        <div style={{ marginTop: "2rem", padding: "1.25rem 1.5rem", background: C.groundWarm, border: "1px solid " + C.rule, borderRadius: 3 }}>
+          <div style={{ fontSize: "0.82rem", color: C.inkMuted, lineHeight: 1.6 }}>
+            &copy; 2026 Andrew Todd Marcus &middot; <ExtLink href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</ExtLink>
+          </div>
+        </div>
+        <div style={{ marginTop: "1.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <ExtLink href="https://sageframe.substack.com/p/the-same-lever">&larr; The Same Lever (Substack)</ExtLink>
+          <ExtLink href="https://sageframe.substack.com">Constructive Interference &nearr;</ExtLink>
+        </div>
+      </Section>
+
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Andrew Todd Marcus &middot; Cambridge, MA</p>
+      <p>Blueprint for Creativity &middot; Sageframe</p>
+    </div>
+  </footer>
+  <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const sheet = document.getElementById('bottomSheet');
+    const backdrop = document.getElementById('sheetBackdrop');
+    function openSheet() { sheet.classList.add('open'); backdrop.classList.add('visible'); toggle.classList.add('active'); toggle.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+    function closeSheet() { sheet.classList.remove('open'); backdrop.classList.remove('visible'); toggle.classList.remove('active'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+    toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
+    backdrop.addEventListener('click', closeSheet);
+    sheet.querySelectorAll('nav a').forEach(a => a.addEventListener('click', closeSheet));
+
+    // Side nav scroll tracking
+    const sideLinks = document.querySelectorAll('.side-nav a');
+    const sections = ['s1','s2','s3','s4','s5','s6','s7','s8','refs'].map(id => document.getElementById(id));
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (s && s.getBoundingClientRect().top <= 200) current = s.id;
+      });
+      sideLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    });
+  </script>
+</body>
+</html>
