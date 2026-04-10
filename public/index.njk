@@ -117,9 +117,10 @@
     .consulting h2 { margin-bottom: 1.25rem; }
     .consulting-intro { margin-bottom: 2rem; }
     .consulting-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-    .consulting-example { padding: 1.25rem 1.5rem; background: var(--color-white); border: 1px solid var(--color-rule); border-radius: 2px; }
-    .consulting-example-title { font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; color: var(--color-ink); margin-bottom: 0.5rem; }
-    .consulting-example p { font-size: 0.88rem; line-height: 1.6; color: var(--color-ink-muted); }
+    .consulting-card { border: 1px solid var(--color-rule); border-radius: 2px; overflow: hidden; }
+    .consulting-card-title { padding: 1rem 1.25rem; font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; }
+    .consulting-card-work { padding: 1rem 1.25rem; background: var(--color-white); font-size: 0.85rem; line-height: 1.6; color: var(--color-ink-light); }
+    .consulting-card-evidence { padding: 1rem 1.25rem; background: var(--color-ink); font-size: 0.82rem; line-height: 1.6; color: #b0a99e; }
 
     /* WRITING */
     .writing { background: var(--color-white); border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule); }
@@ -346,17 +347,20 @@
       <h2 class="reveal">Organizational systems design for teams navigating change.</h2>
       <p class="consulting-intro reveal">Through Blueprint for Creativity, I partner with mission-driven organizations to diagnose what's stuck, design what's next, and build the infrastructure that makes change durable. I collaborate, build capacity, and design systems that continue working after I leave.</p>
       <div class="consulting-examples reveal">
-        <div class="consulting-example">
-          <div class="consulting-example-title">Institutional Redesign</div>
-          <p>Curriculum restructuring, LMS design and build, and organizational infrastructure for a specialized school to achieve state certification. Full systems overhaul from diagnosis to delivery.</p>
+        <div class="consulting-card">
+          <div class="consulting-card-title">Institutional Redesign</div>
+          <div class="consulting-card-work">Diagnosing what's stuck, designing what's next, and building the infrastructure that makes change durable. Assessment architecture, training pipelines, competency frameworks — from diagnosis through implementation and delivery.</div>
+          <div class="consulting-card-evidence">Multi-site nonprofit across Boston Public Schools. Innovation school scaled to 7 countries. National organization restructured from prescriptive to experience-based. Full systems overhaul for state certification.</div>
         </div>
-        <div class="consulting-example">
-          <div class="consulting-example-title">Strategic Facilitation</div>
-          <p>Design-led retreats to build creative culture. Professional development programs for technical teams on critique, collaboration, and experiential learning. Advisory support for organizations in transition.</p>
+        <div class="consulting-card">
+          <div class="consulting-card-title">Learning Systems & EdTech</div>
+          <div class="consulting-card-work">LMS design and build, curriculum architecture, EdTech implementation auditing, UDL-aligned standards. Making learning infrastructure that actually reflects the pedagogy it's supposed to serve.</div>
+          <div class="consulting-card-evidence">Visual LMS serving 7,000+ students. National PD platform for scalable online delivery. Legacy program codified for digital distribution. First open-source tool for student-level Google Classroom implementation data.</div>
         </div>
-        <div class="consulting-example">
-          <div class="consulting-example-title">Organizational Strategy</div>
-          <p>Onboarding architecture for fast-scaling organizations. Vision alignment and strategic roadmapping. Coaching startups on integrating creative process into engineering workflows.</p>
+        <div class="consulting-card">
+          <div class="consulting-card-title">Strategic Facilitation</div>
+          <div class="consulting-card-work">Experiential workshops where teams do the work before it becomes the framework. Creative culture-building, professional development, organizational alignment — designed so capability transfers.</div>
+          <div class="consulting-card-evidence">Org-wide creative culture intensives. Empowerment workshops for disabled youth. Experience-based onboarding. Graduate-credit PD reaching 500+ educators. Conference workshops and keynotes.</div>
         </div>
       </div>
       <a class="writing-cta reveal" href="#contact" style="margin-top: 2rem; display: inline-flex;">Let's talk about your organization <span>→</span></a>
