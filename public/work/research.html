@@ -354,44 +354,38 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     backdrop.addEventListener('click', closeSheet);
     sheet.querySelectorAll('a').forEach(a => a.addEventListener('click', closeSheet));
 
-    // Section nav scroll tracking
-    const snavLinks = document.querySelectorAll('.snav-link');
-    const snavIds = ['claim','framework','methodology','empirical','instruments','glassroom','next'];
-    const snavSections = snavIds.map(id => document.getElementById(id));
-    const snavObs = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          snavLinks.forEach(l => l.classList.remove('active'));
-          const link = document.querySelector('.snav-link[href="#' + entry.target.id + '"]');
-          if (link) link.classList.add('active');
-        }
-      });
-    }, { rootMargin: '-40% 0px -55% 0px' });
-    snavSections.forEach(s => s && snavObs.observe(s));
+    // Section nav scroll tracking — wait for React/Babel to render
+    function initSectionNav() {
+      const claimSection = document.getElementById('claim');
+      if (!claimSection) { setTimeout(initSectionNav, 100); return; }
 
-    // Show/hide section nav based on scroll past hero
-    const sectionNav = document.querySelector('.section-nav');
-    const claimSection = document.getElementById('claim');
-    if (claimSection && sectionNav) {
-      const showObs = new IntersectionObserver(entries => {
+      const snavLinks = document.querySelectorAll('.snav-link');
+      const snavIds = ['claim','framework','methodology','empirical','instruments','glassroom','next'];
+      const snavSections = snavIds.map(id => document.getElementById(id));
+      const snavObs = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-          if (entry.boundingClientRect.top < window.innerHeight) {
-            sectionNav.classList.add('visible');
-          } else {
-            sectionNav.classList.remove('visible');
+          if (entry.isIntersecting) {
+            snavLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('.snav-link[href="#' + entry.target.id + '"]');
+            if (link) link.classList.add('active');
           }
         });
-      }, { threshold: 0 });
-      showObs.observe(claimSection);
-      // Also hide when scrolled back to top
-      window.addEventListener('scroll', () => {
-        if (claimSection.getBoundingClientRect().top > window.innerHeight * 0.8) {
-          sectionNav.classList.remove('visible');
-        } else {
-          sectionNav.classList.add('visible');
-        }
-      }, { passive: true });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      snavSections.forEach(s => s && snavObs.observe(s));
+
+      // Show/hide section nav based on scroll past hero
+      const sectionNav = document.querySelector('.section-nav');
+      if (sectionNav) {
+        window.addEventListener('scroll', () => {
+          if (claimSection.getBoundingClientRect().top > window.innerHeight * 0.8) {
+            sectionNav.classList.remove('visible');
+          } else {
+            sectionNav.classList.add('visible');
+          }
+        }, { passive: true });
+      }
     }
+    initSectionNav();
   </script>
 </body>
 </html>
