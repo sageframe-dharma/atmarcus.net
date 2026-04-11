@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research — Human Identity in AI Collaboration — Andrew Todd Marcus</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="description" content="An active research program investigating how humans maintain identity, judgment, and voice while collaborating with AI on creative and generative work.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <style>
+    :root { --color-ink: #1a1a1a; --color-ink-light: #4a4a4a; --color-ink-muted: #7a7a7a; --color-ground: #f5f2ed; --color-ground-warm: #ebe6dd; --color-accent: #c45a2d; --color-rule: #d0c9be; --color-white: #faf8f4; --font-display: 'DM Serif Display', Georgia, serif; --font-body: 'IBM Plex Sans', -apple-system, sans-serif; --font-mono: 'IBM Plex Mono', 'Courier New', monospace; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scroll-padding-top: 6rem; }
+    body { font-family: var(--font-body); color: var(--color-ink); background: var(--color-ground); line-height: 1.7; }
+    a { color: var(--color-accent); text-decoration: none; } a:hover { color: var(--color-ink); }
+    header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); background: rgba(245,242,237,0.92); }
+    .hcont { max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.5rem,5vw,4rem); display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; }
+    nav a { font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-ink-muted); text-decoration: none; margin-left: 1.5rem; letter-spacing: 0.04em; text-transform: lowercase; } nav a:hover { color: var(--color-ink); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; } .nav-toggle span { display: block; width: 18px; height: 2px; background: var(--color-ink); margin: 4px 0; }
+    .sheet-backdrop { display: none; } .bottom-sheet { display: none; }
+    .bottom-sheet.open { display: flex; } .sheet-backdrop.visible { display: block; }
+    .sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; }
+    .bottom-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-white); z-index: 201; flex-direction: column; align-items: center; padding: 1rem 2rem 2rem; border-radius: 12px 12px 0 0; }
+    .sheet-handle { width: 32px; height: 4px; background: var(--color-rule); border-radius: 2px; margin: 0 auto 1.5rem; }
+    .bottom-sheet nav { display: flex; flex-direction: column; gap: 0; width: 100%; }
+    .bottom-sheet nav a { display: block; padding: 1rem 0; font-family: var(--font-mono); font-size: 0.9rem; color: var(--color-ink-muted); letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; border-bottom: 1px solid var(--color-rule); margin-left: 0; }
+    .bottom-sheet nav a:last-child { border-bottom: none; }
+    .section-nav { border-top: 2px solid #c45a2d; border-bottom: 1px solid #d0c9be; background: rgba(245,242,237,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); position: sticky; top: 57px; z-index: 99; overflow-x: auto; opacity: 0; transform: translateY(-100%); transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
+    .section-nav.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .section-nav .snav-inner { max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.5rem,5vw,4rem); display: flex; align-items: center; }
+    .snav-label { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #c45a2d; margin-right: 1.5rem; white-space: nowrap; }
+    .snav-link { padding: 0.9rem 0; margin-right: 1.5rem; background: transparent; border: none; border-bottom: 2px solid transparent; color: #7a7a7a; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400; letter-spacing: 0.04em; text-transform: lowercase; white-space: nowrap; text-decoration: none; display: inline-block; transition: color 0.15s; }
+    .snav-link:hover { color: #1a1a1a; }
+    .snav-link.active { color: #1a1a1a; border-bottom-color: #c45a2d; font-weight: 500; }
+    @media (max-width: 640px) { header nav { display: none; } .nav-toggle { display: block; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hcont">
+      <a href="../index.html" class="wordmark">Andrew Todd Marcus</a>
+      <nav>
+        <a href="../index.html#work">work</a>
+        <a href="../index.html#research">research</a>
+        <a href="../index.html#approach">approach</a>
+        <a href="../index.html#consulting">consulting</a>
+        <a href="../index.html#writing">writing</a>
+        <a href="../index.html#about">about</a>
+        <a href="../index.html#contact">contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <nav>
+      <a href="../index.html#work">work</a>
+      <a href="../index.html#research">research</a>
+      <a href="../index.html#approach">approach</a>
+      <a href="../index.html#consulting">consulting</a>
+      <a href="../index.html#writing">writing</a>
+      <a href="../index.html#about">about</a>
+      <a href="../index.html#contact">contact</a>
+    </nav>
+  </div>
+
+  <div class="section-nav">
+    <div class="snav-inner">
+      <span class="snav-label">Jump to</span>
+      <a href="#claim" class="snav-link">claim</a>
+      <a href="#framework" class="snav-link">framework</a>
+      <a href="#methodology" class="snav-link">methodology</a>
+      <a href="#empirical" class="snav-link">empirical</a>
+      <a href="#instruments" class="snav-link">instruments</a>
+      <a href="#glassroom" class="snav-link">glassroom</a>
+      <a href="#next" class="snav-link">what's next</a>
+    </div>
+  </div>
+
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState } = React;
+
+const F = {
+  display: "'DM Serif Display', Georgia, serif",
+  body: "'IBM Plex Sans', -apple-system, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+const C = {
+  ink: "#1a1a1a", inkLight: "#4a4a4a", inkMuted: "#7a7a7a",
+  ground: "#f5f2ed", groundWarm: "#ebe6dd", accent: "#c45a2d",
+  rule: "#d0c9be", white: "#faf8f4",
+  darkBg: "#3d3a37", darkBgDeep: "#1a1a1a", darkRule: "#555",
+  darkMuted: "#999", darkText: "#d8d2c8",
+};
+
+const wrap = { maxWidth: 1080, margin: "0 auto", padding: "0 clamp(1.5rem, 5vw, 4rem)" };
+
+function Label({ children, dark }) {
+  return <div style={{ fontFamily: F.body, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: dark ? C.darkMuted : C.inkMuted, marginBottom: "1.5rem" }}>{children}</div>;
+}
+
+function Prose({ children, dark, style }) {
+  return <p style={{ fontSize: "1.05rem", color: dark ? C.darkText : C.inkLight, marginBottom: "1.5rem", lineHeight: 1.75, maxWidth: 660, ...style }}>{children}</p>;
+}
+
+function Section({ dark, children, style, id }) {
+  return <section id={id} style={{ background: dark ? C.darkBg : C.ground, color: dark ? C.darkText : C.ink, padding: "clamp(3rem, 8vh, 5rem) 0", ...style }}><div style={wrap}>{children}</div></section>;
+}
+
+function Chip({ children, color }) {
+  return <span style={{ fontFamily: F.mono, fontSize: "0.72rem", color: color || C.inkMuted, letterSpacing: "0.04em", padding: "0.25rem 0.6rem", border: "1px solid " + (color || C.rule), borderRadius: 2, whiteSpace: "nowrap" }}>{children}</span>;
+}
+
+function StatusChip({ status }) {
+  const colors = { shipped: "#5a8a5a", "in development": "#c49a2a", proposed: C.inkMuted, draft: "#c49a2a", published: "#5a8a5a" };
+  return <Chip color={colors[status] || C.inkMuted}>{status}</Chip>;
+}
+
+function ExtLink({ href, children }) {
+  return <a href={href} target="_blank" rel="noopener" style={{ color: C.accent, fontFamily: F.mono, fontSize: "0.82rem", letterSpacing: "0.02em" }}>{children} ↗</a>;
+}
+
+function ResearchItem({ title, status, children, links }) {
+  return (
+    <div style={{ padding: "2rem 0", borderBottom: "1px solid " + C.rule }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+        <h3 style={{ fontFamily: F.display, fontSize: "1.3rem", fontWeight: 400, lineHeight: 1.3, margin: 0 }}>{title}</h3>
+        <StatusChip status={status} />
+      </div>
+      <div style={{ fontSize: "1rem", color: C.inkLight, lineHeight: 1.75, maxWidth: 660, marginBottom: links ? "1rem" : 0 }}>{children}</div>
+      {links && <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>{links.map((l, i) => <ExtLink key={i} href={l.href}>{l.label}</ExtLink>)}</div>}
+    </div>
+  );
+}
+
+function WritingRef({ title, desc, href }) {
+  return (
+    <a href={href} target="_blank" rel="noopener" style={{ display: "block", padding: "1rem 1.25rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2, textDecoration: "none", transition: "border-color 0.2s", marginBottom: "0.75rem" }}>
+      <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground, marginBottom: "0.25rem" }}>{title}</div>
+      <div style={{ fontSize: "0.85rem", color: C.darkMuted, lineHeight: 1.5 }}>{desc}</div>
+    </a>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      {/* ═══ HERO ═══ */}
+      <div style={{ borderBottom: "1px solid " + C.rule, padding: "clamp(3rem, 10vh, 6rem) 0 clamp(2rem, 5vh, 3rem)" }}>
+        <div style={wrap}>
+          <Label>Research Program — Active, Self-Funded</Label>
+          <h1 style={{ fontFamily: F.display, fontSize: "clamp(1.8rem, 4vw, 2.8rem)", lineHeight: 1.15, fontWeight: 400, letterSpacing: "-0.01em", margin: "0 0 1.5rem" }}>
+            Human Identity in{" "}
+            <em style={{ fontStyle: "italic", color: C.accent }}>AI Collaboration</em>
+          </h1>
+          <Prose>How humans maintain judgment, voice, and genuine understanding while collaborating with AI on creative and generative work. An active research program producing frameworks, diagnostic tools, production methodology, and published writing — developed over sixteen months of daily documented practice, without institutional support.</Prose>
+          <Prose style={{ fontSize: "0.95rem", color: C.inkMuted }}>The dominant paradigm for human-AI interaction focuses on the AI system — its capabilities, its alignment, its safety. Almost no one is investigating what happens to the human: how extended collaboration affects voice, evaluative capacity, self-knowledge, and the relationship to your own thinking. This is the gap.</Prose>
+        </div>
+      </div>
+
+      {/* ═══ THE CLAIM ═══ */}
+      <Section dark id="claim">
+        <Label dark>The Foundational Claim</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem", lineHeight: 1.25 }}>The next territory in human–AI collaboration is somatic, relational, and contemplative.</h2>
+        <Prose dark>The AI's model of you is linguistic, statistical, and structural. It is a very good model. It catches your rhythms, your habits of thought, your way of arriving at an idea. But it has no access to the thing that makes you you: your body, your practice, your relationships, your twenty-five years of sitting still and paying attention.</Prose>
+        <Prose dark>That's not a limitation of the technology. That's where you still live. And the research program begins from the recognition that the human capacities AI cannot model — embodied experience, trained contemplative attention, genuine relational presence — are not peripheral to the collaboration. They are the ground it depends on.</Prose>
+        <Prose dark>This argument is developed in full in <em>The Fourth Boundary</em>, drawing on Haraway, Philip K. Dick, Cavell, Buddhist psychology, and the investigator's twenty-five-year contemplative practice. The extended mind thesis (Clark & Chalmers, 1998) provides the cognitive science: if AI is a genuine cognitive extension, then the question of what remains distinctly human is not philosophical decoration — it is the central design problem.</Prose>
+        <div style={{ marginTop: "1.5rem" }}>
+          <WritingRef title="The Fourth Boundary" desc="The foundational essay. Somatic cognition, the scramble suit, and why your body is the last thing the model can't reach." href="https://sageframe.substack.com/p/the-fourth-boundary" />
+          <WritingRef title="Thinking Outside the Skull" desc="The extended mind thesis applied to AI collaboration. Clark, Chalmers, Hutchins, distributed cognition." href="https://sageframe.substack.com/p/thinking-outside-the-skull" />
+        </div>
+      </Section>
+
+      {/* ═══ THE FRAMEWORK ═══ */}
+      <Section id="framework">
+        <Label>Diagnostic Framework</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Destructive Interference</h2>
+        <Prose>An original diagnostic taxonomy identifying seven named classes of structural failure in AI-influenced creative writing: Pre-emptive Evaluation, Performed Urgency, The Throat-Clear, The Balanced Hedge, The Significance Stamp, The Mirror Summary, and The Emotional Instruction.</Prose>
+        <Prose>Each class has a defined mechanism (why AI systems produce it), a diagnostic test (how a practitioner identifies it), and documented examples. The framework is structural, not lexical — it operates at the level of rhetorical architecture rather than vocabulary. This is why existing AI detection tools, which rely on statistical features, fail. Trained human judgment, attending to structure, succeeds.</Prose>
+        <Prose>Integrated within the framework is a voice profiling methodology — <strong>Voice DNA</strong> — for building comprehensive representations of individual writer identity: sentence structure patterns, rhetorical moves, punctuation fingerprint, register shifts, intellectual traditions, and craft precedents. The profile serves both diagnostic purposes (evaluating whether a draft maintains voice integrity) and generative purposes (constraining AI output to respect voice characteristics).</Prose>
+        <Prose style={{ fontWeight: 500, color: C.ink }}>No equivalent framework exists in any commercial product or published research.</Prose>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
+          <StatusChip status="shipped" />
+          <Chip>7 named failure classes</Chip>
+          <Chip>integrated voice profiling</Chip>
+          <Chip>in daily use since January 2026</Chip>
+        </div>
+        <div style={{ marginTop: "1.5rem" }}>
+          <ExtLink href="https://sageframe.substack.com">Destructive Interference — forthcoming on Substack</ExtLink>
+        </div>
+      </Section>
+
+      {/* ═══ THE METHODOLOGY ═══ */}
+      <Section dark id="methodology">
+        <Label dark>Production Methodology</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem" }}>The Ho System (歩)</h2>
+        <Prose dark>A structured methodology for human-AI collaborative development. Not prompting — the development of judgment. The Ho System addresses the core bottleneck of the AI era: access to tools is universal, but the capacity to evaluate, direct, and maintain authority over AI-assisted work is not.</Prose>
+        <Prose dark>The system operates at three levels: project framing (a four-document chain producing a buildable plan before any code is written), structured sessions with clear objectives and required reflection, and a progressive mastery model that adapts as the practitioner develops fluency. Seven months of methodology design preceded the first code commit. This sequencing is a core principle.</Prose>
+        <Prose dark><strong style={{ color: C.ground }}>Evidence: seven production systems</strong> built from zero prior development experience, each documented from inception through deployment. Including Kanyō — a computer vision platform deployed at Harvard's Memorial Hall, developed in collaboration with Nobel laureate economist Claudia Goldin — and m4Bookmaker, a desktop application shipped on PyPI in 3.5 days.</Prose>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
+          <StatusChip status="shipped" />
+          <Chip>open methodology</Chip>
+          <Chip>7 production systems</Chip>
+          <Chip>published documentation</Chip>
+        </div>
+        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
+          <ExtLink href="../work/ho-system.html">Ho System — full case study</ExtLink>
+          <ExtLink href="../work/ho-foundations">Ho System Foundations — position paper</ExtLink>
+          <ExtLink href="https://github.com/sageframe-no-kaji/ho-system">GitHub repository</ExtLink>
+          <ExtLink href="https://sageframe.substack.com/p/three-hours">Three Hours — essay on Substack</ExtLink>
+        </div>
+      </Section>
+
+      {/* ═══ THE EMPIRICAL QUESTION ═══ */}
+      <Section id="empirical">
+        <Label>Empirical Research</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Voice Identity Compression</h2>
+        <Prose>Can 10,000 tokens of prose representing a writer's voice be compressed to 500 tokens of structured notation without losing generative fidelity?</Prose>
+        <Prose>Every AI system that attempts personalization faces this problem: representing a specific human's cognitive and stylistic identity efficiently within a finite context window. Current approaches — system prompts, fine-tuning, retrieval augmentation — are lossy, expensive, or brittle. The question of what the <em>minimal</em> representation of a human voice looks like has not been asked, because it sits at the intersection of computational linguistics, information theory, cognitive science, and transformer architecture. Four departments. Nobody introduced them.</Prose>
+        <Prose>The adjacent work exists in isolation: prompt compression research (Microsoft LLMLingua), computational stylistics (Burrows, Eder et al.), embedding research, distributed cognition theory. The pieces are all there. They are in different rooms.</Prose>
+        <Prose>The experiment is designed: extract features from an existing corpus, design a compressed notation, generate from full representation vs. compressed vs. null, measure fidelity. The corpus exists. The voice profile exists. The infrastructure is in place.</Prose>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
+          <StatusChip status="proposed" />
+          <Chip>experiment designed</Chip>
+          <Chip>corpus available</Chip>
+          <Chip>infrastructure in place</Chip>
+        </div>
+        <div style={{ marginTop: "1.5rem" }}>
+          <ExtLink href="https://sageframe.substack.com">The Amateur's Laboratory — forthcoming on Substack</ExtLink>
+        </div>
+      </Section>
+
+      {/* ═══ THE INSTRUMENTS ═══ */}
+      <Section dark id="instruments">
+        <Label dark>Practitioner Instruments</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1rem" }}>Tools for self-knowledge in AI collaboration</h2>
+        <Prose dark style={{ color: "#d8d2c8" }}>The sycophancy problem has been studied from the AI's side — models tend to agree with their users. The reciprocal problem — users tend to lose evaluative sharpness when surrounded by agreement — has not been instrumentalized. These tools address the human side.</Prose>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Sutra</div>
+              <StatusChip status="in development" />
+            </div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>A writing environment where every piece is a version-controlled repository. Revision history — branching, comparison, annotation — is the native experience. Making the trail of your own thinking visible counteracts the tendency to lose track of your positions during sustained collaboration. Architecture complete.</p>
+          </div>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Shodo (書道)</div>
+              <StatusChip status="in development" />
+            </div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>AI conversation history as searchable, synthesizable knowledge. Not retrieval — pattern finding. Tracing intellectual threads, decision patterns, and evolving thinking across hundreds of conversations. Surfacing meta-patterns inaccessible from within any single conversation.</p>
+            <div style={{ marginTop: "0.75rem" }}><ExtLink href="https://github.com/sageframe-no-kaji/shodo">GitHub</ExtLink></div>
+          </div>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Kinhin (経行)</div>
+              <StatusChip status="in development" />
+            </div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>Structured tracking of practitioner growth across projects, skills, and reflective practices. A progression baseline independent of the AI's assessment of your growth — the ground truth necessary for evaluating the collaboration honestly.</p>
+          </div>
+        </div>
+      </Section>
+
+      {/* ═══ GLASSROOM — APPLIED RESEARCH ═══ */}
+      <Section id="glassroom">
+        <Label>Applied Research</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>Glassroom — EdTech Accountability Infrastructure</h2>
+        <Prose>An open-source tool that scrapes Google Classroom at the student level — every assignment, every attachment, every empty field — and aggregates it into a single dashboard with CSV export and PDF downloads. The first tool that produces student-level implementation variance data for Google Classroom. No published research has examined this variance at the implementation level. Glassroom is the first instrument that makes it visible.</Prose>
+        <Prose>Built while doing IEP advocacy for a student whose accommodation plan required teachers to post materials digitally. Within one school, Glassroom revealed that teacher implementation ranged from 140 well-structured assignments with weekly organization to 61 assignments with zero due dates, zero descriptions, and no actionable instructions. Google Classroom permits both and makes neither visible.</Prose>
+        <Prose>The tool anchors a broader research project. A position paper — <ExtLink href="empty-container.html"><em>The Empty Container</em></ExtLink> — argues that Google Classroom's lack of structural requirements creates accountability gaps that harm vulnerable students, particularly those with IEPs, and that the platform fails to meet the Universal Design for Learning standards endorsed by federal law. I am pursuing a research collaboration with Harvard Graduate School of Education to conduct the first multi-site empirical implementation audit of Google Classroom, using Glassroom as the research instrument.</Prose>
+        <Prose>Through Blueprint for Creativity, this work also has a consulting application: district implementation audits, UDL-aligned standards design, and teacher training — built on 25 years of learning systems design, including the assessment infrastructure I built at NuVu Studio and ARCK Boston.</Prose>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
+          <StatusChip status="shipped" />
+          <Chip>open source</Chip>
+          <Chip>position paper written</Chip>
+          <Chip>Harvard GSE collaboration in pursuit</Chip>
+        </div>
+        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
+          <ExtLink href="https://github.com/sageframe-no-kaji/glassroom">GitHub repository</ExtLink>
+          <ExtLink href="judgment-at-scale.html">Judgment at Scale — position paper</ExtLink>
+        </div>
+      </Section>
+
+      {/* ═══ GENERALIZATION ═══ */}
+      <Section id="next">
+        <Label>What's Next</Label>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>From pilot study to field</h2>
+        <Prose>Everything described on this page was developed through intensive single-practitioner research. Someone had to go first. The frameworks are structural — they describe properties of large language models and human cognitive tendencies, not one person's idiosyncratic experience. But that claim must be tested, not assumed.</Prose>
+        <Prose>The next phase requires what self-funding cannot provide: <strong>other people.</strong></Prose>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 2 }}>
+            <div style={{ fontFamily: F.body, fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.5rem" }}>Writer Cohort Studies</div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: C.inkMuted }}>Test the Destructive Interference taxonomy across 10–20 writers in different genres. Do the seven failure classes appear universally? Does the diagnostic framework enable practitioners to identify and correct them?</p>
+          </div>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 2 }}>
+            <div style={{ fontFamily: F.body, fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.5rem" }}>Ho System Practitioner Cohorts</div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: C.inkMuted }}>Train small cohorts of non-developer practitioners in the methodology and document their progression. Does the methodology develop judgment in AI collaboration beyond the investigator?</p>
+          </div>
+          <div style={{ padding: "1.25rem 1.5rem", background: C.white, border: "1px solid " + C.rule, borderRadius: 2 }}>
+            <div style={{ fontFamily: F.body, fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.5rem" }}>Cross-Disciplinary Replication</div>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: C.inkMuted }}>Replicate the voice compression experiment with writers whose voices differ significantly — different genres, registers, intellectual traditions. Does the compression-to-fidelity ratio hold?</p>
+          </div>
+        </div>
+
+        <Prose style={{ marginTop: "2rem", fontWeight: 500, color: C.ink }}>This research program is already producing results without institutional support. Funding and collaboration would accelerate and formalize work that is underway — not initiate something speculative.</Prose>
+      </Section>
+
+      {/* ═══ CONTACT ═══ */}
+      <Section>
+        <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1rem" }}>Let's talk about this work.</h2>
+        <Prose>I'm looking for institutional context — a role, a lab, a fellowship, a collaboration — where this research is valued, funded, and connected to a larger mission. If you're working on how humans maintain judgment and identity in AI collaboration, or if you think you should be, I'd welcome the conversation.</Prose>
+        <Prose style={{ fontSize: "0.92rem", color: C.inkMuted }}>The full body of published writing — including essays beyond those referenced above — is on <a href="https://sageframe.substack.com" target="_blank" rel="noopener" style={{ color: C.accent }}>Constructive Interference</a>.</Prose>
+        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
+          <ExtLink href="mailto:andrew@atmarcus.net">Email</ExtLink>
+          <ExtLink href="https://linkedin.com/in/atmarcus">LinkedIn</ExtLink>
+          <ExtLink href="https://github.com/sageframe-no-kaji">GitHub</ExtLink>
+          <ExtLink href="https://sageframe.substack.com">Substack</ExtLink>
+        </div>
+      </Section>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer style={{ padding: "2rem 0", borderTop: "1px solid " + C.rule, textAlign: "center" }}>
+        <div style={wrap}>
+          <p style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted }}>© 2026 Andrew Todd Marcus · Cambridge, MA</p>
+          <p style={{ fontFamily: F.mono, fontSize: "0.72rem", color: C.inkMuted }}>Blueprint for Creativity · Sageframe</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+
+  <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const sheet = document.getElementById('bottomSheet');
+    const backdrop = document.getElementById('sheetBackdrop');
+    function openSheet() { sheet.classList.add('open'); backdrop.classList.add('visible'); toggle.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+    function closeSheet() { sheet.classList.remove('open'); backdrop.classList.remove('visible'); toggle.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+    toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
+    backdrop.addEventListener('click', closeSheet);
+    sheet.querySelectorAll('a').forEach(a => a.addEventListener('click', closeSheet));
+
+    // Section nav scroll tracking — wait for React/Babel to render
+    function initSectionNav() {
+      const claimSection = document.getElementById('claim');
+      if (!claimSection) { setTimeout(initSectionNav, 100); return; }
+
+      const snavLinks = document.querySelectorAll('.snav-link');
+      const snavIds = ['claim','framework','methodology','empirical','instruments','glassroom','next'];
+      const snavSections = snavIds.map(id => document.getElementById(id));
+      const snavObs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            snavLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('.snav-link[href="#' + entry.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      snavSections.forEach(s => s && snavObs.observe(s));
+
+      // Show/hide section nav based on scroll past hero
+      const sectionNav = document.querySelector('.section-nav');
+      if (sectionNav) {
+        window.addEventListener('scroll', () => {
+          if (claimSection.getBoundingClientRect().top > window.innerHeight * 0.8) {
+            sectionNav.classList.remove('visible');
+          } else {
+            sectionNav.classList.add('visible');
+          }
+        }, { passive: true });
+      }
+    }
+    initSectionNav();
+  </script>
+</body>
+</html>

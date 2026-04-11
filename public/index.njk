@@ -117,9 +117,10 @@
     .consulting h2 { margin-bottom: 1.25rem; }
     .consulting-intro { margin-bottom: 2rem; }
     .consulting-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-    .consulting-example { padding: 1.25rem 1.5rem; background: var(--color-white); border: 1px solid var(--color-rule); border-radius: 2px; }
-    .consulting-example-title { font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; color: var(--color-ink); margin-bottom: 0.5rem; }
-    .consulting-example p { font-size: 0.88rem; line-height: 1.6; color: var(--color-ink-muted); }
+    .consulting-card { border: 1px solid var(--color-rule); border-radius: 2px; overflow: hidden; }
+    .consulting-card-title { padding: 1rem 1.25rem; font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; background: var(--color-ground-warm); border-bottom: 1px solid var(--color-rule); }
+    .consulting-card-work { padding: 1rem 1.25rem; background: var(--color-white); font-size: 0.85rem; line-height: 1.6; color: var(--color-ink-light); }
+    .consulting-card-evidence { padding: 1rem 1.25rem; background: var(--color-ink); font-size: 0.82rem; line-height: 1.6; color: #b0a99e; }
 
     /* WRITING */
     .writing { background: var(--color-white); border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule); }
@@ -165,6 +166,11 @@
     .contact-link { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-accent); padding: 0.6rem 1.2rem; border: 1px solid var(--color-accent); border-radius: 2px; transition: all 0.2s ease; }
     .contact-link:hover { background: var(--color-accent); color: var(--color-white); }
 
+    /* RESEARCH */
+    .research h3 { margin-bottom: 1.5rem; }
+    .research h2 { margin-bottom: 1.25rem; }
+    .research > .container > p { max-width: 640px; color: var(--color-ink-light); font-size: 1.05rem; }
+
     /* FOOTER */
     footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); }
     footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
@@ -197,6 +203,7 @@
       <a class="wordmark" href="#">Andrew Todd Marcus</a>
       <nav>
         <a href="#work">work</a>
+        <a href="#research">research</a>
         <a href="#approach">approach</a>
         <a href="#consulting">consulting</a>
         <a href="#writing">writing</a>
@@ -214,6 +221,7 @@
     <div class="sheet-handle"></div>
     <nav>
       <a href="#work">work</a>
+      <a href="#research">research</a>
       <a href="#approach">approach</a>
       <a href="#consulting">consulting</a>
       <a href="#writing">writing</a>
@@ -228,8 +236,8 @@
       <p class="hero-intro fade-in">Every organization I've worked with faces the same underlying challenge: they hold deep, hard-won knowledge—about their craft, their mission, their way of working—but lack the infrastructure to make it transferable and scalable. My work begins by helping organizations see the full range of what's possible, then designing the structures that make it operational.</p>
       <div class="hero-meta fade-in">
         <span>Systems Design &amp; Organizational Strategy</span>
-        <span>Human–AI Collaboration</span>
-        <span>Strategy Through Production</span>
+        <span>Human–AI Collaboration Methodology</span>
+        <span>Voice Integrity Research</span>
       </div>
     </div>
   </section>
@@ -250,7 +258,7 @@
         </div>
         <div class="cap-card reveal">
           <h2>Human–AI Collaboration</h2>
-          <p>The most visible expression of my methodology. The Ho System structures how humans and AI build together—human maintains architectural authority, AI handles implementation, genuine understanding develops through the process. I use it to build production systems, including a computer vision platform deployed at Harvard. But the principles are the same ones I've applied to every collaboration for 25 years. The domain is new. The methodology isn't.</p>
+          <p>Two interconnected practices. The Ho System structures how humans and AI build together — human maintains architectural authority, AI handles implementation. Seven production systems shipped as evidence. Alongside it, an active research program investigating how humans maintain identity, voice, and judgment in sustained creative AI collaboration — including an original diagnostic taxonomy, a voice profiling methodology, and a genuine empirical question about voice identity compression.</p>
         </div>
         <div class="cap-card reveal">
           <h2>Strategic Facilitation &amp; Advisory</h2>
@@ -264,31 +272,6 @@
     <div class="container">
       <h3 class="reveal">Selected Work</h3>
       <div class="work-grid">
-  <div class="work-group">
-    <div class="work-group-label reveal">Methodology &amp; Practice</div>
-    <a class="work-item reveal" href="work/ho-system.html">
-      <div>
-        <div class="work-item-title">The Ho System — Human–AI Collaboration Methodology</div>
-        <div class="work-item-desc">A structured framework for building with AI while maintaining architectural authority. Open methodology with position paper, templates, and evidence from practice.</div>
-      </div>
-      <div class="work-item-right"><span class="work-item-tag">methodology</span><span class="work-item-arrow">→</span></div>
-    </a>
-    <a class="work-item reveal" href="https://kanyo.sageframe.net" target="_blank" rel="noopener">
-      <div>
-        <div class="work-item-title">Kanyō — Wildlife Monitoring Platform</div>
-        <div class="work-item-desc">Real-time wildlife monitoring platform deployed at Harvard Memorial Hall. Built from scratch in six weeks using the Ho System methodology. Not a prototype—a working system with active research engagement.</div>
-      </div>
-      <div class="work-item-right"><span class="work-item-tag">live system</span><span class="work-item-arrow">→</span></div>
-    </a>
-    <a class="work-item reveal" href="https://github.com/sageframe-no-kaji/hozo-sentinel" target="_blank" rel="noopener">
-      <div>
-        <div class="work-item-title">Hōzō — Sentinel Monitoring Tool</div>
-        <div class="work-item-desc">Production containerized utility built in three hours. Evidence of methodology mastery—fourteen months of structured practice compressed into fluent execution.</div>
-      </div>
-      <div class="work-item-right"><span class="work-item-tag">release</span><span class="work-item-arrow">→</span></div>
-    </a>
-  </div>
-
   <div class="work-group">
     <div class="work-group-label reveal">Organizational Systems</div>
     <a class="work-item reveal" href="work/sms-case-study.html">
@@ -317,6 +300,34 @@
     </div>
   </section>
 
+<hr class="rule">
+
+<section class="research" id="research">
+  <div class="container">
+    <h3 class="reveal">Research — Human Identity in AI Collaboration</h3>
+    <h2 class="reveal">How humans maintain judgment, voice, and genuine understanding while collaborating with AI.</h2>
+    <p class="reveal" style="margin-bottom: 1.5rem;">An active research program producing frameworks, diagnostic tools, production methodology, and published writing. The dominant paradigm focuses on the AI system. Almost no one is investigating what happens to the human. This is the gap.</p>
+    <p class="reveal" style="margin-bottom: 2rem;">The work has three dimensions: a <strong>production methodology</strong> (the Ho System) with seven shipped systems as evidence. A <strong>diagnostic framework</strong> (Destructive Interference) that names the structural failures in AI-influenced creative work. And a <strong>theoretical investigation</strong> (The Fourth Boundary) arguing the next territory is somatic, relational, and contemplative. Underneath: an empirical question about whether human voice identity can be compressed efficiently enough for AI systems to preserve it.</p>
+
+    <div class="work-items reveal">
+      <a class="work-item" href="work/research.html">
+        <div>
+          <div class="work-item-title">The Full Research Program</div>
+          <div class="work-item-desc">The claim, the frameworks, the methodology, the empirical question, the instruments in development, and what's next. One page, one story.</div>
+        </div>
+        <div class="work-item-right"><span class="work-item-tag">research overview</span><span class="work-item-arrow">→</span></div>
+      </a>
+      <a class="work-item" href="work/ho-system.html">
+        <div>
+          <div class="work-item-title">The Ho System (歩) — Production Methodology</div>
+          <div class="work-item-desc">Structured human–AI collaborative development. Seven production systems built as evidence, including a computer vision platform deployed at Harvard.</div>
+        </div>
+        <div class="work-item-right"><span class="work-item-tag">methodology</span><span class="work-item-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
   <section class="approach" id="approach">
     <div class="container">
       <h3>Approach</h3>
@@ -325,6 +336,7 @@
         <p>I create structured conditions for people to surface what they already know—what matters, what's trapped, what's dead—and then I design the collaborative framework through which they build what's next. The depth of involvement varies. The pattern is always the same: <strong>free the knowledge, design the structure, transfer the capability.</strong></p>
         <p>This is the same thing whether I'm working with an AI, a school, a nonprofit, a C-suite, or a group of teenagers. It draws on 25 years of practice, formalized through the Ho System and tested across every domain I've touched. The domain changes. The methodology doesn't.</p>
         <p>The result is that I don't separate strategy from build. I've set national learning direction and built the systems to deliver it. I've diagnosed organizational incoherence and constructed the infrastructure to resolve it. I've developed a structured human–AI methodology and used it to build production software from scratch. When facilitation surfaces a need for new tools, <strong>I build those too.</strong></p>
+        <p>The <a href="#research">research program in human identity and AI collaboration</a> is the most current expression of this practice — investigating the same questions of judgment, voice, and genuine understanding that have driven the work across every domain.</p>
       </div>
     </div>
   </section>
@@ -335,17 +347,20 @@
       <h2 class="reveal">Organizational systems design for teams navigating change.</h2>
       <p class="consulting-intro reveal">Through Blueprint for Creativity, I partner with mission-driven organizations to diagnose what's stuck, design what's next, and build the infrastructure that makes change durable. I collaborate, build capacity, and design systems that continue working after I leave.</p>
       <div class="consulting-examples reveal">
-        <div class="consulting-example">
-          <div class="consulting-example-title">Institutional Redesign</div>
-          <p>Curriculum restructuring, LMS design and build, and organizational infrastructure for a specialized school to achieve state certification. Full systems overhaul from diagnosis to delivery.</p>
+        <div class="consulting-card">
+          <div class="consulting-card-title">Institutional Redesign</div>
+          <div class="consulting-card-work">Diagnosing what's stuck, designing what's next, and building the infrastructure that makes change durable. Assessment architecture, training pipelines, competency frameworks — from diagnosis through implementation and delivery.</div>
+          <div class="consulting-card-evidence">Multi-site nonprofit across Boston Public Schools. Innovation school scaled to 7 countries. National organization restructured from prescriptive to experience-based. Full systems overhaul for state certification.</div>
         </div>
-        <div class="consulting-example">
-          <div class="consulting-example-title">Strategic Facilitation</div>
-          <p>Design-led retreats to build creative culture. Professional development programs for technical teams on critique, collaboration, and experiential learning. Advisory support for organizations in transition.</p>
+        <div class="consulting-card">
+          <div class="consulting-card-title">Learning Systems & EdTech</div>
+          <div class="consulting-card-work">LMS design and build, curriculum architecture, EdTech implementation auditing, UDL-aligned standards. Making learning infrastructure that actually reflects the pedagogy it's supposed to serve.</div>
+          <div class="consulting-card-evidence">Visual LMS serving 7,000+ students. National PD platform for scalable online delivery. Legacy program codified for digital distribution. First open-source tool for student-level Google Classroom implementation data.</div>
         </div>
-        <div class="consulting-example">
-          <div class="consulting-example-title">Organizational Strategy</div>
-          <p>Onboarding architecture for fast-scaling organizations. Vision alignment and strategic roadmapping. Coaching startups on integrating creative process into engineering workflows.</p>
+        <div class="consulting-card">
+          <div class="consulting-card-title">Strategic Facilitation</div>
+          <div class="consulting-card-work">Experiential workshops where teams do the work before it becomes the framework. Creative culture-building, professional development, organizational alignment — designed so capability transfers.</div>
+          <div class="consulting-card-evidence">Org-wide creative culture intensives. Empowerment workshops for disabled youth. Experience-based onboarding. Graduate-credit PD reaching 500+ educators. Conference workshops and keynotes.</div>
         </div>
       </div>
       <a class="writing-cta reveal" href="#contact" style="margin-top: 2rem; display: inline-flex;">Let's talk about your organization <span>→</span></a>
@@ -384,7 +399,7 @@
     <div class="container">
       <h3 class="reveal">About</h3>
       <div class="about-content reveal">
-        <p>I'm a systems architect and organizational strategist with 25+ years building infrastructure for learning, collaboration, and innovation. Architecture trained how I see problems: as structures that either serve human purpose or get in the way.</p>
+        <p>I design how humans work with AI — not at the prompt level, but at the systems level. An architect by training, I find what's alive in a system and build the infrastructure that makes it operational and transferable. I've done this across education, organizational design, consulting, and production software. The domain changes. The method doesn't.</p>
         <p>As a project architect at <strong>Next Phase Studios</strong>, I managed the $80M public amenities portion of Harvard's billion-dollar Allston development program — regulatory compliance, multi-agency coordination, and technical delivery at institutional scale. As <strong>Chief Academic Officer at NuVu Studio and NuVuX</strong>, I designed the academic infrastructure that scaled across 15 partner schools in seven countries — assessment systems, transcript architecture, and a learning management platform built from scratch. As <strong>Managing Director at ARCK Boston</strong>, I built the organizational operating system from the ground up: framework, evaluation architecture, training pipeline, hiring. As <strong>Director of Learning Design at Citizen Schools</strong>, I created the unified learning framework and critical-process-first training approach that restructured national programming.</p>
         <p>Through <strong>Blueprint for Creativity</strong>, I partner with organizations navigating reinvention. Through <strong>Sageframe</strong>, I build experimental infrastructure for human–AI collaboration, knowledge systems, and applied innovation. I write about all of it on <strong>Constructive Interference</strong>.</p>
         <p>Cambridge, MA. Remote-primary. Available for senior leadership roles, strategic consulting, and organizational advisory.</p>
