@@ -187,17 +187,18 @@
       .writing-card { min-width: 280px; }
     }
 
-    /* ANIMATIONS */
-    .fade-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s ease forwards; }
-    .fade-in:nth-child(2) { animation-delay: 0.1s; }
-    .fade-in:nth-child(3) { animation-delay: 0.2s; }
-    .fade-in:nth-child(4) { animation-delay: 0.3s; }
+    /* ANIMATIONS — scoped to .js so content is visible without JavaScript (crawlers, AI tools, headless) */
+    .js .fade-in { opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s ease forwards; }
+    .js .fade-in:nth-child(2) { animation-delay: 0.1s; }
+    .js .fade-in:nth-child(3) { animation-delay: 0.2s; }
+    .js .fade-in:nth-child(4) { animation-delay: 0.3s; }
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .js .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .js .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
+  <script>document.documentElement.classList.add('js');</script>
   <header>
     <div class="container">
       <a class="wordmark" href="#">Andrew Todd Marcus</a>
