@@ -165,6 +165,9 @@ function App() {
           </h1>
           <Prose>How humans maintain judgment, voice, and genuine understanding while collaborating with AI on creative and generative work. An active research program producing frameworks, diagnostic tools, production methodology, and published writing — developed over sixteen months of daily documented practice, without institutional support.</Prose>
           <Prose style={{ fontSize: "0.95rem", color: C.inkMuted }}>The dominant paradigm for human-AI interaction focuses on the AI system — its capabilities, its alignment, its safety. Almost no one is investigating what happens to the human: how extended collaboration affects voice, evaluative capacity, self-knowledge, and the relationship to your own thinking. This is the gap.</Prose>
+          <div style={{ marginTop: "1.5rem" }}>
+            <ExtLink href="sageframe.html">Sageframe — where the research began</ExtLink>
+          </div>
         </div>
       </div>
 
@@ -205,7 +208,7 @@ function App() {
         <Label dark>Production Methodology</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem" }}>The Ho System (歩)</h2>
         <Prose dark>A structured methodology for human-AI collaborative development. Not prompting — the development of judgment. The Ho System addresses the core bottleneck of the AI era: access to tools is universal, but the capacity to evaluate, direct, and maintain authority over AI-assisted work is not.</Prose>
-        <Prose dark>The system operates at three levels: project framing (a four-document chain producing a buildable plan before any code is written), structured sessions with clear objectives and required reflection, and a progressive mastery model that adapts as the practitioner develops fluency. Seven months of methodology design preceded the first code commit. This sequencing is a core principle.</Prose>
+        <Prose dark>The system operates at three levels: project framing (a four-document chain producing a buildable plan before any code is written), structured sessions with clear objectives and required reflection, and a progressive mastery model that adapts as the practitioner develops fluency. Seven months of methodology design preceded the first code commit. This sequencing is a core principle. The methodology emerged from Sageframe — a living knowledge architecture of 500+ documents built over a year of daily AI collaboration, where every question in this research program was first encountered.</Prose>
         <Prose dark><strong style={{ color: C.ground }}>Evidence: seven production systems</strong> built from zero prior development experience, each documented from inception through deployment. Including Kanyō — a computer vision platform deployed at Harvard's Memorial Hall, developed in collaboration with Nobel laureate economist Claudia Goldin — and m4Bookmaker, a desktop application shipped on PyPI in 3.5 days.</Prose>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
           <StatusChip status="shipped" />
@@ -218,6 +221,7 @@ function App() {
           <ExtLink href="../work/ho-foundations">Ho System Foundations — position paper</ExtLink>
           <ExtLink href="https://github.com/sageframe-no-kaji/ho-system">GitHub repository</ExtLink>
           <ExtLink href="https://sageframe.substack.com/p/three-hours">Three Hours — essay on Substack</ExtLink>
+          <ExtLink href="sageframe.html">Sageframe — the laboratory</ExtLink>
         </div>
       </Section>
 
@@ -244,7 +248,7 @@ function App() {
       <Section dark id="instruments">
         <Label dark>Practitioner Instruments</Label>
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1rem" }}>Tools for self-knowledge in AI collaboration</h2>
-        <Prose dark style={{ color: "#d8d2c8" }}>The sycophancy problem has been studied from the AI's side — models tend to agree with their users. The reciprocal problem — users tend to lose evaluative sharpness when surrounded by agreement — has not been instrumentalized. These tools address the human side.</Prose>
+        <Prose dark style={{ color: "#d8d2c8" }}>The sycophancy problem has been studied from the AI's side — models tend to agree with their users. The reciprocal problem — users tend to lose evaluative sharpness when surrounded by agreement — has not been instrumentalized. These tools address the human side. The need for these tools was first identified inside Sageframe — a year of sustained AI collaboration that revealed the gaps in self-knowledge infrastructure before the research program had a name.</Prose>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "2rem" }}>
           <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>

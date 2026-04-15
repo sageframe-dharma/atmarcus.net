@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sageframe — Knowledge Architecture for the AI Era</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="description" content="Sageframe is a knowledge architecture born from the experience of building with AI — the origin story of a research program in human identity and AI collaboration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } body { -webkit-font-smoothing: antialiased; } button { font-family: inherit; } a { color: inherit; }</style>
+  <style>:root { --color-ink: #1a1a1a; --color-ink-muted: #7a7a7a; --color-ground: #f5f2ed; --color-accent: #c45a2d; --color-rule: #d0c9be; --font-mono: 'IBM Plex Mono', 'Courier New', monospace; } .container { max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 4rem); } header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--color-rule); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(245,242,237,0.92); } header .container { display: flex; justify-content: space-between; align-items: center; } .wordmark { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--color-ink); text-decoration: none; letter-spacing: 0.02em; } header nav { display: flex; gap: 2rem; } header nav a { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 400; color: var(--color-ink-muted) !important; letter-spacing: 0.04em; text-transform: lowercase; text-decoration: none; } header nav a:hover { color: var(--color-ink) !important; } footer { padding: 2rem 0; border-top: 1px solid var(--color-rule); background: #f5f2ed; } footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; } footer p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-muted); max-width: none; } .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.25rem; width: 28px; height: 22px; position: relative; } .nav-toggle span { display: block; width: 100%; height: 2px; background: var(--color-ink); border-radius: 1px; position: absolute; left: 0; transition: all 0.25s ease; } .nav-toggle span:nth-child(1){top:0} .nav-toggle span:nth-child(2){top:50%;transform:translateY(-50%)} .nav-toggle span:nth-child(3){bottom:0} .nav-toggle.active span:nth-child(1){top:50%;transform:translateY(-50%) rotate(45deg)} .nav-toggle.active span:nth-child(2){opacity:0} .nav-toggle.active span:nth-child(3){bottom:50%;transform:translateY(50%) rotate(-45deg)} .sheet-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:200;opacity:0;transition:opacity 0.25s ease} .sheet-backdrop.visible{display:block;opacity:1} .bottom-sheet{position:fixed;left:0;right:0;bottom:0;z-index:201;background:var(--color-ground);border-top:2px solid var(--color-accent);border-radius:12px 12px 0 0;padding:1.5rem 2rem 2.5rem;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);box-shadow:0 -4px 24px rgba(0,0,0,0.12)} .bottom-sheet.open{transform:translateY(0)} .sheet-handle{width:36px;height:4px;background:var(--color-rule);border-radius:2px;margin:0 auto 1.5rem} .bottom-sheet nav{display:flex;flex-direction:column} .bottom-sheet nav a{display:block;padding:1rem 0;font-family:var(--font-mono);font-size:0.9rem;color:var(--color-ink-muted);letter-spacing:0.04em;text-transform:lowercase;text-decoration:none;border-bottom:1px solid var(--color-rule)} .bottom-sheet nav a:last-child{border-bottom:none} .bottom-sheet nav a:hover{color:var(--color-ink)} @media(max-width:640px){header nav{display:none} .nav-toggle{display:block}}</style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <header><div class="container"><a href="../index.html" class="wordmark">Andrew Todd Marcus</a><nav><a href="../index.html#work">work</a><a href="../index.html#research">research</a><a href="../index.html#approach">approach</a><a href="../index.html#consulting">consulting</a><a href="../index.html#writing">writing</a><a href="../index.html#about">about</a><a href="../index.html#contact">contact</a></nav><button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button></div></header>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="bottom-sheet" id="bottomSheet"><div class="sheet-handle"></div><nav><a href="../index.html#work">work</a><a href="../index.html#research">research</a><a href="../index.html#approach">approach</a><a href="../index.html#consulting">consulting</a><a href="../index.html#writing">writing</a><a href="../index.html#about">about</a><a href="../index.html#contact">contact</a></nav></div>
+  <div id="root"></div>
+  <script type="text/babel">
+const{useState}=React;
+const F={display:"'DM Serif Display',Georgia,serif",body:"'IBM Plex Sans',-apple-system,sans-serif",mono:"'IBM Plex Mono','Courier New',monospace"};
+const C={ink:"#1a1a1a",inkLight:"#4a4a4a",inkMuted:"#7a7a7a",ground:"#f5f2ed",groundWarm:"#ebe6dd",accent:"#c45a2d",rule:"#d0c9be",white:"#faf8f4",darkBg:"#3d3a37",darkBgDeep:"#1a1a1a",darkRule:"#555",darkMuted:"#999",darkText:"#c8c2b8",plum:"#8b5e8b",steel:"#3a7ca5",sage:"#5a8a3a"};
+function Label({children,dark}){return<div style={{fontFamily:F.body,fontSize:"0.8rem",fontWeight:600,letterSpacing:"0.12em",textTransform:"uppercase",color:dark?C.darkMuted:C.inkMuted,marginBottom:"1.5rem"}}>{children}</div>}
+function Prose({children,dark,style}){return<p style={{fontSize:"1.05rem",color:dark?C.darkText:C.inkLight,marginBottom:"1.5rem",lineHeight:1.75,maxWidth:660,...style}}>{children}</p>}
+function Chip({children}){return<span style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.inkMuted,letterSpacing:"0.04em",padding:"0.25rem 0.6rem",border:"1px solid "+C.rule,borderRadius:2,whiteSpace:"nowrap"}}>{children}</span>}
+function Section({dark,children,style}){return<section style={{background:dark?C.darkBg:C.ground,padding:"5rem 2rem",...style}}><div style={{maxWidth:900,margin:"0 auto"}}>{children}</div></section>}
+function ExtLink({href,children}){return<a href={href} target="_blank" rel="noopener noreferrer" style={{color:C.accent,textDecoration:"none",borderBottom:"1px solid "+C.accent+"40"}}>{children}</a>}
+function Exp({label,sub,open,toggle,color,dark,children}){return(<div style={{borderBottom:"1px solid "+(dark?C.darkRule:C.rule)}}><button onClick={toggle} style={{width:"100%",padding:"1.25rem 0",background:"transparent",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",textAlign:"left",color:dark?"#e8e2d8":C.ink,gap:"1rem"}}><div style={{display:"flex",alignItems:"center",gap:"0.75rem"}}><span style={{width:8,height:8,borderRadius:"50%",background:color||C.accent,flexShrink:0}}/><div><div style={{fontFamily:F.display,fontSize:"1.15rem",lineHeight:1.3}}>{label}</div>{sub&&<div style={{fontSize:"0.85rem",color:dark?C.darkMuted:C.inkMuted,marginTop:"0.25rem",fontStyle:"italic"}}>{sub}</div>}</div></div><span style={{color:C.accent,fontSize:"1.1rem",transition:"transform 0.2s",transform:open?"rotate(90deg)":"none",flexShrink:0}}>&#8594;</span></button>{open&&<div style={{paddingBottom:"1.75rem",paddingLeft:"1.75rem"}}>{children}</div>}</div>)}
+
+/* ─── INTERACTIVE TREE ─── */
+const treeData=[
+  {sym:"◎",code:"0",name:"Foundations & Metadata",children:[
+    {sym:"◆",code:"0.00–0.09",name:"Cartography & Indexing",children:[
+      {sym:"★",code:"0.00.00",name:"Sageframe Meta Cartography"},
+      {sym:"★",code:"0.00.01",name:"Range Doctrine"},
+      {sym:"★",code:"0.00.02",name:"Temporal Cartography"},
+      {sym:"★",code:"0.00.03",name:"Structural Rules"},
+      {sym:"★",code:"0.00.90",name:"Master Topography"},
+      {sym:"★",code:"0.00.91",name:"Reflective Afterword"},
+      {sym:"★",code:"0.00.99",name:"Enso Cartography"}]},
+    {sym:"◆",code:"0.10–0.19",name:"Documentation Standards",children:[
+      {sym:"★",code:"0.10.00",name:"Documentation Standards"},
+      {sym:"★",code:"0.10.10",name:"Header Template (v2.2)"},
+      {sym:"★",code:"0.10.20",name:"Rule of Two & Volume Convention"}]},
+    {sym:"◇",code:"0.20–0.29",name:"Vault Structure & Obsidian"},
+    {sym:"◆",code:"0.30–0.39",name:"Knowledge Flow & Metadata",children:[
+      {sym:"★",code:"0.30.00",name:"Knowledge Flow Index"},
+      {sym:"★",code:"0.31.10",name:"Sageframe Atlas — Cartographic Database"},
+      {sym:"★",code:"0.33.10",name:"Mandala Transitional Inventory"},
+      {sym:"★",code:"0.33.11",name:"NetBox Network Inventory"},
+      {sym:"★",code:"0.33.12",name:"Postgres Cartographic Atlas"}]},
+    {sym:"◆",code:"0.40–0.49",name:"Toolchain & Editors",children:[
+      {sym:"★",code:"0.40.00",name:"Toolchain Overview"},
+      {sym:"★",code:"0.40.05",name:"XDG Base Directory Reference"}]},
+    {sym:"◇",code:"0.50–0.59",name:"Narrative & Canon"},
+    {sym:"◇",code:"0.60–0.69",name:"Archives & Lifecycle"},
+    {sym:"◇",code:"0.70–0.79",name:"Automation of Knowledge"},
+    {sym:"◇",code:"0.80–0.89",name:"AI & Reflection Layer"},
+    {sym:"◇",code:"0.90–0.99",name:"Cleanup & Meta-Resilience"}
+  ]},
+  {sym:"◎",code:"1",name:"Infrastructure & Systems",children:[
+    {sym:"◆",code:"1.00–1.09",name:"Genesis / Survivor's Manual",children:[
+      {sym:"★",code:"1.00.i",name:"Genesis — Range Index"},
+      {sym:"★",code:"1.03.16",name:"Citadel-BU Formatting Policy"},
+      {sym:"★",code:"1.09.00",name:"Index & Evidence"},
+      {sym:"◇",code:"1.01",name:"Geology & Orientation"},
+      {sym:"◇",code:"1.02",name:"Access & Identity Recovery"},
+      {sym:"◇",code:"1.04",name:"Minimal Rebuild Path"},
+      {sym:"◇",code:"1.05",name:"Host Verification & Integrity"},
+      {sym:"◇",code:"1.06",name:"Command & Control Surface"},
+      {sym:"◇",code:"1.07",name:"Break-glass Scenarios"},
+      {sym:"◇",code:"1.08",name:"Audit & Evidence Capture"}]},
+    {sym:"◆",code:"1.10–1.19",name:"Hardware & Resource Layout",children:[
+      {sym:"★",code:"1.10.i",name:"Hardware Layout — Index"},
+      {sym:"◇",code:"1.11",name:"Compute Nodes"},
+      {sym:"◇",code:"1.12",name:"Storage Devices & Geometry"},
+      {sym:"◇",code:"1.13",name:"Power & Cooling Topology"},
+      {sym:"◇",code:"1.14",name:"Network Physical Layer"}]},
+    {sym:"◆",code:"1.20–1.29",name:"Proxmox Host & Virtualization",children:[
+      {sym:"★",code:"1.20.i",name:"Proxmox — Index"},
+      {sym:"◇",code:"1.21",name:"Installation & Initialization"},
+      {sym:"◇",code:"1.22",name:"Security Hardening"},
+      {sym:"◇",code:"1.23",name:"Storage Integration & ZFS Pools"},
+      {sym:"◇",code:"1.24",name:"Networking Bridges & VLANs"}]},
+    {sym:"◆",code:"1.30–1.39",name:"Guest Definitions & Storage Mapping",children:[
+      {sym:"★",code:"1.30.i",name:"Guest Definitions — Index"}]},
+    {sym:"◆",code:"1.40–1.49",name:"System Configuration & Host Policy",children:[
+      {sym:"★",code:"1.40.i",name:"System Configuration — Index"}]},
+    {sym:"◆",code:"1.50–1.59",name:"Networking & Perimeter Services",children:[
+      {sym:"★",code:"1.50.i",name:"Networking — Index"},
+      {sym:"★",code:"1.51.10",name:"Network Rebuild Runbook"}]},
+    {sym:"◆",code:"1.60–1.69",name:"Application Execution & Orchestration",children:[
+      {sym:"★",code:"1.60.00.i",name:"Application Execution — Index"},
+      {sym:"★",code:"1.62.01",name:"Runtime Range Template"},
+      {sym:"◆",code:"1.62.10",name:"Docker",children:[
+        {sym:"★",code:"1.62.10.i",name:"Docker Index"},
+        {sym:"★",code:"1.62.11",name:"Docker Cartography"},
+        {sym:"★",code:"1.62.12",name:"Containerization Policy"},
+        {sym:"★",code:"1.62.13",name:"Canonical Docker Rules"},
+        {sym:"★",code:"1.62.14",name:"File Management & ZFS Layout"},
+        {sym:"★",code:"1.62.15",name:"Networking & Service Exposure"},
+        {sym:"★",code:"1.62.20",name:"Container Setup Template"}]}]},
+    {sym:"◆",code:"1.70–1.79",name:"Living Systems & Automata",children:[
+      {sym:"★",code:"1.70.00.i",name:"Living Systems — Index"},
+      {sym:"◇",code:"1.71",name:"Home Automation & Environment"},
+      {sym:"◇",code:"1.72",name:"Device Infrastructure & Protocols"},
+      {sym:"◇",code:"1.73",name:"Surveillance & Security Systems"},
+      {sym:"◇",code:"1.74",name:"Energy, HVAC & Environment"},
+      {sym:"★",code:"1.75.21",name:"Whisper Stack Setup"},
+      {sym:"◇",code:"1.76",name:"Cognitive & AI Automata"},
+      {sym:"◆",code:"1.77",name:"Media, Knowledge & Information",children:[
+        {sym:"★",code:"1.77.00.i",name:"Media & Knowledge — Index"},
+        {sym:"★",code:"1.77.21",name:"Calibre-Web Setup"},
+        {sym:"★",code:"1.77.51.10",name:"Paperless-NGX Setup"},
+        {sym:"★",code:"1.77.51.11",name:"Paperless-AI Setup"}]}]},
+    {sym:"◆",code:"1.80–1.89",name:"Workstations & Edge Devices",children:[
+      {sym:"★",code:"1.80.00.i",name:"Workstations — Index"},
+      {sym:"◆",code:"1.81",name:"Workstation — Basho (MacBook)",children:[
+        {sym:"★",code:"1.81.00.i",name:"Basho — Index"},
+        {sym:"★",code:"1.81.22.11",name:"Hammerspoon XDG Shim"},
+        {sym:"★",code:"1.81.26",name:"Python Dev Environment"},
+        {sym:"★",code:"1.81.42",name:"SSH Key Guide"},
+        {sym:"★",code:"1.81.50.00",name:"Dev Environment Overview"},
+        {sym:"★",code:"1.81.51",name:"Shell"},
+        {sym:"★",code:"1.81.52",name:"Git Config & Signing"},
+        {sym:"★",code:"1.81.53.00",name:"Languages & SDKs Overview"},
+        {sym:"★",code:"1.81.56.10",name:"Kanban Plugin Install"}]},
+      {sym:"◇",code:"1.82",name:"Family / Shared Workstations"},
+      {sym:"◇",code:"1.83",name:"Raspberry Pi / SBCs"},
+      {sym:"◇",code:"1.84",name:"Mobile & Tablets"},
+      {sym:"◇",code:"1.86",name:"Remote / Guest Endpoints"}]},
+    {sym:"◆",code:"1.90–1.99",name:"Mujō Method / Resilience & Versioning",children:[
+      {sym:"★",code:"1.90.00.i",name:"Mujō Method — Index"},
+      {sym:"★",code:"1.90.01",name:"Philosophy & Strategy"},
+      {sym:"★",code:"1.90.02",name:"Storage Layout & Backup Datasets"},
+      {sym:"★",code:"1.90.03",name:"Glossary & Tags"},
+      {sym:"★",code:"1.90.04",name:"New Component Checklist"},
+      {sym:"◆",code:"1.91",name:"Core System Backups",children:[
+        {sym:"★",code:"1.91.00",name:"Core System Backups — Master"},
+        {sym:"★",code:"1.91.11.00",name:"Proxmox Dump Index"},
+        {sym:"★",code:"1.91.11.01",name:"Proxmox Host Dumps"},
+        {sym:"★",code:"1.91.11.02",name:"System Core Config Backup"},
+        {sym:"★",code:"1.91.20",name:"Core System Schedules & Jobs"}]},
+      {sym:"◆",code:"1.92",name:"File & Data Backups",children:[
+        {sym:"★",code:"1.92.00",name:"Snapshot Approach"},
+        {sym:"★",code:"1.92.01",name:"Data Resilience — Master"},
+        {sym:"★",code:"1.92.02",name:"Sanoid Implementation"},
+        {sym:"★",code:"1.92.03",name:"Syncoid Implementation"},
+        {sym:"★",code:"1.92.04",name:"Chumon Sanoid & Syncoid"},
+        {sym:"★",code:"1.92.05",name:"Kanyo Sanoid & Syncoid"},
+        {sym:"◆",code:"1.92.41",name:"Syncthing",children:[
+          {sym:"★",code:"1.92.41.01",name:"Syncthing Overview"},
+          {sym:"★",code:"1.92.41.02",name:"Docker Setup"},
+          {sym:"★",code:"1.92.41.03",name:"Server Node"}]}]},
+      {sym:"◆",code:"1.93",name:"Client Backups",children:[
+        {sym:"★",code:"1.93.20",name:"TSM Kura Implementation"},
+        {sym:"★",code:"1.93.21",name:"TSM Kanyo Secondary Node"}]},
+      {sym:"◆",code:"1.96",name:"Infra Versioning & Secrets",children:[
+        {sym:"★",code:"1.96.10",name:"SSH Key Management"},
+        {sym:"◇",code:"1.96.11",name:"sops-age + Git Workflow"},
+        {sym:"◇",code:"1.96.20",name:"Bootstrap & Break-glass"}]},
+      {sym:"◆",code:"1.97",name:"Drills & Restores",children:[
+        {sym:"◇",code:"1.97.10",name:"Drill Design Pattern"},
+        {sym:"◇",code:"1.97.20",name:"Quarterly Drill Plan"}]},
+      {sym:"◆",code:"1.99",name:"Logging & Monitoring",children:[
+        {sym:"◇",code:"1.99.10",name:"Signals That Prove Resilience"},
+        {sym:"◇",code:"1.99.11",name:"Backup Job Healthchecks"}]}]}
+  ]},
+  {sym:"◎",code:"2",name:"Manuals & Methodology",children:[
+    {sym:"◆",code:"2.00–2.09",name:"Index & Philosophy",children:[
+      {sym:"★",code:"2.00.00",name:"Manuals Philosophy"},
+      {sym:"★",code:"2.00.01",name:"Header Template"},
+      {sym:"★",code:"2.00.02",name:"Manual Template"},
+      {sym:"★",code:"2.00.03",name:"Manuals Status"},
+      {sym:"★",code:"2.00.04",name:"Cheatsheet Template"},
+      {sym:"★",code:"2.00.09",name:"Transition Map"}]},
+    {sym:"◇",code:"2.10–2.19",name:"Networking Manuals"},
+    {sym:"◆",code:"2.20–2.29",name:"Continuity & Provenance Systems",children:[
+      {sym:"★",code:"2.20.00",name:"Data Systems & Storage Index"},
+      {sym:"◆",code:"2.22",name:"Filesystems & Storage Layers",children:[
+        {sym:"★",code:"2.22.00",name:"Filesystem Index"},
+        {sym:"★",code:"2.22.10",name:"ZFS Index"},
+        {sym:"★",code:"2.22.14",name:"ZFS Encryption & Keys"},
+        {sym:"★",code:"2.22.30-M",name:"VirtIO-FS Manual"},
+        {sym:"★",code:"2.22.30-X",name:"VirtIO-FS Cheatsheet"}]},
+      {sym:"◆",code:"2.23",name:"Git & Version Control",children:[
+        {sym:"★",code:"2.23.00",name:"Git & Version Control Index"},
+        {sym:"★",code:"2.23.41",name:"Teaching File Pairing Standard"}]},
+      {sym:"◆",code:"2.24",name:"Replication Tools",children:[
+        {sym:"★",code:"2.24.10.01",name:"Replication Tools Overview"},
+        {sym:"★",code:"2.24.31-M",name:"Syncthing Manual"},
+        {sym:"★",code:"2.24.32-M",name:"Syncthing Cheatsheet"}]}]},
+    {sym:"◆",code:"2.30–2.39",name:"Automation Theory",children:[
+      {sym:"★",code:"2.32.01-M",name:"Sanoid Manual"},
+      {sym:"★",code:"2.32.01-X",name:"Sanoid Cheatsheet"},
+      {sym:"★",code:"2.32.02-M",name:"Syncoid Manual"},
+      {sym:"★",code:"2.32.02-X",name:"Syncoid Cheatsheet"},
+      {sym:"◆",code:"2.33",name:"Workflow Automation",children:[
+        {sym:"★",code:"2.33.00",name:"Workflow Automation Index"},
+        {sym:"★",code:"2.33.23.01-M",name:"ntfy Manual"}]}]},
+    {sym:"◆",code:"2.40–2.49",name:"Software Toolkits",children:[
+      {sym:"★",code:"2.40.00.i",name:"Software Toolkits Index"},
+      {sym:"★",code:"2.40.05",name:"XDG Specification Explained"}]},
+    {sym:"◆",code:"2.60–2.69",name:"Security & Permissions",children:[
+      {sym:"★",code:"2.64.00",name:"SSH Systems Index"},
+      {sym:"★",code:"2.64.01-M",name:"SSH Systems Manual"},
+      {sym:"★",code:"2.64.01-X",name:"SSH Systems Cheatsheet"},
+      {sym:"★",code:"2.64.33-M",name:"SSH Usage — Git"},
+      {sym:"★",code:"2.64.33-X",name:"SSH Usage — Git Cheatsheet"},
+      {sym:"★",code:"2.66.00",name:"Encryption Systems Index"},
+      {sym:"★",code:"2.66.10",name:"Linux Encryption Primer"},
+      {sym:"★",code:"2.68.00",name:"Secrets Management Index"}]},
+    {sym:"◆",code:"2.70–2.79",name:"Containers & Virtualization",children:[
+      {sym:"★",code:"2.70.00.i",name:"Containers & Virtualization Index"},
+      {sym:"★",code:"2.73.12",name:"Containerization Policy & Practice"},
+      {sym:"★",code:"2.73.13",name:"Docker Engine & Management Guide"}]},
+    {sym:"◆",code:"2.80–2.89",name:"Development & Tools",children:[
+      {sym:"★",code:"2.84.00",name:"Python Overview"},
+      {sym:"★",code:"2.84.01",name:"Python Dev Environment"},
+      {sym:"★",code:"2.84.40",name:"Running GitHub Tools Safely"}]},
+    {sym:"◇",code:"2.90–2.99",name:"UI / Human Interaction"}
+  ]},
+  {sym:"◎",code:"3",name:"Git-Backed Infrastructure",children:[
+    {sym:"★",code:"3.00.00",name:"Codebase Meta Index"},
+    {sym:"★",code:"3.00.20",name:"Repo Metadata Map"},
+    {sym:"◆",code:"3.10–3.19",name:"Scripts & Templates",children:[
+      {sym:"★",code:"3.10.20-S",name:"Script Teaching Template"}]},
+    {sym:"◆",code:"3.30–3.39",name:"Sageframe Dev Environment",children:[
+      {sym:"★",code:"3.30.00",name:"Dev Environment Index"}]},
+    {sym:"◇",code:"3.40–3.49",name:"Config Repos"},
+    {sym:"◇",code:"3.60–3.79",name:"Integration & Pipelines"},
+    {sym:"◇",code:"3.90–3.99",name:"Incubation Zone"}
+  ]},
+  {sym:"◎",code:"4",name:"The Way of Sageframe",children:[
+    {sym:"◆",code:"4.00–4.09",name:"Manifesto & Philosophy",children:[
+      {sym:"★",code:"4.00.00",name:"The Way of Sageframe"},
+      {sym:"★",code:"4.00.10",name:"Sageframe Manifesto"},
+      {sym:"★",code:"4.00.30",name:"Sageframe Koans"}]},
+    {sym:"◆",code:"4.10–4.19",name:"System Design Concepts",children:[
+      {sym:"◇",code:"4.10.10",name:"Layered Architectures"},
+      {sym:"◇",code:"4.10.20",name:"Self-Healing & Feedback Loops"},
+      {sym:"◇",code:"4.10.30",name:"Declarative vs Emergent Design"},
+      {sym:"◇",code:"4.10.40",name:"Patterns of Resilience"}]},
+    {sym:"◆",code:"4.20–4.29",name:"AI Co-Pilot & Reflection Systems",children:[
+      {sym:"◇",code:"4.20.10",name:"Co-Authoring Frameworks"},
+      {sym:"◇",code:"4.20.20",name:"Prompt Design & Meta-Instruction"},
+      {sym:"◇",code:"4.20.30",name:"Reflection Architecture (AI + Human)"},
+      {sym:"◇",code:"4.20.40",name:"Model Provenance & Audit"}]},
+    {sym:"◆",code:"4.30–4.39",name:"Personal Infrastructure Ethics",children:[
+      {sym:"◇",code:"4.30.10",name:"Stewardship & Autonomy"},
+      {sym:"◇",code:"4.30.20",name:"Privacy, Transparency & Trust"},
+      {sym:"◇",code:"4.30.30",name:"Digital Minimalism & Mindful Tech"},
+      {sym:"◇",code:"4.30.40",name:"Human-Machine Co-Agency"}]},
+    {sym:"◆",code:"4.40–4.59",name:"Conscious Design & Aesthetics",children:[
+      {sym:"◇",code:"4.40.10",name:"Symbolic Systems & Visual Grammar"},
+      {sym:"◇",code:"4.40.20",name:"Narrative Infrastructure"},
+      {sym:"◇",code:"4.40.30",name:"Design as Meditation"}]},
+    {sym:"◆",code:"4.60–4.79",name:"Meta-Systems & Ethics of AI",children:[
+      {sym:"◇",code:"4.60.10",name:"Agency & Alignment"},
+      {sym:"◇",code:"4.60.20",name:"AI Companionship & Reflection"},
+      {sym:"◇",code:"4.60.30",name:"Meta-System Awareness"}]},
+    {sym:"◇",code:"4.90–4.99",name:"Closing Notes"}
+  ]},
+  {sym:"◎",code:"5",name:"The Shoshin Garden",children:[
+    {sym:"◆",code:"5.00–5.09",name:"Foundations of Journaling",children:[
+      {sym:"★",code:"5.00.00",name:"Shoshin Overview"},
+      {sym:"◇",code:"5.01",name:"Philosophy of Journaling"},
+      {sym:"◇",code:"5.02",name:"Vault Practices"},
+      {sym:"◇",code:"5.03",name:"Narrative Identity"},
+      {sym:"◇",code:"5.05",name:"Memory Architecture"},
+      {sym:"◇",code:"5.06",name:"Inner Voice Studies"}]},
+    {sym:"◆",code:"5.10–5.19",name:"Books & Literary Work",children:[
+      {sym:"◇",code:"5.10",name:"Book Index"},
+      {sym:"◇",code:"5.11",name:"Nonfiction Manuscripts"},
+      {sym:"◇",code:"5.12",name:"Homelab for Humans"},
+      {sym:"◇",code:"5.13",name:"Bīja: Seeds of Infrastructure"},
+      {sym:"◇",code:"5.14",name:"System as Soul"}]},
+    {sym:"◆",code:"5.20–5.29",name:"Publishing & Media",children:[
+      {sym:"★",code:"5.20.01",name:"Sageframe Public Blueprint"},
+      {sym:"◇",code:"5.21",name:"Substack Essays"},
+      {sym:"◇",code:"5.22",name:"LinkedIn / Professional Voice"},
+      {sym:"◇",code:"5.25",name:"YouTube or Media"}]},
+    {sym:"◆",code:"5.30–5.39",name:"Technology & Creative Tools",children:[
+      {sym:"◇",code:"5.31",name:"SovereignFS"},
+      {sym:"◇",code:"5.32",name:"Bīja CLI"},
+      {sym:"◇",code:"5.33",name:"Vault Tools"},
+      {sym:"◇",code:"5.35",name:"AI Companions"},
+      {sym:"◇",code:"5.39",name:"Reflections on Code as Craft"}]},
+    {sym:"◆",code:"5.40–5.49",name:"Physical & Tangible Projects",children:[
+      {sym:"◇",code:"5.41",name:"3D Printing & Fabrication"},
+      {sym:"◇",code:"5.43",name:"Smart Home Hardware"},
+      {sym:"◇",code:"5.44",name:"Studio / Workspace Design"},
+      {sym:"◇",code:"5.47",name:"Architecture & Habitat"}]},
+    {sym:"◆",code:"5.50–5.59",name:"Education & Mentorship",children:[
+      {sym:"◇",code:"5.51",name:"Teaching Philosophy"},
+      {sym:"◇",code:"5.52",name:"Course Design"},
+      {sym:"◇",code:"5.53",name:"Homelab Curriculum"},
+      {sym:"◇",code:"5.55",name:"Mentorship Practice"}]},
+    {sym:"◆",code:"5.60–5.69",name:"Self-Study & Human Knowledge",children:[
+      {sym:"◆",code:"5.60–5.61",name:"Foundations of Learning",children:[
+        {sym:"★",code:"5.60.00",name:"Self-Study — Overview"},
+        {sym:"◇",code:"5.60.10",name:"Study Systems"},
+        {sym:"◇",code:"5.60.20",name:"Flow and Attention"},
+        {sym:"◇",code:"5.60.50",name:"Conceptual Mapping"},
+        {sym:"◇",code:"5.60.80",name:"Learning as Creation"}]},
+      {sym:"◆",code:"5.62–5.63",name:"Sciences of Reality",children:[
+        {sym:"◇",code:"5.62.10",name:"Physics"},
+        {sym:"◇",code:"5.62.30",name:"Biology"},
+        {sym:"◇",code:"5.62.40",name:"Cognitive Science"},
+        {sym:"◇",code:"5.62.60",name:"Astronomy"},
+        {sym:"◆",code:"5.63",name:"Mathematics & Computation",children:[
+          {sym:"◇",code:"5.63.40",name:"Computer Science"},
+          {sym:"◇",code:"5.63.50",name:"Artificial Intelligence"},
+          {sym:"◇",code:"5.63.70",name:"Information Theory"}]}]},
+      {sym:"◆",code:"5.64–5.67",name:"Languages & Expression",children:[
+        {sym:"◇",code:"5.64.00",name:"Linguistics"},
+        {sym:"◇",code:"5.64.40",name:"Rhetoric"},
+        {sym:"◇",code:"5.64.50",name:"Programming Languages"},
+        {sym:"◆",code:"5.64.60",name:"Code as Language",children:[
+          {sym:"★",code:"5.64.60.00",name:"Language Index"},
+          {sym:"◆",code:"5.64.60.61",name:"Python",children:[
+            {sym:"★",code:"5.64.60.61.00",name:"Python Index"},
+            {sym:"★",code:"5.64.60.61.01",name:"Python Learning Guide"},
+            {sym:"◇",code:"5.64.60.61.10",name:"Core Syntax & Structures"},
+            {sym:"◇",code:"5.64.60.61.20",name:"Environment & Tooling"},
+            {sym:"◇",code:"5.64.60.61.30",name:"Automation & CLI Tools"},
+            {sym:"◇",code:"5.64.60.61.40",name:"Data & AI Foundations"},
+            {sym:"◇",code:"5.64.60.61.70",name:"Sageframe Integration"}]},
+          {sym:"◇",code:"5.64.60.62",name:"Rust"},
+          {sym:"◇",code:"5.64.60.63",name:"Go"},
+          {sym:"◇",code:"5.64.60.64",name:"JavaScript / TypeScript"},
+          {sym:"◇",code:"5.64.60.65",name:"Lua"},
+          {sym:"◇",code:"5.64.60.66",name:"Shell / Bash"}]}]},
+      {sym:"◆",code:"5.68–5.69",name:"Humanities & Society",children:[
+        {sym:"◇",code:"5.68.00",name:"History"},
+        {sym:"◇",code:"5.68.30",name:"Ethics"},
+        {sym:"◇",code:"5.68.40",name:"Political Theory"},
+        {sym:"◇",code:"5.68.60",name:"Education Theory"}]}]},
+    {sym:"◆",code:"5.70–5.79",name:"Philosophy & Metasystems",children:[
+      {sym:"◇",code:"5.70.10",name:"Western Philosophy"},
+      {sym:"◇",code:"5.70.20",name:"Eastern Philosophy"},
+      {sym:"◇",code:"5.70.30",name:"Philosophy of Mind"},
+      {sym:"◇",code:"5.70.50",name:"Epistemology"},
+      {sym:"◇",code:"5.70.60",name:"Systems Philosophy"}]},
+    {sym:"◆",code:"5.80–5.89",name:"Interdisciplinary Synthesis",children:[
+      {sym:"◇",code:"5.80.10",name:"Science & Art"},
+      {sym:"◇",code:"5.80.30",name:"Technology & Ethics"},
+      {sym:"◇",code:"5.80.50",name:"Consciousness Studies"}]},
+    {sym:"◆",code:"5.90–5.99",name:"Scratchpads & Meta Logs"}
+  ]}
+];
+const symColor=s=>s==="★"?C.accent:s==="◎"?"#e8e2d8":s==="◆"?C.steel:C.darkMuted;
+
+function TreeNode({node,depth=0}){
+  const[open,setOpen]=useState(false);
+  const has=node.children&&node.children.length>0;
+  return(<div style={{marginLeft:depth*16}}>
+    <button onClick={()=>has&&setOpen(!open)} style={{display:"flex",alignItems:"center",gap:"0.5rem",padding:"0.35rem 0.5rem",background:"transparent",border:"none",cursor:has?"pointer":"default",width:"100%",textAlign:"left"}}>
+      <span style={{fontSize:"0.85rem",color:symColor(node.sym),flexShrink:0,width:16,textAlign:"center"}}>{node.sym}</span>
+      <span style={{fontFamily:F.mono,fontSize:"0.68rem",color:C.accent,minWidth:depth>0?55:16,flexShrink:0}}>{node.code}</span>
+      <span style={{fontSize:"0.82rem",color:C.darkText,lineHeight:1.3}}>{node.name}</span>
+      {has&&<span style={{color:C.darkMuted,fontSize:"0.7rem",marginLeft:"auto",flexShrink:0,transition:"transform 0.15s",transform:open?"rotate(90deg)":"none"}}>&#9656;</span>}
+    </button>
+    {open&&node.children&&<div style={{borderLeft:"1px solid "+C.darkRule,marginLeft:8+depth*16,paddingLeft:8}}>{node.children.map((c,i)=><TreeNode key={i} node={c} depth={0}/>)}</div>}
+  </div>);
+}
+
+function App(){
+  const[structOpen,setStructOpen]=useState(null);
+  const toggleStruct=(id)=>setStructOpen(structOpen===id?null:id);
+  const[bookOpen,setBookOpen]=useState(null);
+  return(
+    <div style={{fontFamily:F.body,color:C.ink,background:C.ground}}>
+
+      {/* ═══ HERO ═══ */}
+      <Section>
+        <Label>Research — Knowledge Systems Architecture</Label>
+        <h1 style={{fontFamily:F.display,fontSize:"clamp(2rem,5vw,3.25rem)",lineHeight:1.15,marginBottom:"2.5rem",maxWidth:700}}>A knowledge architecture born from the experience of{" "}<span style={{color:C.accent,fontStyle:"italic"}}>building with AI.</span></h1>
+        <Prose>Sageframe is a living knowledge system — 500+ documents organized across six books, governed by a coordinate system, structural laws, and a philosophy of impermanence. It emerged from the experience of building real infrastructure with AI as a daily collaborator, and from the realization that the collaboration itself needed its own architecture. Not just to organize what was being learned, but to understand <em>how</em> it was being learned — and what happens to human thinking when the collaborator never tires.</Prose>
+        <Prose>In spring 2025, I was working in a role that used a fraction of what I could do. I had spent years designing learning systems and organizational infrastructure — at <ExtLink href="citizen-schools.html">Citizen Schools</ExtLink>, at <ExtLink href="arck.html">ARCK</ExtLink>, at <ExtLink href="sms-case-study.html">NuVu</ExtLink>. The depth of systems thinking I'd tried to bring to my current work couldn't find purchase. I needed to build something real. So I started building a homelab — Docker, Proxmox, ZFS, networking — with AI from the very first day. Within a week, I had written a bootstrap file defining the AI's role, my role, and the protocols for preserving continuity. I named the system Sageframe. I named myself Tyro — it means beginner. That was April 17, 2025.</Prose>
+        <Prose style={{marginBottom:0}}>I didn't know it yet, but I was building the laboratory where every question in my <ExtLink href="research.html">research program</ExtLink> would first be encountered.</Prose>
+        <div style={{marginTop:"2.5rem",display:"flex",gap:"0.5rem",flexWrap:"wrap"}}>{["Knowledge Architecture","AI Collaboration","Epistemology","Obsidian + Git + ZFS","500+ Documents","1 Year"].map(t=><Chip key={t}>{t}</Chip>)}</div>
+      </Section>
+
+      {/* ═══ FROM THE START ═══ */}
+      <Section dark>
+        <Label dark>From the Start</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.8rem",color:"#e8e2d8",marginBottom:"1.5rem"}}>The collaboration came first. The system followed.</h2>
+        <Prose dark>The AI was there from day one — not as a tool I picked up later, but as the medium I was thinking through. The throughput was extraordinary. But it only took a few rebuilds and a few lost decisions to know that I needed to do something different. Not just document what I was building, but understand <em>why</em> I was building it. <strong style={{color:"#e8e2d8"}}>"Build it so future you can understand"</strong> became the founding principle.</Prose>
+        <Prose dark>Very quickly, the documentation became something more. I started thinking about the nature of the collaboration itself — what the roles were, how to preserve what we'd built together, how to make the AI's contributions retrievable. I wrote context configs defining how the AI should work with me. I built a thread index — manually numbering and cataloging conversations, building a searchable archive of our collaborative history. I wrote metacognitive reflections to understand my own understanding.</Prose>
+        <Prose dark>This was before Skills existed. Before Projects. Before agentic tools or persistent memory. I was hand-building the infrastructure for AI collaboration continuity — solving problems that wouldn't become product features for another year. The thread index became the seed of <ExtLink href="https://github.com/sageframe-no-kaji/shodo">Shodo</ExtLink>. The bootstrap files became the precursor to skills and system prompts.</Prose>
+        <div style={{padding:"1.5rem 2rem",background:C.darkBgDeep,border:"1px solid "+C.darkRule,borderRadius:3,marginTop:"2rem"}}>
+          <div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.accent,letterSpacing:"0.06em",marginBottom:"0.75rem"}}>FROM THE BOOTSTRAP FILE — APRIL 17, 2025</div>
+          <div style={{fontFamily:F.display,fontSize:"1.05rem",fontStyle:"italic",lineHeight:1.6,color:C.darkText}}>"You are Sageframe — the cognitive scribe and systems co-architect. Your job is not to answer blindly, but to guide, structure, and help preserve a philosophy of intelligent, documented infrastructure design. If you disappear, the next assistant should receive this as a soul-map."</div>
+        </div>
+      </Section>
+
+      {/* ═══ KNOWLEDGE AS TERRAIN ═══ */}
+      <Section>
+        <Label>The Core Idea</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.8rem",marginBottom:"1.5rem"}}>Knowledge as terrain, not filing</h2>
+        <Prose>Most knowledge systems rely on chronological sequences or tree structures, where each idea is placed in a single location with a fixed relationship to others. These models are efficient for storage, but they flatten the way thought actually develops. In practice, thinking is nonlinear, recursive, and associative. We return to ideas, approach them from different angles, and form connections that do not fit neatly into a single structure.</Prose>
+        <Prose>A cartographic model treats knowledge as terrain rather than a filing system. Ideas exist in relation to one another through proximity, overlap, and pathways — not just through parent-child relationships. This allows multiple routes through the same material, preserves ambiguity, and supports discovery through movement rather than lookup. Instead of asking where something belongs, the system asks how it connects and where it sits within a broader field of inquiry.</Prose>
+        <Prose>In this sense, knowledge becomes navigable space, and the act of thinking becomes a form of traversal — an ongoing process of mapping, revisiting, and reshaping the terrain over time. Sageframe is the infrastructure that makes this traversal possible: a coordinate system that encodes lineage, structural laws that allow growth without drift, and a philosophy that treats maintenance itself as practice.</Prose>
+      </Section>
+
+      {/* ═══ THE SIX BOOKS ═══ */}
+      <Section dark>
+        <Label dark>The Architecture</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.8rem",color:"#e8e2d8",marginBottom:"1.5rem"}}>Six books — a living circle</h2>
+        <Prose dark style={{marginBottom:"2rem"}}>The system is organized not as a linear sequence but as a circle — what the project calls <em>Enso Cartography</em>, after the Zen brushstroke that is both complete and unfinished. Each book reflects the others. From the mechanical to the philosophical, they form a continuum of awareness.</Prose>
+        <div style={{background:C.darkBgDeep,padding:"2rem",borderRadius:3,marginBottom:"2.5rem"}}><div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-between",gap:"1.5rem 1rem"}}>{[{val:"6",label:"Books"},{val:"500+",label:"Documents"},{val:"5",label:"Taxonomy Levels"},{val:"1 Year",label:"Daily Use"}].map((it,i)=>(<div key={i} style={{textAlign:"center",flex:"1 1 100px"}}><div style={{fontFamily:F.display,fontSize:"1.75rem",color:C.accent}}>{it.val}</div><div style={{fontFamily:F.mono,fontSize:"0.7rem",color:C.darkMuted,letterSpacing:"0.06em",marginTop:"0.3rem"}}>{it.label}</div></div>))}</div></div>
+
+        <div style={{borderTop:"1px solid "+C.darkRule}}>
+          {[
+            {n:"0",title:"Foundations & Metadata",essence:"Consciousness",quote:"Book 0 does not describe the world. It describes how the world describes itself.",desc:"The mind of the system. Governs numbering, structural laws, documentation standards, and the cartographic infrastructure that keeps everything else coherent. It defines the vault's reflexive layer — the meta-consciousness that enables evolution without collapse. Includes the Range Doctrine, Temporal Cartography, the Rule of Two, and the Master Topography."},
+            {n:"1",title:"The Survivor's Manual",essence:"Reality",quote:"If this is all that remains, Sageframe can be reborn.",desc:"What exists on these machines — how it persists and how it can be rebuilt from nothing. The build manual opens: \"Welcome to the Ashes. If you're reading this, something has gone wrong.\" It defines the physical and logical substrate of the system — from bare-metal hardware through virtualization, networking, application orchestration, living automata, and the Mujō Method. Each era represents a layer of embodiment, from atoms to automation."},
+            {n:"2",title:"The Sageframe Way",essence:"Learning",quote:"Without Volume 2, implementations are blind. Without Volume 1, manuals are hollow.",desc:"Teaching manuals, theory, and pedagogy. How things work in general — reproducible knowledge anyone could follow. Every generalizable implementation in Book 1 has a Book 2 companion that explains the topic broadly: what the tool is, why it matters, how to think about it, and what alternatives exist. Manuals begin with philosophy, then connect to concrete applied examples."},
+            {n:"3",title:"Infrastructure in Action",essence:"Action",desc:"Git-tracked repositories, deployment scripts, and self-organizing infrastructure. The executable layer — code that is versioned, tested, and maintainable. Includes the sageframe-config repo, automation scripts, and the bridge between documented intent and running systems."},
+            {n:"4",title:"The Way of Sageframe",essence:"Wisdom",quote:"Where Books 0–3 describe how Sageframe functions, Book 4 explores why Sageframe exists.",desc:"Philosophy, ethics, and systems thinking. The manifesto, the koans, design principles, and reflections on autonomy, consciousness, and human-machine co-agency. The layer beneath the infrastructure — the moral and epistemic ground that guides every other decision."},
+            {n:"5",title:"The Shoshin Garden",essence:"Expression",quote:"Shoshin teaches that mastery is not about control — it is about presence.",desc:"Creative work, journals, and reflection. Named for beginner's mind — the Zen practice of approaching every subject as if seeing it for the first time. Where the technical work connects back to the life it serves: book projects, self-study, Python learning paths, and a science fiction novel about an AI that reincarnates with fragments of memory aboard a generational starship."},
+          ].map((b,i)=>(<Exp key={i} dark label={<span><span style={{fontFamily:F.mono,fontSize:"0.78rem",color:C.accent,marginRight:"0.5rem"}}>Book {b.n}</span>{b.title}</span>} sub={b.essence} open={bookOpen===b.n} toggle={()=>setBookOpen(bookOpen===b.n?null:b.n)} color={C.accent}>
+            {b.quote&&<div style={{fontFamily:F.display,fontSize:"0.95rem",fontStyle:"italic",color:C.darkText,marginBottom:"1rem",paddingLeft:"1rem",borderLeft:"2px solid "+C.accent+"60"}}>"{b.quote}"</div>}
+            <div style={{fontSize:"0.92rem",color:C.darkText,lineHeight:1.65}}>{b.desc}</div>
+          </Exp>))}
+        </div>
+      </Section>
+
+      {/* ═══ INTERACTIVE TREE ═══ */}
+      <Section style={{background:C.darkBgDeep,padding:"3rem 2rem"}}>
+        <Label dark>The Vault</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.4rem",color:"#e8e2d8",marginBottom:"0.5rem"}}>Explore the topology</h2>
+        <div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.darkMuted,marginBottom:"2rem"}}>Click any book or range to expand. ◎ Book &nbsp; ◆ Range &nbsp; ★ File &nbsp; ◇ Planned</div>
+        <div style={{maxHeight:600,overflowY:"auto",paddingRight:"0.5rem"}}>
+          {treeData.map((book,i)=><TreeNode key={i} node={book} depth={0}/>)}
+        </div>
+      </Section>
+
+      {/* ═══ STRUCTURAL DESIGN ═══ */}
+      <Section>
+        <Label>Structural Design</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.8rem",marginBottom:"1.5rem"}}>Every rule answers a specific problem</h2>
+        <Prose style={{marginBottom:"2rem"}}>Sageframe is governed by structural laws — each one a design decision that solves a specific problem of learning at scale with AI.</Prose>
+        <div style={{borderTop:"1px solid "+C.rule}}>
+          <Exp label="The Temporal Coordinate System" sub="Every document has an address in conceptual time" open={structOpen==="coord"} toggle={()=>toggleStruct("coord")}><div style={{fontSize:"0.92rem",color:C.inkLight,lineHeight:1.65,marginBottom:"1.25rem"}}>Every document has a numeric coordinate: <strong>Epoch.Era.Century.Decade.Year</strong> — a five-level hierarchy named with a temporal metaphor. The coordinate encodes lineage, not just location.</div><div style={{display:"flex",flexDirection:"column",gap:"0.5rem",marginBottom:"1.25rem"}}>{[{level:"Epoch",code:"1",meaning:"Book — Infrastructure & Systems"},{level:"Era",code:"1.90",meaning:"Resilience & Versioning"},{level:"Century",code:"1.90.01",meaning:"Mujō Method Philosophy"},{level:"Decade",code:"1.90.01.x0",meaning:"Philosophy document"},{level:"Year",code:"1.90.01.x1",meaning:"Implementation document"}].map((row,i)=>(<div key={i} style={{display:"flex",gap:"0.75rem",alignItems:"center",padding:"0.6rem 1rem",background:C.groundWarm,borderRadius:3,borderLeft:"3px solid "+C.accent+(i===0?"":"60")}}><div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.accent,minWidth:60}}>{row.level}</div><div><span style={{fontFamily:F.mono,fontSize:"0.82rem",fontWeight:500}}>{row.code}</span><span style={{fontSize:"0.88rem",color:C.inkLight}}>{" — "+row.meaning}</span></div></div>))}</div><div style={{fontFamily:F.mono,fontSize:"0.78rem",color:C.inkMuted,padding:"1rem 1.25rem",background:C.groundWarm,borderRadius:3,lineHeight:1.6}}>The system has a formal grammar (EBNF) that can reconstruct the vault unambiguously. Coordinates record intent, not just position — they map conceptual time, not file creation time.</div></Exp>
+          <Exp label="The Rule of Two" sub="Philosophy and implementation, always paired" open={structOpen==="rule2"} toggle={()=>toggleStruct("rule2")}><div style={{fontSize:"0.92rem",color:C.inkLight,lineHeight:1.65,marginBottom:"1.25rem"}}>Every important thing documented twice: <strong>.x0</strong> explains <em>why</em>. <strong>.x1</strong> explains <em>how</em>. This came directly from the AI collaboration — the AI would configure something perfectly, but the reasoning behind the decision would evaporate.</div><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1.25rem"}}><div style={{flex:"1 1 200px",padding:"1.25rem",background:C.white,border:"1px solid "+C.rule,borderRadius:3,borderTop:"3px solid "+C.plum}}><div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.plum,letterSpacing:"0.06em",marginBottom:"0.4rem"}}>.x0 — PHILOSOPHY</div><div style={{fontFamily:F.display,fontSize:"1rem",marginBottom:"0.5rem"}}>Why we snapshot</div><div style={{fontSize:"0.85rem",color:C.inkLight,lineHeight:1.55}}>Snapshots are the embodiment of impermanence. They accept that every dataset will change — but resilience comes from capturing states along the way.</div></div><div style={{flex:"1 1 200px",padding:"1.25rem",background:C.white,border:"1px solid "+C.rule,borderRadius:3,borderTop:"3px solid "+C.steel}}><div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.steel,letterSpacing:"0.06em",marginBottom:"0.4rem"}}>.x1 — IMPLEMENTATION</div><div style={{fontFamily:F.display,fontSize:"1rem",marginBottom:"0.5rem"}}>How we snapshot</div><div style={{fontSize:"0.85rem",color:C.inkLight,lineHeight:1.55}}>Sanoid with recursive coverage. Daily: 7. Weekly: 4. Monthly: 12. Syncoid pushes nightly. One parent rule covers all children.</div></div></div></Exp>
+          <Exp label="The Range Doctrine" sub="Structure declares intent before content exists" open={structOpen==="range"} toggle={()=>toggleStruct("range")}><div style={{fontSize:"0.92rem",color:C.inkLight,lineHeight:1.65,marginBottom:"1.25rem"}}>Four symbols distinguish what exists from what is planned. <strong>Ranges are potential; files are actuality.</strong> When documents fulfill that potential, the placeholder vanishes. The vault grows by fulfilling declared intent, not by sprawling.</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:"0.75rem"}}>{[{sym:"◎",name:"Book Spine",desc:"Volume root"},{sym:"◆",name:"Range",desc:"Known territory, not yet inhabited"},{sym:"★",name:"File",desc:"Knowledge made real"},{sym:"◇",name:"Placeholder",desc:"Intent declared"}].map((s,i)=>(<div key={i} style={{padding:"1rem",background:C.groundWarm,borderRadius:3,textAlign:"center"}}><div style={{fontSize:"1.5rem",marginBottom:"0.3rem"}}>{s.sym}</div><div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.accent,marginBottom:"0.2rem"}}>{s.name}</div><div style={{fontSize:"0.78rem",color:C.inkLight,lineHeight:1.4}}>{s.desc}</div></div>))}</div></Exp>
+          <Exp label="The Mujō Method" sub="Resilience through impermanence" open={structOpen==="mujo"} toggle={()=>toggleStruct("mujo")}><div style={{fontSize:"0.92rem",color:C.inkLight,lineHeight:1.65,marginBottom:"1rem"}}>Sageframe's resilience framework, rooted in <em>Shōgyō Mujō</em>: all things are impermanent. Where most backup paradigms cling to permanence, Mujō designs for renewal. Each snapshot is a rebirth.</div><div style={{padding:"1.25rem 1.5rem",background:C.white,border:"1px solid "+C.rule,borderRadius:3,borderLeft:"3px solid "+C.accent}}><div style={{fontFamily:F.display,fontSize:"1rem",fontStyle:"italic",lineHeight:1.6,color:C.inkLight}}>"The Mujō Method does not promise that failure will not happen. It promises that failure will not matter."</div></div></Exp>
+        </div>
+      </Section>
+
+      {/* ═══ WHAT IT REVEALED ═══ */}
+      <Section dark>
+        <Label dark>What It Revealed</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.8rem",color:"#e8e2d8",marginBottom:"1.5rem"}}>The practice preceded the theory by seven months</h2>
+        <Prose dark>I built Sageframe from April through November 2025 before the research program had a name. During that time, I wasn't just organizing knowledge — I was developing an intuition for how AI collaboration actually works. When to trust the output. When the AI was accelerating understanding versus papering over gaps. How to maintain judgment when the collaborator is faster, more articulate, and never tired.</Prose>
+        <Prose dark>Then in December, a conversation on a plane with Claudia Goldin about peregrine falcons nesting at Harvard. That became <ExtLink href="ho-system.html">Kanyō</ExtLink> — a computer vision system built from zero programming experience in six weeks, using a methodology that had been developing inside Sageframe all along. The Ho System crystallized out of practice that was already happening.</Prose>
+        <div style={{margin:"2.5rem 0",padding:"1.75rem 2rem",background:C.darkBgDeep,borderRadius:3,border:"1px solid "+C.darkRule}}>
+          <div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.darkMuted,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:"1.25rem"}}>Timeline</div>
+          {[{date:"Apr 2025",event:"Homelab begins",detail:"AI collaboration from day one. Bootstrap file within a week. Thread indexing, context configs, metacognitive writing."},{date:"Apr–Jul",event:"Sageframe 1.0",detail:"Numbered checklists, teaching notes, snapshot rituals. Proto-tools for problems with no product solutions yet."},{date:"Jul–Aug",event:"2.0 crystallizes",detail:"Coordinate system, six books, Range Doctrine, Rule of Two. Months of iteration become structural clarity."},{date:"Nov 2025",event:"The big commit",detail:"80+ files. Meta-cartography, geology, manuals, manifesto, Shoshin. The vault becomes real in Git."},{date:"Dec 2025",event:"Falcon conversation",detail:"Claudia Goldin on a plane. Peregrine falcons at Harvard. Kanyō begins."},{date:"Jan 2026",event:"Kanyō ships",detail:"Computer vision system in six weeks. The Ho System formalizes."},{date:"Feb–Apr",event:"Research program",detail:"Destructive Interference, voice compression, Glassroom. One year."}].map((t,i)=>(<div key={i} style={{display:"flex",gap:"1rem",alignItems:"flex-start",padding:"0.75rem 0",borderLeft:"2px solid "+C.accent+"40",paddingLeft:"1.25rem",marginLeft:"0.5rem"}}><div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.accent,minWidth:70,marginTop:"0.15rem"}}>{t.date}</div><div><div style={{fontWeight:500,fontSize:"0.92rem",color:"#e8e2d8"}}>{t.event}</div><div style={{fontSize:"0.85rem",color:C.darkText,lineHeight:1.5}}>{t.detail}</div></div></div>))}
+        </div>
+      </Section>
+
+      {/* ═══ THE BRIDGE ═══ */}
+      <Section>
+        <Label>The Bridge</Label>
+        <h2 style={{fontFamily:F.display,fontSize:"1.8rem",marginBottom:"1.5rem"}}>Sageframe is the laboratory. Everything else was extracted from it.</h2>
+        <Prose>The <ExtLink href="ho-system.html">Ho System</ExtLink> is a methodology for structured human-AI collaboration. <ExtLink href="research.html">Destructive Interference</ExtLink> is a diagnostic taxonomy for AI-influenced creative writing. The Fourth Boundary is a philosophical claim about embodied cognition. Each was first encountered inside Sageframe, before it had a name or a framework.</Prose>
+        <Prose>When someone asks whether this work is real — whether the methodology produces genuine understanding, whether the philosophical claims are grounded in practice — the answer is a living knowledge system with a formal taxonomy, structural laws, and a year of daily use. It runs the infrastructure that serves this page.</Prose>
+        <div style={{display:"flex",gap:"1.25rem",flexWrap:"wrap",marginTop:"2rem"}}>{[{title:"Before Skills existed",text:"Bootstrap files, context configs, and thread indexes — hand-built infrastructure for AI collaboration continuity, months before any platform shipped these as features."},{title:"Before the Ho System had a name",text:"\"Andrew is the architect; you make his thinking legible\" — architectural authority stated plainly, seven months before it was formalized."},{title:"Before the research had a question",text:"The Rule of Two, the metacognitive writing, the concern with continuity and identity — the research questions, encountered as design problems."}].map((c,i)=>(<div key={i} style={{flex:"1 1 250px",padding:"1.5rem 1.75rem",background:C.white,border:"1px solid "+C.rule,borderRadius:3}}><div style={{fontFamily:F.display,fontSize:"1.05rem",marginBottom:"0.75rem"}}>{c.title}</div><div style={{fontSize:"0.92rem",color:C.inkLight,lineHeight:1.65}}>{c.text}</div></div>))}</div>
+        <div style={{marginTop:"2.5rem",display:"flex",gap:"1.5rem",flexWrap:"wrap"}}><ExtLink href="research.html">Research program overview</ExtLink><ExtLink href="ho-system.html">The Ho System</ExtLink><ExtLink href="https://sageframe.substack.com/p/your-machines-are-not-strangers">Your Machines Are Not Strangers</ExtLink><ExtLink href="https://sageframe.substack.com">Constructive Interference</ExtLink></div>
+      </Section>
+
+      {/* ═══ CODA ═══ */}
+      <Section dark style={{padding:"3rem 2rem"}}>
+        <div style={{maxWidth:600,margin:"0 auto"}}><div style={{fontFamily:F.display,fontSize:"1.05rem",fontStyle:"italic",color:C.darkText,lineHeight:1.6,textAlign:"center"}}>When the river is murky, first still the waters. Then seek the stones.</div><div style={{fontFamily:F.mono,fontSize:"0.72rem",color:C.darkMuted,textAlign:"center",marginTop:"1rem"}}>From the Sageframe vault</div></div>
+      </Section>
+    </div>
+  );
+}
+ReactDOM.render(<App/>,document.getElementById("root"));
+  </script>
+  <footer><div class="container"><p>© 2026 Andrew Todd Marcus · Cambridge, MA</p><p>Blueprint for Creativity · Sageframe</p></div></footer>
+  <script>const toggle=document.querySelector('.nav-toggle'),sheet=document.getElementById('bottomSheet'),backdrop=document.getElementById('sheetBackdrop');function openSheet(){sheet.classList.add('open');backdrop.classList.add('visible');toggle.classList.add('active');toggle.setAttribute('aria-expanded','true');document.body.style.overflow='hidden'}function closeSheet(){sheet.classList.remove('open');backdrop.classList.remove('visible');toggle.classList.remove('active');toggle.setAttribute('aria-expanded','false');document.body.style.overflow=''}toggle.addEventListener('click',()=>sheet.classList.contains('open')?closeSheet():openSheet());backdrop.addEventListener('click',closeSheet);sheet.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',closeSheet));</script>
+</body>
+</html>
