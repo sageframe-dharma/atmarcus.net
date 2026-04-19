@@ -89,6 +89,11 @@ body { font-family: var(--font-body); color: var(--ink); background: var(--groun
 }
 .reset:hover { color: var(--accent); border-color: var(--accent); }
 
+@media (max-width: 520px) {
+  .chip { font-size: 0.62rem; padding: 0.45rem 0.7rem; max-width: calc(100vw - 8rem); overflow: hidden; text-overflow: ellipsis; }
+  .reset { font-size: 0.62rem; padding: 0.45rem 0.6rem; }
+}
+
 .tagline {
   position: absolute;
   bottom: clamp(1.4rem, 3vw, 2.4rem);
