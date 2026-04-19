@@ -47,10 +47,20 @@ body { font-family: var(--font-body); color: var(--ink); background: var(--groun
   pointer-events: none;
   padding: clamp(1.2rem, 2.5vw, 2rem) clamp(1.4rem, 3vw, 2.4rem);
 }
-.chip {
+.top-bar {
   position: absolute;
   top: clamp(1.2rem, 2.5vw, 2rem);
   left: clamp(1.4rem, 3vw, 2.4rem);
+  right: clamp(1.4rem, 3vw, 2.4rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.chip {
+  flex: 1;
+  min-width: 0;
   display: inline-flex; align-items: center; gap: 0.6rem;
   padding: 0.55rem 0.95rem;
   background: rgba(245,242,237,0.78);
@@ -63,15 +73,15 @@ body { font-family: var(--font-body); color: var(--ink); background: var(--groun
   text-transform: uppercase;
   color: var(--ink);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   pointer-events: auto;
 }
-.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: breathe 2.8s ease-in-out infinite; }
+.chip .dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: breathe 2.8s ease-in-out infinite; }
 @keyframes breathe { 0%,100%{opacity:.4;transform:scale(.9)} 50%{opacity:1;transform:scale(1.1)} }
 
 .reset {
-  position: absolute;
-  top: clamp(1.2rem, 2.5vw, 2rem);
-  right: clamp(1.4rem, 3vw, 2.4rem);
+  flex-shrink: 0;
   padding: 0.55rem 0.9rem;
   background: rgba(245,242,237,0.78);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
@@ -86,11 +96,12 @@ body { font-family: var(--font-body); color: var(--ink); background: var(--groun
   cursor: pointer;
   pointer-events: auto;
   transition: color .18s, border-color .18s;
+  white-space: nowrap;
 }
 .reset:hover { color: var(--accent); border-color: var(--accent); }
 
 @media (max-width: 520px) {
-  .chip { font-size: 0.62rem; padding: 0.45rem 0.7rem; max-width: calc(100vw - 8rem); overflow: hidden; text-overflow: ellipsis; }
+  .chip { font-size: 0.62rem; padding: 0.45rem 0.7rem; }
   .reset { font-size: 0.62rem; padding: 0.45rem 0.6rem; }
 }
 
@@ -231,8 +242,10 @@ body.edit .tweaks { display: block; }
 <div class="hero" id="hero">
   <canvas id="canvas"></canvas>
   <div class="overlay">
-    <div class="chip"><span class="dot"></span>Constructive Interference&nbsp;&nbsp;·&nbsp;&nbsp;click to add a project</div>
-    <a class="reset" id="reset" href="#">Reset field&nbsp;↺</a>
+    <div class="top-bar">
+      <div class="chip"><span class="dot"></span>Constructive Interference&nbsp;&nbsp;·&nbsp;&nbsp;click to add a project</div>
+      <a class="reset" id="reset" href="#">Reset field&nbsp;↺</a>
+    </div>
     <p class="tagline">Where disciplines meet, they <em>amplify</em>.</p>
   </div>
 </div>
