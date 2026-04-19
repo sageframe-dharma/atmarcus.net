@@ -700,7 +700,7 @@ if (IS_EDIT) {
 
   // Export config — copy a complete hero-config.js
   $('btn-export').addEventListener('click', async () => {
-    const colorEntries = Object.entries(COLORS).map(([k, v]) => `  ${k.padEnd(10)} '${v}',`).join('\n');
+    const colorEntries = Object.entries(COLORS).map(([k, v]) => `  ${(k + ':').padEnd(11)} '${v}',`).join('\n');
     const projLines = PROJECTS.map(p => {
       const key = Object.keys(COLORS).find(k => COLORS[k].toLowerCase() === String(p.color).toLowerCase());
       const colorStr = key ? `HERO_COLORS.${key}` : JSON.stringify(p.color);

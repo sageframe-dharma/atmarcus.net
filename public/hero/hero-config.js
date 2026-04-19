@@ -1,19 +1,19 @@
 // hero-config.js — generated from author mode
 
 window.HERO_COLORS = {
-  ink        '#1a1a1a',
-  inkLight   '#4a4a4a',
-  inkMuted   '#7a7a7a',
-  ground     '#f5f2ed',
-  groundWarm '#ebe6dd',
-  accent     '#c45a2d',
-  umber      '#6b3a2a',
-  rule       '#d0c9be',
-  plum       '#8b5e8b',
-  ochre      '#b8860b',
-  steel      '#3a7ca5',
-  sage       '#5a8a3a',
-  clay       '#a0846b',
+  ink:        '#1a1a1a',
+  inkLight:   '#4a4a4a',
+  inkMuted:   '#7a7a7a',
+  ground:     '#f5f2ed',
+  groundWarm: '#ebe6dd',
+  accent:     '#c45a2d',
+  umber:      '#6b3a2a',
+  rule:       '#d0c9be',
+  plum:       '#8b5e8b',
+  ochre:      '#b8860b',
+  steel:      '#3a7ca5',
+  sage:       '#5a8a3a',
+  clay:       '#a0846b',
 };
 
 window.HERO_PROJECTS = [
