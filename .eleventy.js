@@ -5,6 +5,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('public/work');
   eleventyConfig.addPassthroughCopy('public/hero');
   eleventyConfig.addPassthroughCopy('public/favicon.svg');
+  eleventyConfig.addPassthroughCopy('public/_headers');
   eleventyConfig.addPassthroughCopy('public/add-card.txt');
 
   return {
