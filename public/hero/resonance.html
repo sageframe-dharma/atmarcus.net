@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resonance Hero — atmarcus.net</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+  PRODUCTION DEPLOYMENT: uncomment the line below to load the external
+  hero-config.js file. It lives alongside this HTML file. The inline
+  fallback data further down keeps the hero working whether this loads
+  or not, so you can also leave it commented if you prefer a single file.
+-->
+<script src="./hero-config.js"></script>
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-light: #4a4a4a;
+  --ink-muted: #7a7a7a;
+  --ground: #f5f2ed;
+  --accent: #c45a2d;
+  --rule: #d0c9be;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body { font-family: var(--font-body); color: var(--ink); background: var(--ground); }
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100%;     /* fills iframe or viewport parent */
+  cursor: crosshair;
+  overflow: hidden;
+}
+.hero.hovering-node { cursor: pointer; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  padding: clamp(1.2rem, 2.5vw, 2rem) clamp(1.4rem, 3vw, 2.4rem);
+}
+.chip {
+  position: absolute;
+  top: clamp(1.2rem, 2.5vw, 2rem);
+  left: clamp(1.4rem, 3vw, 2.4rem);
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 0.95rem;
+  background: rgba(245,242,237,0.78);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: auto;
+}
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: breathe 2.8s ease-in-out infinite; }
+@keyframes breathe { 0%,100%{opacity:.4;transform:scale(.9)} 50%{opacity:1;transform:scale(1.1)} }
+
+.reset {
+  position: absolute;
+  top: clamp(1.2rem, 2.5vw, 2rem);
+  right: clamp(1.4rem, 3vw, 2.4rem);
+  padding: 0.55rem 0.9rem;
+  background: rgba(245,242,237,0.78);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color .18s, border-color .18s;
+}
+.reset:hover { color: var(--accent); border-color: var(--accent); }
+
+.tagline {
+  position: absolute;
+  bottom: clamp(1.4rem, 3vw, 2.4rem);
+  left: 50%; transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.3;
+  color: var(--ink-light);
+  text-align: center;
+  pointer-events: none;
+  text-shadow: 0 0 16px rgba(245,242,237,0.85);
+  margin: 0;
+}
+.tagline em { color: var(--accent); font-style: italic; }
+
+/* Author mode — unlocked via ?edit */
+.tweaks {
+  position: fixed;
+  bottom: 1.5rem; left: 1.5rem;
+  width: 320px;
+  background: rgba(245,242,237,0.96);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1rem 1.1rem;
+  font-family: var(--font-body);
+  z-index: 100;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  display: none;
+}
+body.edit .tweaks { display: block; }
+.tweaks-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 600;
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
+  border-bottom: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.tweaks-title .kbd { font-size: 0.6rem; color: var(--ink-muted); font-weight: 400; letter-spacing: 0.04em; }
+.tweak-row { margin-bottom: 0.7rem; }
+.tweak-label {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.65rem; color: var(--ink-light); letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+}
+.tweak-label .v { color: var(--accent); font-weight: 500; }
+.tweaks input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+.btn {
+  all: unset; cursor: pointer; display: inline-block;
+  padding: 0.4rem 0.7rem;
+  background: var(--ground); border: 1px solid var(--rule);
+  border-radius: 2px;
+  font-family: var(--font-mono); font-size: 0.65rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink); text-align: center;
+  transition: all .15s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.nodes-editor { margin-top: 0.8rem; padding-top: 0.7rem; border-top: 1px solid var(--rule); }
+.nodes-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0.5rem;
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink); font-weight: 500;
+}
+.nodes-reset { all: unset; cursor: pointer; font-size: 0.62rem; font-family: var(--font-mono); color: var(--ink-muted); }
+.nodes-reset:hover { color: var(--accent); }
+.nodes-list { max-height: 260px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 0.45rem; }
+.nodes-list::-webkit-scrollbar { width: 6px; }
+.nodes-list::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+.node-row {
+  display: grid;
+  grid-template-columns: 6px 1fr auto auto;
+  grid-template-rows: auto auto;
+  gap: 2px 6px;
+  align-items: center;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(208,201,190,0.4);
+}
+.node-row .swatch { grid-column: 1; grid-row: 1 / span 2; width: 5px; min-height: 22px; align-self: stretch; border-radius: 1px; cursor: pointer; position: relative; }
+.node-row .name {
+  grid-column: 2; grid-row: 1;
+  font-size: 0.68rem; color: var(--ink);
+  background: transparent; border: none; outline: none;
+  font-family: var(--font-body);
+  padding: 0 2px;
+  width: 100%;
+}
+.node-row .name:focus { background: rgba(196,90,45,0.08); }
+.node-row .wval { grid-column: 3; grid-row: 1; font-family: var(--font-mono); font-size: 0.64rem; color: var(--accent); min-width: 22px; text-align: right; }
+.node-row .del {
+  grid-column: 4; grid-row: 1;
+  all: unset; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  color: var(--ink-muted); padding: 0 2px;
+}
+.node-row .del:hover { color: #c0392b; }
+.node-row input[type=range] { grid-column: 2 / span 3; grid-row: 2; width: 100%; accent-color: var(--accent); margin: 0; }
+.node-add { margin-top: 0.5rem; width: 100%; }
+
+.export-row { display: flex; gap: 0.4rem; margin-top: 0.6rem; }
+.export-row .btn { flex: 1; }
+.hint { font-family: var(--font-mono); font-size: 0.6rem; color: var(--ink-muted); letter-spacing: 0.02em; margin-top: 0.5rem; line-height: 1.4; }
+
+/* Node URL editor inline */
+.url-editor {
+  grid-column: 2 / span 3; grid-row: 3;
+  display: none;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  padding: 0.3rem 0.4rem;
+  background: rgba(196,90,45,0.05);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  color: var(--ink-light);
+  width: 100%;
+  outline: none;
+  margin-top: 0.25rem;
+}
+.node-row.expanded { grid-template-rows: auto auto auto; }
+.node-row.expanded .url-editor { display: block; }
+</style>
+</head>
+<body>
+
+<div class="hero" id="hero">
+  <canvas id="canvas"></canvas>
+  <div class="overlay">
+    <div class="chip"><span class="dot"></span>Constructive Interference&nbsp;&nbsp;·&nbsp;&nbsp;click to add a project</div>
+    <a class="reset" id="reset" href="#">Reset field&nbsp;↺</a>
+    <p class="tagline">Where disciplines meet, they <em>amplify</em>.</p>
+  </div>
+</div>
+
+<!-- Tweaks panel (only visible in ?edit mode) -->
+<div class="tweaks" id="tweaks">
+  <div class="tweaks-title"><span>Author mode · Resonance</span><span class="kbd">?edit</span></div>
+  <div class="tweak-row">
+    <div class="tweak-label"><span>Wave speed</span><span class="v" id="v-speed">0.25×</span></div>
+    <input type="range" id="t-speed" min="0" max="200" value="25" step="1">
+  </div>
+  <div class="tweak-row">
+    <div class="tweak-label"><span>Wavelength</span><span class="v" id="v-wl">60 px</span></div>
+    <input type="range" id="t-wl" min="24" max="120" value="60" step="2">
+  </div>
+  <div class="tweak-row">
+    <div class="tweak-label"><span>Source drift</span><span class="v" id="v-drift">0.00×</span></div>
+    <input type="range" id="t-drift" min="0" max="100" value="0" step="1">
+  </div>
+  <div class="tweak-row">
+    <div class="tweak-label"><span>Smoothing</span><span class="v" id="v-smooth">0.55</span></div>
+    <input type="range" id="t-smooth" min="0" max="90" value="55" step="1">
+  </div>
+  <div class="tweak-row">
+    <div class="tweak-label"><span>Fade base (w=5)</span><span class="v" id="v-fade">20 s</span></div>
+    <input type="range" id="t-fade" min="5" max="120" value="20" step="1">
+  </div>
+
+  <div class="nodes-editor">
+    <div class="nodes-header">
+      <span>Nodes · weight 1–10</span>
+      <button class="nodes-reset" id="nodes-reset" title="Restore defaults">reset</button>
+    </div>
+    <div class="nodes-list" id="nodes-list"></div>
+    <button class="btn node-add" id="node-add">+ Add node</button>
+  </div>
+
+  <div class="export-row">
+    <button class="btn" id="btn-reset-field">Reset field</button>
+    <button class="btn" id="btn-export">Export config</button>
+  </div>
+  <div class="hint">Click swatch to edit color · click row to edit URL · drag slider to tune. Export copies ready-to-paste hero-config.js.</div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   RESONANCE HERO — production runtime
+   Loads HERO_PROJECTS + HERO_RES_TUNE from hero-config.js.
+   Falls back to baked-in defaults if the config fails to load.
+   ════════════════════════════════════════════════════════════════ */
+
+// Fallback defaults — mirror hero-config.js so the hero still works
+// if the external config file fails to load for any reason.
+window.HERO_COLORS = window.HERO_COLORS || {
+  ink:'#1a1a1a', inkLight:'#4a4a4a', inkMuted:'#7a7a7a',
+  ground:'#f5f2ed', groundWarm:'#ebe6dd', accent:'#c45a2d', umber:'#6b3a2a',
+  rule:'#d0c9be', plum:'#8b5e8b', ochre:'#b8860b', steel:'#3a7ca5',
+  sage:'#5a8a3a', clay:'#a0846b',
+};
+window.HERO_PROJECTS = window.HERO_PROJECTS || [
+  { name:'Ho System',                  url:'https://atmarcus.net/work/ho-system',                color: HERO_COLORS.accent, weight: 9 },
+  { name:'Sageframe',                  url:'https://sageframe.net',                              color: HERO_COLORS.plum,   weight: 10 },
+  { name:'Sageframe Knowledge System', url:'https://atmarcus.net/work/sageframe',                color: HERO_COLORS.plum,   weight: 9 },
+  { name:'Glassroom',                  url:'https://glassroom.sageframe.net',                    color: HERO_COLORS.steel,  weight: 7 },
+  { name:'Kanyo',                      url:'https://kanyo.sageframe.net',                        color: HERO_COLORS.sage,   weight: 6 },
+  { name:'m4Bookmaker',                url:'https://m4bookmaker.sageframe.net',                  color: HERO_COLORS.ochre,  weight: 5 },
+  { name:'Constructive Interference',  url:'https://sageframe.substack.com',                     color: HERO_COLORS.accent, weight: 8 },
+  { name:'NuVu Studio',                url:'https://atmarcus.net/work/sms-case-study.html',      color: HERO_COLORS.ochre,  weight: 8 },
+  { name:'Citizen Schools LF',         url:'https://atmarcus.net/work/citizen-schools.html',     color: HERO_COLORS.sage,   weight: 7 },
+  { name:'ARCK Boston',                url:'https://atmarcus.net/work/arck.html',                color: HERO_COLORS.clay,   weight: 7 },
+  { name:'Hozo Sentinel',              url:'https://github.com/sageframe-no-kaji/hozo-sentinel', color: HERO_COLORS.steel,  weight: 4 },
+  { name:'ssh actually',               url:'https://github.com/sageframe-no-kaji/ssh-actually',  color: HERO_COLORS.ink,    weight: 3 },
+];
+window.HERO_RES_TUNE = window.HERO_RES_TUNE || {
+  speed: 0.25, wavelength: 60, drift: 0, smoothing: 0.55, fadeBase: 20,
+};
+
+const IS_EDIT = new URLSearchParams(location.search).has('edit');
+if (IS_EDIT) document.body.classList.add('edit');
+
+const PROJECTS = window.HERO_PROJECTS;
+const RES_TUNE = window.HERO_RES_TUNE;
+const COLORS = window.HERO_COLORS;
+const PROJECTS_DEFAULTS = PROJECTS.map(p => ({ ...p }));
+
+// Persist overrides in edit mode
+function loadOverrides() {
+  if (!IS_EDIT) return;
+  try {
+    const projRaw = localStorage.getItem('atm-hero-projects');
+    if (projRaw) {
+      const saved = JSON.parse(projRaw);
+      if (Array.isArray(saved)) {
+        PROJECTS.length = 0;
+        saved.forEach(p => PROJECTS.push(p));
+      }
+    }
+    const tuneRaw = localStorage.getItem('atm-hero-tune');
+    if (tuneRaw) Object.assign(RES_TUNE, JSON.parse(tuneRaw));
+  } catch(e){}
+}
+function saveProjects() {
+  try { localStorage.setItem('atm-hero-projects', JSON.stringify(PROJECTS)); } catch(e){}
+}
+function saveTune() {
+  try { localStorage.setItem('atm-hero-tune', JSON.stringify(RES_TUNE)); } catch(e){}
+}
+loadOverrides();
+
+function hexWithAlpha(hex, a) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function hexRGB(hex) {
+  const h = hex.replace('#','');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+
+// ── Canvas setup ──────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const hero = document.getElementById('hero');
+let DPR = window.devicePixelRatio || 1;
+function setupCanvas() {
+  const r = canvas.getBoundingClientRect();
+  canvas.width = r.width * DPR;
+  canvas.height = r.height * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+setupCanvas();
+window.addEventListener('resize', () => { setupCanvas(); });
+
+// ── Mouse tracker ────────────────────────────────────────────
+const mouse = { x:0, y:0, active:false };
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.active = true;
+});
+canvas.addEventListener('mouseleave', () => { mouse.active = false; hero.classList.remove('hovering-node'); });
+
+// ── Weight helpers ───────────────────────────────────────────
+function wavelengthFor(w) {
+  const u = (w - 1) / 9;
+  return Math.max(10, RES_TUNE.wavelength * (1.6 - u * 1.05));
+}
+function reachFor(w) {
+  const u = (w - 1) / 9;
+  return wavelengthFor(w) * (3 + u * 19);
+}
+/* Fade curve — tuned so default node mix all clear the field in reasonable time.
+   Only w >= 10 is permanent; everything else fades.
+   At fadeBase=20:  w1≈6s  w3≈10s  w5=20s  w7≈36s  w9≈60s                    */
+function lifespanFor(w) {
+  if (w >= 10) return Infinity;
+  const base = RES_TUNE.fadeBase ?? 20;
+  const u = (w - 1) / 9; // 0..1
+  // Smooth ramp: 0.3 at w=1, 1.0 at w=5, 3.0 at w=9
+  const mul = 0.3 + Math.pow(u, 1.4) * 3.5;
+  return Math.max(3, base * mul);
+}
+function envelope(age, life) {
+  const rise = Math.min(1, age / 0.8);
+  const riseE = rise * rise * (3 - 2 * rise);
+  if (!isFinite(life)) return riseE;
+  if (age >= life) return 0;
+  const tailStart = life * 0.75;
+  if (age <= tailStart) return riseE;
+  const u = (age - tailStart) / (life - tailStart);
+  const fade = 0.5 + 0.5 * Math.cos(u * Math.PI);
+  return riseE * fade;
+}
+
+// ── State ────────────────────────────────────────────────────
+let placed = [];
+let projectIndex = 0;
+let tt = 0;
+let lastFrame = performance.now();
+
+function reset() {
+  placed = []; projectIndex = 0; tt = 0;
+}
+document.getElementById('reset').addEventListener('click', e => { e.preventDefault(); reset(); });
+document.getElementById('btn-reset-field')?.addEventListener('click', reset);
+
+function hitTest(mx, my) {
+  for (let i = placed.length - 1; i >= 0; i--) {
+    const p = placed[i];
+    if (Math.hypot(p.x - mx, p.y - my) < 18) return p;
+  }
+  return null;
+}
+function hitLabel(mx, my) {
+  for (let i = placed.length - 1; i >= 0; i--) {
+    const p = placed[i];
+    const r = p._labelRect; if (!r) continue;
+    if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) return p;
+  }
+  return null;
+}
+
+canvas.addEventListener('click', e => {
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const lh = hitLabel(mx, my);
+  if (lh) { window.open(lh.proj.url, '_blank', 'noopener'); return; }
+  const hit = hitTest(mx, my);
+  if (hit) { window.open(hit.proj.url, '_blank', 'noopener'); return; }
+  if (!PROJECTS.length) return;
+  if (projectIndex >= PROJECTS.length) projectIndex = 0;
+  const proj = PROJECTS[projectIndex++];
+  placed.push({ proj, x: mx, y: my, bornAt: tt, lifespan: lifespanFor(proj.weight) });
+});
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const over = hitLabel(mx, my) || hitTest(mx, my);
+  hero.classList.toggle('hovering-node', !!over);
+});
+
+// ── Physics buffer ───────────────────────────────────────────
+const CELL = 3;
+let bufW=0, bufH=0, buf=null, prevBuf=null, tmp=null, tmpCtx=null;
+function ensureBuffer(W, H) {
+  const bw = Math.ceil(W/CELL), bh = Math.ceil(H/CELL);
+  if (bw !== bufW || bh !== bufH || !buf) {
+    bufW = bw; bufH = bh;
+    buf = ctx.createImageData(bw, bh);
+    if (!tmp) { tmp = document.createElement('canvas'); tmpCtx = tmp.getContext('2d'); }
+    tmp.width = bw; tmp.height = bh;
+    prevBuf = null;
+  }
+}
+const GROUND = [0xf5, 0xf2, 0xed];
+
+function draw() {
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - lastFrame) / 1000);
+  lastFrame = now; tt += dt;
+
+  const r = canvas.getBoundingClientRect();
+  const W = r.width, H = r.height;
+
+  // Drift (default 0; respects RES_TUNE.drift with eased post-spawn mask)
+  if (RES_TUNE.drift > 0.001) {
+    for (let i = 0; i < placed.length; i++) {
+      const s = placed[i];
+      const age = tt - s.bornAt;
+      const settle = Math.min(1, age / 1.5);
+      const mask = settle * settle * (3 - 2 * settle);
+      s.x += Math.sin(tt * 0.22 + i) * 0.10 * RES_TUNE.drift * mask * (dt * 60);
+      s.y += Math.cos(tt * 0.19 + i * 1.3) * 0.08 * RES_TUNE.drift * mask * (dt * 60);
+    }
+  }
+  // Cull
+  placed = placed.filter(p => !isFinite(p.lifespan) || (tt - p.bornAt) < p.lifespan + 0.1);
+
+  const propSpeed = 70 * RES_TUNE.speed;
+  ensureBuffer(W, H);
+
+  if (placed.length === 0) {
+    ctx.fillStyle = '#f5f2ed';
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const srcs = placed.map(p => {
+      const age = Math.max(0, tt - p.bornAt);
+      const env = envelope(age, p.lifespan);
+      p._env = env;
+      return {
+        x: p.x, y: p.y, age,
+        front: age * propSpeed,
+        λ: wavelengthFor(p.proj.weight),
+        reach: reachFor(p.proj.weight),
+        rgb: hexRGB(p.proj.color),
+        env,
+      };
+    });
+    const data = buf.data;
+    const TWO_PI = Math.PI * 2;
+    for (let y = 0; y < bufH; y++) {
+      const py = y * CELL;
+      for (let x = 0; x < bufW; x++) {
+        const px = x * CELL;
+        let sumH = 0, sumAbsA = 0, tintR = 0, tintG = 0, tintB = 0;
+        for (let i = 0; i < srcs.length; i++) {
+          const s = srcs[i];
+          const dx = px - s.x, dy = py - s.y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d > s.front || d > s.reach) continue;
+          const A = Math.max(0, 1 - d / s.reach) * (1 / (1 + d * 0.006)) * s.env;
+          const k = TWO_PI / s.λ;
+          const phase = k * d - k * propSpeed * s.age;
+          sumH += A * Math.cos(phase);
+          sumAbsA += A;
+          tintR += s.rgb[0] * A;
+          tintG += s.rgb[1] * A;
+          tintB += s.rgb[2] * A;
+        }
+        const h01 = Math.tanh(sumH * 1.2);
+        let R = GROUND[0], G = GROUND[1], B = GROUND[2];
+        if (sumAbsA > 0.002) {
+          const tr = tintR / sumAbsA, tg = tintG / sumAbsA, tb = tintB / sumAbsA;
+          const energy = Math.min(1, sumAbsA * 1.1);
+          if (h01 > 0) {
+            const mix = h01 * energy * 0.42;
+            R = R * (1 - mix) + tr * mix;
+            G = G * (1 - mix) + tg * mix;
+            B = B * (1 - mix) + tb * mix;
+          } else {
+            const mix = -h01 * energy * 0.18;
+            R = R * (1 - mix) + 0x1a * mix;
+            G = G * (1 - mix) + 0x1a * mix;
+            B = B * (1 - mix) + 0x1a * mix;
+          }
+        }
+        const idx = (y * bufW + x) * 4;
+        data[idx]=R|0; data[idx+1]=G|0; data[idx+2]=B|0; data[idx+3]=255;
+      }
+    }
+    // Temporal smoothing
+    const smooth = Math.max(0, Math.min(0.9, RES_TUNE.smoothing ?? 0.55));
+    if (smooth > 0 && prevBuf && prevBuf.data.length === buf.data.length) {
+      const a = buf.data, b = prevBuf.data;
+      for (let i = 0; i < a.length; i += 4) {
+        a[i]   = (a[i]   * (1 - smooth) + b[i]   * smooth) | 0;
+        a[i+1] = (a[i+1] * (1 - smooth) + b[i+1] * smooth) | 0;
+        a[i+2] = (a[i+2] * (1 - smooth) + b[i+2] * smooth) | 0;
+      }
+    }
+    if (!prevBuf || prevBuf.data.length !== buf.data.length) prevBuf = ctx.createImageData(bufW, bufH);
+    prevBuf.data.set(buf.data);
+    tmpCtx.putImageData(buf, 0, 0);
+    ctx.fillStyle = '#f5f2ed';
+    ctx.fillRect(0, 0, W, H);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(tmp, 0, 0, bufW, bufH, 0, 0, W, H);
+  }
+
+  // Nodes + labels
+  for (const p of placed) {
+    const env = p._env ?? 1;
+    if (env < 0.01) continue;
+    const hovered = mouse.active && Math.hypot(p.x - mouse.x, p.y - mouse.y) < 16;
+    ctx.fillStyle = hexWithAlpha(p.proj.color, (hovered ? 0.35 : 0.22) * env);
+    ctx.beginPath(); ctx.arc(p.x, p.y, hovered ? 14 : 10, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = hexWithAlpha(p.proj.color, env);
+    ctx.beginPath(); ctx.arc(p.x, p.y, hovered ? 4.8 : 3.8, 0, Math.PI * 2); ctx.fill();
+    const fontSize = 9.5 + ((p.proj.weight - 1) / 9) * 3.5; // 9.5 → 13 px
+    ctx.font = `500 ${fontSize.toFixed(1)}px 'IBM Plex Mono', monospace`;
+    const label = p.proj.name;
+    const tw = ctx.measureText(label).width;
+    const lx = p.x + 12, ly = p.y + 3;
+    ctx.fillStyle = hexWithAlpha(p.proj.color, (hovered ? 0.95 : 0.7) * env);
+    ctx.fillText(label, lx, ly);
+    p._labelRect = { x: lx - 3, y: ly - (fontSize + 0.5), w: tw + 6, h: fontSize + 3 };
+  }
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* ════════════════════════════════════════════════════════════════
+   AUTHOR MODE — Tweaks panel + Nodes editor (only in ?edit)
+   ════════════════════════════════════════════════════════════════ */
+if (IS_EDIT) {
+  const $ = id => document.getElementById(id);
+  // Wire sliders
+  const speed=$('t-speed'), wl=$('t-wl'), drift=$('t-drift'), smooth=$('t-smooth'), fade=$('t-fade');
+  const vSpeed=$('v-speed'), vWl=$('v-wl'), vDrift=$('v-drift'), vSmooth=$('v-smooth'), vFade=$('v-fade');
+  // seed from RES_TUNE
+  speed.value  = Math.round((RES_TUNE.speed ?? 0.25) * 100);
+  wl.value     = RES_TUNE.wavelength ?? 60;
+  drift.value  = Math.round((RES_TUNE.drift ?? 0) * 100);
+  smooth.value = Math.round((RES_TUNE.smoothing ?? 0.55) * 100);
+  fade.value   = RES_TUNE.fadeBase ?? 20;
+  function syncTune() {
+    RES_TUNE.speed      = parseInt(speed.value, 10) / 100;
+    RES_TUNE.wavelength = parseInt(wl.value, 10);
+    RES_TUNE.drift      = parseInt(drift.value, 10) / 100;
+    RES_TUNE.smoothing  = parseInt(smooth.value, 10) / 100;
+    RES_TUNE.fadeBase   = parseInt(fade.value, 10);
+    vSpeed.textContent  = RES_TUNE.speed.toFixed(2) + '×';
+    vWl.textContent     = RES_TUNE.wavelength + ' px';
+    vDrift.textContent  = RES_TUNE.drift.toFixed(2) + '×';
+    vSmooth.textContent = RES_TUNE.smoothing.toFixed(2);
+    vFade.textContent   = RES_TUNE.fadeBase + ' s';
+    saveTune();
+  }
+  [speed, wl, drift, smooth, fade].forEach(el => el.addEventListener('input', syncTune));
+  syncTune();
+
+  // Nodes editor
+  const list = $('nodes-list');
+  function renderNodes() {
+    list.innerHTML = '';
+    PROJECTS.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'node-row';
+      row.innerHTML = `
+        <div class="swatch" style="background:${p.color}" title="Click to change color"></div>
+        <input class="name" value="${p.name.replace(/"/g,'&quot;')}">
+        <div class="wval">w${p.weight}</div>
+        <button class="del" title="Delete">✕</button>
+        <input type="range" min="1" max="10" step="1" value="${p.weight}">
+        <input class="url-editor" value="${p.url.replace(/"/g,'&quot;')}" placeholder="https://…">
+      `;
+      const nameInput = row.querySelector('.name');
+      const urlInput = row.querySelector('.url-editor');
+      const slider = row.querySelector('input[type=range]');
+      const wval = row.querySelector('.wval');
+      const swatch = row.querySelector('.swatch');
+      const del = row.querySelector('.del');
+
+      nameInput.addEventListener('input', () => { PROJECTS[i].name = nameInput.value; saveProjects(); });
+      urlInput.addEventListener('input', () => { PROJECTS[i].url = urlInput.value; saveProjects(); });
+      slider.addEventListener('input', () => {
+        const v = parseInt(slider.value, 10);
+        PROJECTS[i].weight = v;
+        wval.textContent = 'w' + v;
+        saveProjects();
+      });
+      // Click swatch to cycle a color picker
+      swatch.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'color'; input.value = p.color;
+        input.addEventListener('input', () => {
+          PROJECTS[i].color = input.value;
+          swatch.style.background = input.value;
+          saveProjects();
+        });
+        input.click();
+      });
+      // Click row expands URL editor
+      row.addEventListener('click', e => {
+        if (e.target === swatch || e.target === del || e.target === slider || e.target === nameInput || e.target === urlInput) return;
+        row.classList.toggle('expanded');
+      });
+      del.addEventListener('click', e => {
+        e.stopPropagation();
+        if (!confirm(`Delete "${p.name}"?`)) return;
+        PROJECTS.splice(i, 1);
+        saveProjects();
+        renderNodes();
+      });
+      list.appendChild(row);
+    });
+  }
+  renderNodes();
+
+  // Reset nodes
+  $('nodes-reset').addEventListener('click', () => {
+    if (!confirm('Restore default node list? Your edits will be lost.')) return;
+    PROJECTS.length = 0;
+    PROJECTS_DEFAULTS.forEach(p => PROJECTS.push({ ...p }));
+    saveProjects();
+    renderNodes();
+  });
+
+  // Add node
+  $('node-add').addEventListener('click', () => {
+    const colorKeys = Object.keys(COLORS).filter(k => !['ink','inkLight','inkMuted','ground','groundWarm','rule'].includes(k));
+    const pickColor = COLORS[colorKeys[Math.floor(Math.random() * colorKeys.length)]];
+    PROJECTS.push({ name: 'New node', url: 'https://', color: pickColor, weight: 5 });
+    saveProjects();
+    renderNodes();
+    // scroll to bottom
+    list.scrollTop = list.scrollHeight;
+  });
+
+  // Export config — copy a complete hero-config.js
+  $('btn-export').addEventListener('click', async () => {
+    const colorEntries = Object.entries(COLORS).map(([k, v]) => `  ${k.padEnd(10)} '${v}',`).join('\n');
+    const projLines = PROJECTS.map(p => {
+      const key = Object.keys(COLORS).find(k => COLORS[k].toLowerCase() === String(p.color).toLowerCase());
+      const colorStr = key ? `HERO_COLORS.${key}` : JSON.stringify(p.color);
+      const name = JSON.stringify(p.name);
+      const url  = JSON.stringify(p.url);
+      return `  { name: ${name}, url: ${url}, color: ${colorStr}, weight: ${p.weight} },`;
+    }).join('\n');
+    const tune = JSON.stringify(RES_TUNE, null, 2);
+    const out = `// hero-config.js — generated from author mode\n\nwindow.HERO_COLORS = {\n${colorEntries}\n};\n\nwindow.HERO_PROJECTS = [\n${projLines}\n];\n\nwindow.HERO_RES_TUNE = ${tune};\n`;
+    try {
+      await navigator.clipboard.writeText(out);
+      const btn = $('btn-export');
+      const prev = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = prev; }, 1600);
+    } catch (e) {
+      // fallback: open in a new window so you can copy manually
+      const w = window.open('', '_blank');
+      w.document.write(`<pre style="font-family:monospace;white-space:pre-wrap;padding:2rem;">${out.replace(/</g,'&lt;')}</pre>`);
+    }
+    console.log(out);
+  });
+}
+</script>
+</body>
+</html>

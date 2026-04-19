@@ -75,6 +75,25 @@
     .hero-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-ink-muted); }
     .hero-meta span::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--color-accent); border-radius: 50%; margin-right: 0.5rem; vertical-align: middle; }
 
+    /* RESONANCE FIELD — interactive hero iframe */
+    .resonance-field {
+      width: 100%;
+      height: clamp(380px, 50vh, 560px);
+      padding: 0;
+      border-top: 1px solid var(--color-rule);
+      background: var(--color-ground);
+    }
+    .resonance-field iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: var(--color-ground);
+    }
+    @media (max-width: 640px) {
+      .resonance-field { height: clamp(320px, 45vh, 420px); }
+    }
+
     /* CAPABILITIES — 2x2 cards */
     .capabilities { background: var(--color-white); border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule); }
     .capabilities h3 { margin-bottom: 2.5rem; }
@@ -241,6 +260,15 @@
         <span>Voice Integrity Research</span>
       </div>
     </div>
+  </section>
+
+  <section class="resonance-field" aria-label="Interactive project field">
+    <iframe
+      src="/hero/resonance.html"
+      title="Project field — click to explore"
+      loading="lazy"
+      allow="clipboard-write"
+    ></iframe>
   </section>
 
   <hr class="rule">
