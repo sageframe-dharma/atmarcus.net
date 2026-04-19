@@ -316,6 +316,11 @@ if (IS_EDIT) document.body.classList.add('edit');
 const PROJECTS = window.HERO_PROJECTS;
 const RES_TUNE = window.HERO_RES_TUNE;
 const COLORS = window.HERO_COLORS;
+// Shuffle order on each page load (Fisher-Yates)
+for (let i = PROJECTS.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [PROJECTS[i], PROJECTS[j]] = [PROJECTS[j], PROJECTS[i]];
+}
 const PROJECTS_DEFAULTS = PROJECTS.map(p => ({ ...p }));
 
 // Persist overrides in edit mode
