@@ -1796,6 +1796,83 @@ code {
     </div>
   </div>
 
+  <div class="demo">
+    <div class="demo-bar"><span>Live &middot; drift — 3 nodes wandering</span></div>
+    <canvas id="d5" style="height:140px;"></canvas>
+    <div class="demo-code"><span class="cm">// Applied every frame to each placed node:</span>
+<span class="ky">const</span> <span class="vr">drift</span>  = <span id="d5c-drift" class="live-val nm">0.6</span>;  <span class="cm">// drift strength (0 = off)</span>
+<span class="ky">const</span> <span class="vr">settle</span> = <span id="d5c-settle" class="live-val nm">1.5</span>; <span class="cm">// seconds before drift reaches full strength</span>
+
+<span class="cm">// Smoothstep mask — drift fades in over settle seconds</span>
+<span class="ky">const</span> s = Math.<span class="fn">min</span>(<span class="nm">1</span>, age / <span class="vr">settle</span>);
+<span class="ky">const</span> mask = s * s * (<span class="nm">3</span> - <span class="nm">2</span> * s);
+
+<span class="cm">// Different phase per node (i) → each drifts a different direction</span>
+node.x += Math.<span class="fn">sin</span>(tt * <span class="nm">0.22</span> + i) * <span class="nm">0.30</span> * <span class="vr">drift</span> * mask * (dt * <span class="nm">60</span>);
+node.y += Math.<span class="fn">cos</span>(tt * <span class="nm">0.19</span> + i * <span class="nm">1.3</span>) * <span class="nm">0.24</span> * <span class="vr">drift</span> * mask * (dt * <span class="nm">60</span>);</div>
+    <div class="demo-controls">
+      <label class="demo-ctrl">drift <input type="range" id="d5-drift" min="0" max="3" step="0.1" value="0.6"><span class="cv" id="d5-driftv">0.6</span></label>
+      <label class="demo-ctrl">settle <input type="range" id="d5-settle" min="0.2" max="4" step="0.1" value="1.5"><span class="cv" id="d5-settlev">1.5</span></label>
+    </div>
+    <div class="demo-caption">Three nodes placed at spawn and immediately beginning to drift. Drag <code>drift</code> to zero and the nodes freeze in place — that's the default in production. Drag <code>settle</code> to a small value and nodes will start wandering right away; at a large value they hold position for several seconds first. Click the canvas to reset positions.</div>
+  </div>
+  <script>(function(){
+    const c=document.getElementById('d5'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
+    let W=0,H=140,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
+    const sDrift=document.getElementById('d5-drift'),vDrift=document.getElementById('d5-driftv'),cDrift=document.getElementById('d5c-drift');
+    const sSet=document.getElementById('d5-settle'),vSet=document.getElementById('d5-settlev'),cSet=document.getElementById('d5c-settle');
+    let drift=0.6,settle=1.5;
+    sDrift.addEventListener('input',()=>{drift=+sDrift.value;vDrift.textContent=drift.toFixed(1);cDrift.textContent=drift.toFixed(1);});
+    sSet.addEventListener('input',()=>{settle=+sSet.value;vSet.textContent=settle.toFixed(1);cSet.textContent=settle.toFixed(1);});
+    function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=140;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
+    sz();new ResizeObserver(sz).observe(c);
+    const COLORS=['#c45a2d','#8b5e8b','#3a7ca5'];
+    const CRGB=[[0xc4,0x5a,0x2d],[0x8b,0x5e,0x8b],[0x3a,0x7c,0xa5]];
+    const GR=[0xf5,0xf2,0xed];
+    let tt=0,last=performance.now();
+    function mkNodes(){return[
+      {x:W*0.25,y:H*0.5,born:0},{x:W*0.5,y:H*0.35,born:0},{x:W*0.75,y:H*0.55,born:0}
+    ];}
+    let nodes=[];
+    function reset(){nodes=mkNodes().map(n=>({...n,born:tt}));}
+    c.addEventListener('click',reset);
+    const lam=52,spd=50,k=(Math.PI*2)/lam,reach=350;
+    function draw(now){
+      const dt=Math.min(0.05,(now-last)/1000);last=now;tt+=dt;
+      if(!W||!imgD){requestAnimationFrame(draw);return;}
+      if(!nodes.length)reset();
+      // drift
+      nodes.forEach((n,i)=>{
+        const age=tt-n.born;
+        const s=Math.min(1,age/Math.max(0.01,settle));
+        const mask=s*s*(3-2*s);
+        n.x+=Math.sin(tt*0.22+i)*0.30*drift*mask*(dt*60);
+        n.y+=Math.cos(tt*0.19+i*1.3)*0.24*drift*mask*(dt*60);
+        // soft bounce at edges
+        if(n.x<20)n.x+=1;if(n.x>W-20)n.x-=1;
+        if(n.y<14)n.y+=1;if(n.y>H-14)n.y-=1;
+      });
+      // wave field
+      const srcs=nodes.map((n,i)=>({x:n.x,y:n.y,age:tt-n.born,front:(tt-n.born)*spd,rgb:CRGB[i]}));
+      const dat=imgD.data;
+      for(let y=0;y<bh;y++){const py=y*3;for(let x=0;x<bw;x++){const px=x*3;let sumH=0,sumA=0,tR=0,tG=0,tB=0;for(const s of srcs){const dist=Math.sqrt((px-s.x)**2+(py-s.y)**2);if(dist>s.front||dist>reach)continue;const A=Math.max(0,1-dist/reach)*(1/(1+dist*0.009));sumH+=A*Math.cos(k*dist-k*spd*s.age);sumA+=A;tR+=s.rgb[0]*A;tG+=s.rgb[1]*A;tB+=s.rgb[2]*A;}const h01=Math.tanh(sumH*1.4);let R=GR[0],G=GR[1],B=GR[2];if(sumA>0.002){const tr=tR/sumA,tg=tG/sumA,tb=tB/sumA,en=Math.min(1,sumA*1.1);if(h01>0){const m=h01*en*0.48;R=R*(1-m)+tr*m;G=G*(1-m)+tg*m;B=B*(1-m)+tb*m;}else{const m=-h01*en*0.20;R=R*(1-m)+0x1a*m;G=G*(1-m)+0x1a*m;B=B*(1-m)+0x1a*m;}}const i=(y*bw+x)*4;dat[i]=R|0;dat[i+1]=G|0;dat[i+2]=B|0;dat[i+3]=255;}}
+      tctx.putImageData(imgD,0,0);ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      ctx.drawImage(tmp,0,0,bw,bh,0,0,W,H);
+      // draw node dots + trails
+      nodes.forEach((n,i)=>{
+        const age=tt-n.born;
+        const s2=Math.min(1,age/Math.max(0.01,settle));
+        const mask=s2*s2*(3-2*s2);
+        // settle ring: fades out as drift kicks in
+        if(mask<0.99){ctx.strokeStyle='rgba('+CRGB[i].join(',')+','+(1-mask)*0.4+')';ctx.lineWidth=1;ctx.beginPath();ctx.arc(n.x,n.y,10*(1-mask)+4,0,Math.PI*2);ctx.stroke();}
+        ctx.fillStyle=COLORS[i];ctx.beginPath();ctx.arc(n.x,n.y,4,0,Math.PI*2);ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();</script>
+
   <h3>Step 3 — Remove expired nodes</h3>
   <div class="annotated">
     <div class="ann-row">
