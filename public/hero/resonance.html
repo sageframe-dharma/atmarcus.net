@@ -329,11 +329,13 @@ if (IS_EDIT) document.body.classList.add('edit');
 const PROJECTS = window.HERO_PROJECTS;
 const RES_TUNE = window.HERO_RES_TUNE;
 const COLORS = window.HERO_COLORS;
-// Shuffle order on each page load (Fisher-Yates)
-for (let i = PROJECTS.length - 1; i > 0; i--) {
-  const j = Math.floor(Math.random() * (i + 1));
-  [PROJECTS[i], PROJECTS[j]] = [PROJECTS[j], PROJECTS[i]];
+function shuffleProjects() {
+  for (let i = PROJECTS.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [PROJECTS[i], PROJECTS[j]] = [PROJECTS[j], PROJECTS[i]];
+  }
 }
+shuffleProjects();
 const PROJECTS_DEFAULTS = PROJECTS.map(p => ({ ...p }));
 
 // Persist overrides in edit mode
@@ -426,12 +428,10 @@ function envelope(age, life) {
 
 // ── State ────────────────────────────────────────────────────
 let placed = [];
-let projectIndex = 0;
 let tt = 0;
 let lastFrame = performance.now();
-
 function reset() {
-  placed = []; projectIndex = 0; tt = 0;
+  placed = []; tt = 0; shuffleProjects();
 }
 document.getElementById('reset').addEventListener('click', e => { e.preventDefault(); reset(); });
 document.getElementById('btn-reset-field')?.addEventListener('click', reset);
@@ -460,8 +460,7 @@ canvas.addEventListener('click', e => {
   const hit = hitTest(mx, my);
   if (hit) { window.open(hit.proj.url, '_blank', 'noopener'); return; }
   if (!PROJECTS.length) return;
-  if (projectIndex >= PROJECTS.length) projectIndex = 0;
-  const proj = PROJECTS[projectIndex++];
+  const proj = PROJECTS[Math.floor(Math.random() * PROJECTS.length)];
   placed.push({ proj, x: mx, y: my, bornAt: tt, lifespan: lifespanFor(proj.weight) });
 });
 canvas.addEventListener('mousemove', e => {

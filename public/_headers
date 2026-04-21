@@ -1,2 +1,5 @@
 /hero/hero-config.js
   Cache-Control: no-store
+
+/hero/resonance.html
+  Cache-Control: no-store
