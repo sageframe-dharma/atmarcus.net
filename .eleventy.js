@@ -7,6 +7,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('public/favicon.svg');
   eleventyConfig.addPassthroughCopy('public/_headers');
   eleventyConfig.addPassthroughCopy('public/add-card.txt');
+  eleventyConfig.addPassthroughCopy('public/about-the-hero.html');
 
   return {
     // Only treat .njk files as templates — .html files are never parsed
