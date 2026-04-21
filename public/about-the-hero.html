@@ -19,10 +19,11 @@
   --font-display: 'DM Serif Display', Georgia, serif;
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-  --max-w: 740px;
+  --max-width: 1080px;
+  --gutter: clamp(1.5rem, 5vw, 4rem);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scroll-padding-top: 4.5rem; }
 body {
   font-family: var(--font-body);
   color: var(--ink);
@@ -34,61 +35,229 @@ body {
 
 /* ── Layout ── */
 .page {
-  max-width: var(--max-w);
+  max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 clamp(1.2rem, 5vw, 3rem);
+  padding: 0 var(--gutter);
 }
 
-/* ── Sticky site nav ── */
-.site-nav {
+/* ── Header ── */
+body > header {
+  padding: 1.5rem 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(245,242,237,0.92);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--rule);
-  padding: 0 clamp(1.5rem, 5vw, 4rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  height: 3rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(245,242,237,0.92);
 }
-.site-nav .wordmark {
+body > header .page {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.wordmark {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: var(--ink);
   text-decoration: none;
   letter-spacing: 0.02em;
-  white-space: nowrap;
+}
+body > header nav {
+  display: flex;
+  gap: 2rem;
+}
+body > header nav a {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+body > header nav a:hover { color: var(--ink); }
+
+/* ── Hamburger — mobile only ── */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  width: 28px;
+  height: 22px;
+  position: relative;
   flex-shrink: 0;
 }
-.jump-links {
+.nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 1px;
+  position: absolute;
+  left: 0;
+  transition: all 0.25s ease;
+}
+.nav-toggle span:nth-child(1) { top: 0; }
+.nav-toggle span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+.nav-toggle span:nth-child(3) { bottom: 0; }
+.nav-toggle.active span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+.nav-toggle.active span:nth-child(2) { opacity: 0; }
+.nav-toggle.active span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+
+/* ── Bottom sheet ── */
+.sheet-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.sheet-backdrop.visible { display: block; opacity: 1; }
+.bottom-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 201;
+  background: var(--ground);
+  border-top: 2px solid var(--accent);
+  border-radius: 12px 12px 0 0;
+  padding: 1.5rem 2rem 2.5rem;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+}
+.bottom-sheet.open { transform: translateY(0); }
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  margin: 0 auto 1.5rem;
+}
+.bottom-sheet nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.bottom-sheet nav a {
+  display: block;
+  padding: 1rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  transition: color 0.2s ease;
+}
+.bottom-sheet nav a:last-child { border-bottom: none; }
+.bottom-sheet nav a:hover { color: var(--ink); }
+
+/* ── Resonance hero canvas ── */
+.resonance-hero {
+  width: 100%;
+  height: clamp(260px, 38vh, 380px);
+  border-bottom: 1px solid var(--rule);
+  background: var(--ground);
+  overflow: hidden;
+}
+.resonance-hero canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  header nav { display: none; }
+  .nav-toggle { display: block; }
+}
+
+/* ── Jump nav — sticks below main header once sections begin ── */
+.jump-nav {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 90;
+  background: rgba(245,242,237,0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
+}
+.jump-nav-inner {
   display: flex;
   gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  height: 2.5rem;
+  align-items: stretch;
 }
-.jump-links::-webkit-scrollbar { display: none; }
-.jump-links a {
+.jump-nav-inner::-webkit-scrollbar { display: none; }
+.jump-nav-inner a {
+  display: flex;
+  align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ink-muted);
   text-decoration: none;
-  padding: 0 0.7rem;
+  padding: 0 0.75rem;
   white-space: nowrap;
-  transition: color .15s;
-  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  transition: color .15s, background .15s;
 }
-.jump-links a:first-child { border-left: none; }
-.jump-links a:hover { color: var(--accent); }
-@media (max-width: 600px) {
-  .jump-links a { font-size: 0.58rem; padding: 0 0.5rem; }
+.jump-nav-inner a:first-child { border-left: 1px solid var(--rule); }
+.jump-nav-inner a:hover { color: var(--accent); background: rgba(196,90,45,0.04); }
+.jump-nav-inner a.active { color: var(--accent); }
+
+/* ── Jump nav — sticks below main header once sections begin ── */
+.jump-nav {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 90;
+  background: rgba(245,242,237,0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
 }
+.jump-nav-inner {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  height: 2.5rem;
+  align-items: stretch;
+}
+.jump-nav-inner::-webkit-scrollbar { display: none; }
+.jump-nav-inner a {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: 0 0.75rem;
+  white-space: nowrap;
+  border-right: 1px solid var(--rule);
+  transition: color .15s, background .15s;
+}
+.jump-nav-inner a:first-child { border-left: 1px solid var(--rule); }
+.jump-nav-inner a:hover { color: var(--accent); background: rgba(196,90,45,0.04); }
+.jump-nav-inner a.active { color: var(--accent); }
 
 /* ── Document header ── */
 .doc-header {
@@ -577,12 +746,40 @@ code {
 </style>
 </head>
 <body>
-<div class="page">
 
-<!-- ═══════════════ STICKY NAV ═══════════════ -->
-<nav class="site-nav">
-  <a href="/" class="wordmark">Andrew Todd Marcus</a>
-  <div class="jump-links">
+<header>
+  <div class="page">
+    <a class="wordmark" href="/">Andrew Todd Marcus</a>
+    <nav>
+      <a href="/#work">work</a>
+      <a href="/#research">research</a>
+      <a href="/#approach">approach</a>
+      <a href="/#consulting">consulting</a>
+      <a href="/#writing">writing</a>
+      <a href="/#about">about</a>
+      <a href="/#contact">contact</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="sheet-handle"></div>
+  <nav>
+    <a href="/#work">work</a>
+    <a href="/#research">research</a>
+    <a href="/#approach">approach</a>
+    <a href="/#consulting">consulting</a>
+    <a href="/#writing">writing</a>
+    <a href="/#about">about</a>
+    <a href="/#contact">contact</a>
+
+<!-- Jump nav — becomes sticky once sections begin -->
+<nav class="jump-nav" aria-label="Section navigation">
+  <div class="jump-nav-inner">
     <a href="#s1">§1 What it is</a>
     <a href="#s2">§2 Metaphor</a>
     <a href="#s3">§3 RAF loop</a>
@@ -595,8 +792,18 @@ code {
   </div>
 </nav>
 
+  </nav>
+</div>
+
+<!-- ═══════════════ RESONANCE HERO ═══════════════ -->
+<div class="resonance-hero">
+  <canvas id="resonanceHero"></canvas>
+</div>
+
+<div class="page">
+
 <!-- ═══════════════ HEADER ═══════════════ -->
-<header class="doc-header">
+<div class="doc-header">
   <div class="eyebrow">atmarcus.net · How it works</div>
   <h1>The Resonance Field</h1>
   <p class="doc-intro">
@@ -605,8 +812,7 @@ code {
     This document explains how it was made, starting from the very beginning.
     You don't need any coding background to start reading. Stop wherever you want.
   </p>
-  <a class="back-link" href="/">← Back to atmarcus.net</a>
-</header>
+</div>
 
 <!-- ═══════════════ TOC ═══════════════ -->
 <nav class="toc">
@@ -625,6 +831,22 @@ code {
 </nav>
 
 <!-- ═══════════════ SECTION 1 ═══════════════ -->
+
+<!-- Jump nav — becomes sticky once sections begin -->
+<nav class="jump-nav" aria-label="Section navigation">
+  <div class="jump-nav-inner">
+    <a href="#s1">§1 What it is</a>
+    <a href="#s2">§2 Metaphor</a>
+    <a href="#s3">§3 RAF loop</a>
+    <a href="#s4">§4 Data</a>
+    <a href="#s5">§5 Physics</a>
+    <a href="#s6">§6 Architecture</a>
+    <a href="#s7">§7 Functions</a>
+    <a href="#s8">§8 One frame</a>
+    <a href="#s9">§9 Author mode</a>
+  </div>
+</nav>
+
 <section class="section" id="s1">
   <div class="depth-badge"><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span>Level 1 · No code</span></div>
   <div class="section-label">Section 01</div>
@@ -2155,8 +2377,6 @@ node.y += Math.<span class="fn">cos</span>(tt * <span class="nm">0.19</span> + i
   </div>
 </section>
 
-<hr class="rule">
-
 <!-- ═══════════════ FOOTER ═══════════════ -->
 <footer class="doc-footer">
   <p>
@@ -2172,5 +2392,166 @@ node.y += Math.<span class="fn">cos</span>(tt * <span class="nm">0.19</span> + i
 </footer>
 
 </div>
+
+<!-- ═══════════════ RESONANCE HERO CANVAS ═══════════════ -->
+<script>
+(function () {
+  const canvas = document.getElementById('resonanceHero');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let DPR = window.devicePixelRatio || 1;
+
+  // Five pre-placed nodes: [x fraction, y fraction, weight, color rgb, phase offset]
+  const NODES = [
+    { fx: 0.10, fy: 0.52, w: 7, rgb: [196,  90,  45], phase: 0.0 },
+    { fx: 0.30, fy: 0.28, w: 9, rgb: [139,  94, 139], phase: 1.1 },
+    { fx: 0.52, fy: 0.70, w: 6, rgb: [ 90, 138,  58], phase: 2.4 },
+    { fx: 0.72, fy: 0.25, w: 8, rgb: [ 58, 124, 165], phase: 0.7 },
+    { fx: 0.88, fy: 0.60, w: 7, rgb: [184, 134,  11], phase: 1.8 },
+  ];
+  const GROUND = [0xf5, 0xf2, 0xed];
+  const TUNE = { speed: 0.25, wavelength: 60 };
+  const CELL = 4;
+
+  let W = 0, H = 0, bufW = 0, bufH = 0;
+  let buf = null, prevBuf = null, tmp = null, tmpCtx = null;
+  let tt = 0, lastFrame = null;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    DPR = window.devicePixelRatio || 1;
+    canvas.width  = rect.width  * DPR;
+    canvas.height = rect.height * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    W = rect.width;
+    H = rect.height;
+    const bw = Math.ceil(W / CELL), bh = Math.ceil(H / CELL);
+    if (bw !== bufW || bh !== bufH) {
+      bufW = bw; bufH = bh;
+      buf = ctx.createImageData(bw, bh);
+      if (!tmp) { tmp = document.createElement('canvas'); tmpCtx = tmp.getContext('2d'); }
+      tmp.width = bw; tmp.height = bh;
+      prevBuf = null;
+    }
+  }
+
+  function draw(now) {
+    if (!lastFrame) lastFrame = now;
+    const dt = Math.min(0.05, (now - lastFrame) / 1000);
+    lastFrame = now;
+    tt += dt;
+
+    if (!W || !bufW) { requestAnimationFrame(draw); return; }
+
+    const propSpeed = 70 * TUNE.speed;
+    const srcs = NODES.map(n => {
+      const wl = Math.max(10, TUNE.wavelength * (1.6 - ((n.w - 1) / 9) * 1.05));
+      const reach = wl * (3 + ((n.w - 1) / 9) * 19);
+      return { x: n.fx * W, y: n.fy * H, wl, reach, rgb: n.rgb, phase: n.phase };
+    });
+
+    const data = buf.data;
+    const TWO_PI = Math.PI * 2;
+    for (let y = 0; y < bufH; y++) {
+      const py = y * CELL;
+      for (let x = 0; x < bufW; x++) {
+        const px = x * CELL;
+        let sumH = 0, sumAbsA = 0, tR = 0, tG = 0, tB = 0;
+        for (const s of srcs) {
+          const dx = px - s.x, dy = py - s.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d > s.reach) continue;
+          const A = Math.max(0, 1 - d / s.reach) * (1 / (1 + d * 0.006));
+          const k = TWO_PI / s.wl;
+          sumH += A * Math.cos(k * d - k * propSpeed * tt + s.phase);
+          sumAbsA += A;
+          tR += s.rgb[0] * A; tG += s.rgb[1] * A; tB += s.rgb[2] * A;
+        }
+        const h01 = Math.tanh(sumH * 1.2);
+        let R = GROUND[0], G = GROUND[1], B = GROUND[2];
+        if (sumAbsA > 0.002) {
+          const tr = tR / sumAbsA, tg = tG / sumAbsA, tb = tB / sumAbsA;
+          const energy = Math.min(1, sumAbsA * 1.1);
+          if (h01 > 0) {
+            const mix = h01 * energy * 0.42;
+            R = R * (1 - mix) + tr * mix;
+            G = G * (1 - mix) + tg * mix;
+            B = B * (1 - mix) + tb * mix;
+          } else {
+            const mix = -h01 * energy * 0.18;
+            R = R * (1 - mix) + 0x1a * mix;
+            G = G * (1 - mix) + 0x1a * mix;
+            B = B * (1 - mix) + 0x1a * mix;
+          }
+        }
+        const idx = (y * bufW + x) * 4;
+        data[idx] = R | 0; data[idx + 1] = G | 0; data[idx + 2] = B | 0; data[idx + 3] = 255;
+      }
+    }
+    const smooth = 0.55;
+    if (prevBuf && prevBuf.data.length === buf.data.length) {
+      const a = buf.data, b = prevBuf.data;
+      for (let i = 0; i < a.length; i += 4) {
+        a[i]   = (a[i]   * (1 - smooth) + b[i]   * smooth) | 0;
+        a[i+1] = (a[i+1] * (1 - smooth) + b[i+1] * smooth) | 0;
+        a[i+2] = (a[i+2] * (1 - smooth) + b[i+2] * smooth) | 0;
+      }
+    }
+    if (!prevBuf || prevBuf.data.length !== buf.data.length) prevBuf = ctx.createImageData(bufW, bufH);
+    prevBuf.data.set(buf.data);
+    tmpCtx.putImageData(buf, 0, 0);
+    ctx.fillStyle = '#f5f2ed';
+    ctx.fillRect(0, 0, W, H);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(tmp, 0, 0, bufW, bufH, 0, 0, W, H);
+
+    for (const s of srcs) {
+      ctx.fillStyle = `rgba(${s.rgb[0]},${s.rgb[1]},${s.rgb[2]},0.22)`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(${s.rgb[0]},${s.rgb[1]},${s.rgb[2]},0.9)`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(draw);
+})();
+</script>
+
+<!-- ═══════════════ HAMBURGER ═══════════════ -->
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const sheet = document.getElementById('bottomSheet');
+  const backdrop = document.getElementById('sheetBackdrop');
+  function openSheet() { sheet.classList.add('open'); backdrop.classList.add('visible'); toggle.classList.add('active'); toggle.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+  function closeSheet() { sheet.classList.remove('open'); backdrop.classList.remove('visible'); toggle.classList.remove('active'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+  toggle.addEventListener('click', () => sheet.classList.contains('open') ? closeSheet() : openSheet());
+  backdrop.addEventListener('click', closeSheet);
+  sheet.querySelectorAll('nav a').forEach(a => a.addEventListener('click', closeSheet));
+</script>
+
+<!-- Jump nav active section highlight -->
+<script>
+  (function () {
+    const links = document.querySelectorAll('.jump-nav-inner a');
+    const sections = Array.from(document.querySelectorAll('section.section[id]'));
+    if (!links.length || !sections.length) return;
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`.jump-nav-inner a[href="#${entry.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => obs.observe(s));
+  })();
+</script>
+
 </body>
 </html>

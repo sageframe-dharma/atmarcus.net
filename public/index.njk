@@ -77,6 +77,7 @@
 
     /* RESONANCE FIELD — interactive hero iframe */
     .resonance-field {
+      position: relative;
       width: 100%;
       height: clamp(380px, 50vh, 560px);
       padding: 0;
@@ -93,6 +94,30 @@
     @media (max-width: 640px) {
       .resonance-field { height: clamp(460px, 65vh, 560px); }
     }
+    .resonance-how {
+      position: absolute;
+      bottom: clamp(1rem, 2.5vw, 1.4rem);
+      right: clamp(1rem, 2.5vw, 1.4rem);
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      background: rgba(245,242,237,0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid var(--color-rule);
+      border-radius: 2px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-ink-muted);
+      text-decoration: none;
+      transition: color .18s, border-color .18s, background .18s;
+      pointer-events: auto;
+    }
+    .resonance-how:hover { color: var(--color-accent); border-color: var(--color-accent); background: rgba(245,242,237,0.95); }
 
     /* CAPABILITIES — 2x2 cards */
     .capabilities { background: var(--color-white); border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule); }
@@ -269,6 +294,7 @@
       loading="lazy"
       allow="clipboard-write"
     ></iframe>
+    <a class="resonance-how" href="/about-the-hero.html">How it works →</a>
   </section>
 
   <hr class="rule">
