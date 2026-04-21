@@ -329,10 +329,11 @@ if (IS_EDIT) document.body.classList.add('edit');
 const PROJECTS = window.HERO_PROJECTS;
 const RES_TUNE = window.HERO_RES_TUNE;
 const COLORS = window.HERO_COLORS;
-function shuffleProjects() {
-  for (let i = PROJECTS.length - 1; i > 0; i--) {
+function shuffleProjects(arr) {
+  arr = arr || PROJECTS;
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [PROJECTS[i], PROJECTS[j]] = [PROJECTS[j], PROJECTS[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 }
 shuffleProjects();
@@ -430,8 +431,21 @@ function envelope(age, life) {
 let placed = [];
 let tt = 0;
 let lastFrame = performance.now();
+
+// Deck: every project appears once before any repeats
+let deck = [];
+function refillDeck() {
+  deck = [...PROJECTS];
+  shuffleProjects(deck);
+}
+function nextFromDeck() {
+  if (!deck.length) refillDeck();
+  return deck.pop();
+}
+refillDeck();
+
 function reset() {
-  placed = []; tt = 0; shuffleProjects();
+  placed = []; tt = 0; refillDeck();
 }
 document.getElementById('reset').addEventListener('click', e => { e.preventDefault(); reset(); });
 document.getElementById('btn-reset-field')?.addEventListener('click', reset);
@@ -460,7 +474,7 @@ canvas.addEventListener('click', e => {
   const hit = hitTest(mx, my);
   if (hit) { window.open(hit.proj.url, '_blank', 'noopener'); return; }
   if (!PROJECTS.length) return;
-  const proj = PROJECTS[Math.floor(Math.random() * PROJECTS.length)];
+  const proj = nextFromDeck();
   placed.push({ proj, x: mx, y: my, bornAt: tt, lifespan: lifespanFor(proj.weight) });
 });
 canvas.addEventListener('mousemove', e => {
