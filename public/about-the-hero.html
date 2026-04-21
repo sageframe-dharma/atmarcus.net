@@ -420,6 +420,35 @@ code {
   line-height: 1.55;
 }
 .demo-caption code { font-size: 0.76em; background: rgba(208,201,190,0.5); border: none; }
+.demo-controls {
+  padding: 0.6rem 0.9rem 0.7rem;
+  border-top: 1px solid var(--rule);
+  background: var(--ground);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  align-items: center;
+}
+.demo-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.demo-ctrl input[type=range] {
+  width: 90px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.demo-ctrl .cv {
+  min-width: 2.6em;
+  color: var(--accent);
+  font-weight: 500;
+}
 
 /* ── Syntax token colors ── */
 .ky { color: #c87d4a; }      /* keyword: const, let, function, if, return */
@@ -669,12 +698,24 @@ code {
       <span class="demo-live" id="d1-fps">&mdash; fps</span>
     </div>
     <canvas id="d1" style="height:100px;"></canvas>
-    <div class="demo-caption">The dot redraws ~60&times; per second. The frame counter in the corner shows exactly how many times <code>draw()</code> has been called since you loaded this page. Each call schedules the next one via <code>requestAnimationFrame(draw)</code> &mdash; that&rsquo;s the loop.</div>
+    <div class="demo-controls">
+      <label class="demo-ctrl">Speed <input type="range" id="d1-speed" min="1" max="10" step="1" value="5"><span class="cv" id="d1-speedv">5×</span></label>
+      <label class="demo-ctrl">Trail <input type="range" id="d1-trail" min="2" max="24" step="1" value="10"><span class="cv" id="d1-trailv">10</span></label>
+      <label class="demo-ctrl">Orbit size <input type="range" id="d1-orbit" min="10" max="45" step="1" value="30"><span class="cv" id="d1-orbitv">30%</span></label>
+    </div>
+    <div class="demo-caption">The dot redraws ~60&times; per second. The frame counter in the corner shows exactly how many times <code>draw()</code> has been called since you loaded this page. Each call schedules the next one via <code>requestAnimationFrame(draw)</code> &mdash; that&rsquo;s the loop. Use the sliders to change how fast the dot moves and how long the trail is.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d1'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=100,frame=0,last=performance.now(),fpsF=0,fpsL=performance.now();
     const fpsEl=document.getElementById('d1-fps');
+    const sSpeed=document.getElementById('d1-speed'),vSpeed=document.getElementById('d1-speedv');
+    const sTrail=document.getElementById('d1-trail'),vTrail=document.getElementById('d1-trailv');
+    const sOrbit=document.getElementById('d1-orbit'),vOrbit=document.getElementById('d1-orbitv');
+    let speed=5,trail=10,orbit=0.30;
+    sSpeed.addEventListener('input',()=>{speed=+sSpeed.value;vSpeed.textContent=speed+'×';});
+    sTrail.addEventListener('input',()=>{trail=+sTrail.value;vTrail.textContent=trail;});
+    sOrbit.addEventListener('input',()=>{orbit=+sOrbit.value/100;vOrbit.textContent=sOrbit.value+'%';});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);}
     sz();new ResizeObserver(sz).observe(c);
     function draw(now){
@@ -682,8 +723,8 @@ code {
       if(now-fpsL>700){fpsEl.textContent=Math.round(fpsF/((now-fpsL)/1000))+' fps';fpsF=0;fpsL=now;}
       if(!W){requestAnimationFrame(draw);return;}
       ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
-      const t=frame*0.022;
-      for(let i=10;i>=0;i--){const pt=t-i*0.055,px=W/2+Math.cos(pt)*W*0.3,py=H/2+Math.sin(pt*1.3)*H*0.28;ctx.fillStyle='rgba(196,90,45,'+((11-i)/11*0.7)+')';ctx.beginPath();ctx.arc(px,py,Math.max(0.5,(11-i)/11*5),0,Math.PI*2);ctx.fill();}
+      const t=frame*0.022*speed;
+      for(let i=trail;i>=0;i--){const pt=t-i*0.055,px=W/2+Math.cos(pt)*W*orbit,py=H/2+Math.sin(pt*1.3)*H*(orbit*0.93);ctx.fillStyle='rgba(196,90,45,'+((trail+1-i)/(trail+1)*0.72)+')';ctx.beginPath();ctx.arc(px,py,Math.max(0.5,(trail+1-i)/(trail+1)*5),0,Math.PI*2);ctx.fill();}
       ctx.fillStyle='#c0b8b0';ctx.font='10px "IBM Plex Mono",monospace';ctx.textBaseline='top';
       ctx.fillText('frame '+frame.toLocaleString(),10,8);
       requestAnimationFrame(draw);
@@ -888,21 +929,29 @@ code {
   <div class="demo">
     <div class="demo-bar"><span>Live &middot; single wave source &middot; click to restart</span></div>
     <canvas id="d2" style="height:130px;"></canvas>
-    <div class="demo-caption">One source at center. Each bright ring is a wave peak: the cosine cycling from +1 to &minus;1 and back as distance from the source increases. The rings scroll outward as time advances. Click to restart.</div>
+    <div class="demo-controls">
+      <label class="demo-ctrl">Wavelength λ <input type="range" id="d2-lam" min="16" max="100" step="2" value="52"><span class="cv" id="d2-lamv">52 px</span></label>
+      <label class="demo-ctrl">Speed <input type="range" id="d2-spd" min="10" max="120" step="5" value="55"><span class="cv" id="d2-spdv">55</span></label>
+    </div>
+    <div class="demo-caption">One source at center. Each bright ring is a wave peak: the cosine cycling from +1 to &minus;1 and back as distance increases. Drag <strong>Wavelength</strong> to pack rings tighter or looser &mdash; smaller λ means more rings visible. Drag <strong>Speed</strong> to change how fast the wavefront expands. Click the canvas to restart.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d2'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=130,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
+    const sLam=document.getElementById('d2-lam'),vLam=document.getElementById('d2-lamv');
+    const sSpd=document.getElementById('d2-spd'),vSpd=document.getElementById('d2-spdv');
+    let lam=52,spd=55;
+    sLam.addEventListener('input',()=>{lam=+sLam.value;vLam.textContent=lam+' px';});
+    sSpd.addEventListener('input',()=>{spd=+sSpd.value;vSpd.textContent=spd;});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=130;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
     sz();new ResizeObserver(sz).observe(c);
     const GR=[0xf5,0xf2,0xed],CR=[0x8b,0x5e,0x8b];
     let t=0,last=performance.now();
-    const spd=55,lam=52,k=(Math.PI*2)/lam,reach=400;
     c.addEventListener('click',()=>{t=0;});
     function draw(now){
       const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;
       if(!W||!imgD){requestAnimationFrame(draw);return;}
-      const cx=W/2,cy=H/2,front=t*spd,dat=imgD.data;
+      const cx=W/2,cy=H/2,reach=400,front=t*spd,k=(Math.PI*2)/lam,dat=imgD.data;
       for(let y=0;y<bh;y++){const py=y*3;for(let x=0;x<bw;x++){const px=x*3,dist=Math.sqrt((px-cx)**2+(py-cy)**2);let R=GR[0],G=GR[1],B=GR[2];if(dist<=front&&dist<=reach){const A=Math.max(0,1-dist/reach)*(1/(1+dist*0.009));const h=Math.tanh(A*Math.cos(k*dist-k*spd*t)*2.8);if(h>0){const m=h*0.55;R=R*(1-m)+CR[0]*m;G=G*(1-m)+CR[1]*m;B=B*(1-m)+CR[2]*m;}else{const m=-h*0.2;R=R*(1-m)+0x1a*m;G=G*(1-m)+0x1a*m;B=B*(1-m)+0x1a*m;}}const i=(y*bw+x)*4;dat[i]=R|0;dat[i+1]=G|0;dat[i+2]=B|0;dat[i+3]=255;}}
       tctx.putImageData(imgD,0,0);ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -934,20 +983,32 @@ code {
   <div class="demo">
     <div class="demo-bar"><span>Live &middot; two-source interference</span></div>
     <canvas id="d3" style="height:150px;"></canvas>
-    <div class="demo-caption">Two sources (orange and blue), same wavelength. The bright fan-shaped arcs between them are constructive interference &mdash; both waves peak simultaneously at those points. The dark gaps are destructive &mdash; one peaks as the other troughs. This geometry depends entirely on the difference in distance to each source.</div>
+    <div class="demo-controls">
+      <label class="demo-ctrl">Wavelength λ <input type="range" id="d3-lam" min="16" max="100" step="2" value="48"><span class="cv" id="d3-lamv">48 px</span></label>
+      <label class="demo-ctrl">Spacing <input type="range" id="d3-gap" min="10" max="80" step="2" value="40"><span class="cv" id="d3-gapv">40%</span></label>
+      <label class="demo-ctrl">Speed <input type="range" id="d3-spd" min="10" max="120" step="5" value="50"><span class="cv" id="d3-spdv">50</span></label>
+    </div>
+    <div class="demo-caption">Two sources (orange and blue), same wavelength. Drag <strong>Wavelength</strong> to change how fine the interference pattern is — shorter wavelengths pack more, narrower constructive arcs. Drag <strong>Spacing</strong> to move the sources apart or together and watch the pattern rotate and rescale. The math doesn't change, only the geometry does.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d3'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=150,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
+    const sLam=document.getElementById('d3-lam'),vLam=document.getElementById('d3-lamv');
+    const sGap=document.getElementById('d3-gap'),vGap=document.getElementById('d3-gapv');
+    const sSpd=document.getElementById('d3-spd'),vSpd=document.getElementById('d3-spdv');
+    let lam=48,gap=0.40,spd=50;
+    sLam.addEventListener('input',()=>{lam=+sLam.value;vLam.textContent=lam+' px';});
+    sGap.addEventListener('input',()=>{gap=+sGap.value/100;vGap.textContent=sGap.value+'%';});
+    sSpd.addEventListener('input',()=>{spd=+sSpd.value;vSpd.textContent=spd;});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=150;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
     sz();new ResizeObserver(sz).observe(c);
     const GR=[0xf5,0xf2,0xed],C1=[0xc4,0x5a,0x2d],C2=[0x3a,0x7c,0xa5];
     let t=0,last=performance.now();
-    const spd=50,lam=48,k=(Math.PI*2)/lam;
     function draw(now){
       const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;
       if(!W||!imgD){requestAnimationFrame(draw);return;}
-      const srcs=[{x:W*0.3,y:H*0.5,r:C1},{x:W*0.7,y:H*0.5,r:C2}];
+      const k=(Math.PI*2)/lam;
+      const srcs=[{x:W*(0.5-gap/2),y:H*0.5,r:C1},{x:W*(0.5+gap/2),y:H*0.5,r:C2}];
       const reach=Math.max(W,H)*0.9,front=t*spd,dat=imgD.data;
       for(let y=0;y<bh;y++){const py=y*3;for(let x=0;x<bw;x++){const px=x*3;let sumH=0,sumA=0,tR=0,tG=0,tB=0;for(const s of srcs){const dist=Math.sqrt((px-s.x)**2+(py-s.y)**2);if(dist>front||dist>reach)continue;const A=Math.max(0,1-dist/reach)*(1/(1+dist*0.009));sumH+=A*Math.cos(k*dist-k*spd*t);sumA+=A;tR+=s.r[0]*A;tG+=s.r[1]*A;tB+=s.r[2]*A;}const h01=Math.tanh(sumH*1.5);let R=GR[0],G=GR[1],B=GR[2];if(sumA>0.002){const tr=tR/sumA,tg=tG/sumA,tb=tB/sumA,en=Math.min(1,sumA*1.2);if(h01>0){const m=h01*en*0.52;R=R*(1-m)+tr*m;G=G*(1-m)+tg*m;B=B*(1-m)+tb*m;}else{const m=-h01*en*0.22;R=R*(1-m)+0x1a*m;G=G*(1-m)+0x1a*m;B=B*(1-m)+0x1a*m;}}const i=(y*bw+x)*4;dat[i]=R|0;dat[i+1]=G|0;dat[i+2]=B|0;dat[i+3]=255;}}
       tctx.putImageData(imgD,0,0);ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
@@ -1416,15 +1477,26 @@ code {
   <div class="demo">
     <div class="demo-bar"><span>Live &middot; envelope(age, lifespan) &mdash; amplitude over time</span></div>
     <canvas id="d4" style="height:110px;"></canvas>
-    <div class="demo-caption">The plum curve is the output of <code>envelope(age, lifespan)</code> over a full node lifetime. The orange dot marks the current moment. Rise: 0.8 s smoothstep. Sustain: full strength. Fade: cosine curve over the final 25% of life, to zero.</div>
+    <div class="demo-controls">
+      <label class="demo-ctrl">Lifespan <input type="range" id="d4-life" min="3" max="30" step="0.5" value="10"><span class="cv" id="d4-lifev">10 s</span></label>
+      <label class="demo-ctrl">Fade start <input type="range" id="d4-fade" min="40" max="95" step="5" value="75"><span class="cv" id="d4-fadev">75%</span></label>
+      <label class="demo-ctrl">Rise time <input type="range" id="d4-rise" min="0.1" max="2.5" step="0.1" value="0.8"><span class="cv" id="d4-risev">0.8 s</span></label>
+    </div>
+    <div class="demo-caption">The plum curve is the output of <code>envelope(age, lifespan)</code> over a full node lifetime. The orange dot marks the current moment. Drag <strong>Lifespan</strong> to extend or shorten the node. Drag <strong>Fade start</strong> to move where the tail decay begins (default 75%). Drag <strong>Rise time</strong> to make the attack slower or snappier.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d4'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=110,last=performance.now(),t=0;
+    const sLife=document.getElementById('d4-life'),vLife=document.getElementById('d4-lifev');
+    const sFade=document.getElementById('d4-fade'),vFade=document.getElementById('d4-fadev');
+    const sRise=document.getElementById('d4-rise'),vRise=document.getElementById('d4-risev');
+    let LIFE=10,fadeStart=0.75,riseTime=0.8;
+    sLife.addEventListener('input',()=>{LIFE=+sLife.value;vLife.textContent=LIFE+' s';t=0;});
+    sFade.addEventListener('input',()=>{fadeStart=+sFade.value/100;vFade.textContent=sFade.value+'%';});
+    sRise.addEventListener('input',()=>{riseTime=+sRise.value;vRise.textContent=riseTime.toFixed(1)+' s';});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);}
     sz();new ResizeObserver(sz).observe(c);
-    const LIFE=10;
-    function env(age,l){const rise=Math.min(1,age/0.8),rE=rise*rise*(3-2*rise);if(age>=l)return 0;const ts=l*0.75;if(age<=ts)return rE;const u=(age-ts)/(l-ts);return rE*(0.5+0.5*Math.cos(u*Math.PI));}
+    function env(age,l){const rise=Math.min(1,age/riseTime),rE=rise*rise*(3-2*rise);if(age>=l)return 0;const ts=l*fadeStart;if(age<=ts)return rE;const u=(age-ts)/(l-ts);return rE*(0.5+0.5*Math.cos(u*Math.PI));}
     function draw(now){
       const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;if(t>LIFE+0.5)t=0;
       if(!W){requestAnimationFrame(draw);return;}
@@ -1438,7 +1510,8 @@ code {
       ctx.beginPath();ctx.strokeStyle='#8b5e8b';ctx.lineWidth=1.8;
       for(let i=0;i<=gW;i++){const v=env(i/gW*life,life);i===0?ctx.moveTo(pl+i,pt+gH*(1-v)):ctx.lineTo(pl+i,pt+gH*(1-v));}
       ctx.stroke();
-      const tailX=pl+0.75*gW;ctx.save();ctx.strokeStyle='rgba(208,201,190,0.6)';ctx.lineWidth=0.7;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(tailX,pt);ctx.lineTo(tailX,pt+gH);ctx.stroke();ctx.restore();
+      const tailX=pl+fadeStart*gW;ctx.save();ctx.strokeStyle='rgba(208,201,190,0.6)';ctx.lineWidth=0.7;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(tailX,pt);ctx.lineTo(tailX,pt+gH);ctx.stroke();ctx.restore();
+      const riseX=pl+(riseTime/life)*gW;ctx.save();ctx.strokeStyle='rgba(58,124,165,0.35)';ctx.lineWidth=0.7;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(riseX,pt);ctx.lineTo(riseX,pt+gH);ctx.stroke();ctx.restore();
       const cx=pl+Math.min(t/life,1)*gW;
       ctx.save();ctx.strokeStyle='rgba(196,90,45,0.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(cx,pt);ctx.lineTo(cx,pt+gH);ctx.stroke();ctx.restore();
       const cv=env(Math.min(t,life+0.01),life);
@@ -1447,7 +1520,9 @@ code {
       ctx.fillText('birth',pl,pt+gH+4);
       ctx.textAlign='right';ctx.fillText('end of life',pl+gW,pt+gH+4);ctx.textAlign='left';
       ctx.textBaseline='middle';ctx.fillText('1.0',pl+2,pt+3);
-      ctx.textAlign='center';ctx.fillStyle='#c8c0b4';ctx.textBaseline='top';ctx.fillText('fade start',tailX,pt+gH+4);ctx.textAlign='left';
+      ctx.textAlign='center';ctx.fillStyle='#c8c0b4';ctx.textBaseline='top';ctx.fillText('fade',tailX,pt+gH+4);
+      ctx.fillStyle='rgba(58,124,165,0.6)';ctx.fillText('rise',riseX,pt+gH+4);
+      ctx.textAlign='left';
       requestAnimationFrame(draw);
     }
     requestAnimationFrame(draw);
