@@ -220,44 +220,7 @@ body > header nav a:hover { color: var(--ink); }
 .jump-nav-inner a:hover { color: var(--accent); background: rgba(196,90,45,0.04); }
 .jump-nav-inner a.active { color: var(--accent); }
 
-/* ── Jump nav — sticks below main header once sections begin ── */
-.jump-nav {
-  position: sticky;
-  top: 3.5rem;
-  z-index: 90;
-  background: rgba(245,242,237,0.95);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--rule);
-  margin: 0 calc(-1 * var(--gutter));
-  padding: 0 var(--gutter);
-}
-.jump-nav-inner {
-  display: flex;
-  gap: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  height: 2.5rem;
-  align-items: stretch;
-}
-.jump-nav-inner::-webkit-scrollbar { display: none; }
-.jump-nav-inner a {
-  display: flex;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.06em;
-  color: var(--ink-muted);
-  text-decoration: none;
-  padding: 0 0.75rem;
-  white-space: nowrap;
-  border-right: 1px solid var(--rule);
-  transition: color .15s, background .15s;
-}
-.jump-nav-inner a:first-child { border-left: 1px solid var(--rule); }
-.jump-nav-inner a:hover { color: var(--accent); background: rgba(196,90,45,0.04); }
-.jump-nav-inner a.active { color: var(--accent); }
+.section { padding-top: 2.5rem; }
 
 /* ── Document header ── */
 .doc-header {
@@ -776,22 +739,6 @@ code {
     <a href="/#writing">writing</a>
     <a href="/#about">about</a>
     <a href="/#contact">contact</a>
-
-<!-- Jump nav — becomes sticky once sections begin -->
-<nav class="jump-nav" aria-label="Section navigation">
-  <div class="jump-nav-inner">
-    <a href="#s1">§1 What it is</a>
-    <a href="#s2">§2 Metaphor</a>
-    <a href="#s3">§3 RAF loop</a>
-    <a href="#s4">§4 Data</a>
-    <a href="#s5">§5 Physics</a>
-    <a href="#s6">§6 Architecture</a>
-    <a href="#s7">§7 Functions</a>
-    <a href="#s8">§8 One frame</a>
-    <a href="#s9">§9 Author mode</a>
-  </div>
-</nav>
-
   </nav>
 </div>
 
