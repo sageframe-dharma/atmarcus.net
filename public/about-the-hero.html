@@ -366,8 +366,7 @@ code {
   margin: 1.1rem 0;
 }
 .ann-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: block;
   border-bottom: 1px solid rgba(208,201,190,0.35);
 }
 .ann-row:last-child { border-bottom: none; }
@@ -378,19 +377,49 @@ code {
   font-size: 0.76rem;
   color: #c9c0b2;
   line-height: 1.65;
-  border-right: 1px solid #2a2826;
   overflow-x: auto;
-  white-space: nowrap;
+  white-space: pre;
 }
 .ann-note {
   background: var(--ground-warm);
-  padding: 0.48rem 0.9rem;
+  padding: 0.5rem 0.9rem 0.6rem;
   font-size: 0.8rem;
   color: var(--ink-muted);
   line-height: 1.5;
+  border-top: 1px solid rgba(208,201,190,0.4);
+}
+
+/* ── Live demos ── */
+.demo {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.demo-bar {
+  background: var(--ground-warm);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.35rem 0.9rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
 }
+.demo-bar .demo-live { color: var(--accent); }
+.demo canvas { display: block; width: 100%; }
+.demo-caption {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  border-top: 1px solid var(--rule);
+  background: var(--ground-warm);
+  line-height: 1.55;
+}
+.demo-caption code { font-size: 0.76em; background: rgba(208,201,190,0.5); border: none; }
 
 /* ── Syntax token colors ── */
 .ky { color: #c87d4a; }      /* keyword: const, let, function, if, return */
@@ -439,8 +468,6 @@ code {
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-  .ann-row { grid-template-columns: 1fr; }
-  .ann-note { border-top: 1px solid rgba(208,201,190,0.3); }
   .data-field { grid-template-columns: 85px 1fr; }
   .df-desc { display: none; }
   .fn-io { flex-direction: column; gap: 0.6rem; }
@@ -636,6 +663,34 @@ code {
     </div>
   </div>
 
+  <div class="demo">
+    <div class="demo-bar">
+      <span>Live &middot; requestAnimationFrame loop</span>
+      <span class="demo-live" id="d1-fps">&mdash; fps</span>
+    </div>
+    <canvas id="d1" style="height:100px;"></canvas>
+    <div class="demo-caption">The dot redraws ~60&times; per second. The frame counter in the corner shows exactly how many times <code>draw()</code> has been called since you loaded this page. Each call schedules the next one via <code>requestAnimationFrame(draw)</code> &mdash; that&rsquo;s the loop.</div>
+  </div>
+  <script>(function(){
+    const c=document.getElementById('d1'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
+    let W=0,H=100,frame=0,last=performance.now(),fpsF=0,fpsL=performance.now();
+    const fpsEl=document.getElementById('d1-fps');
+    function sz(){const r=c.getBoundingClientRect();W=r.width||600;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);}
+    sz();new ResizeObserver(sz).observe(c);
+    function draw(now){
+      frame++;fpsF++;last=now;
+      if(now-fpsL>700){fpsEl.textContent=Math.round(fpsF/((now-fpsL)/1000))+' fps';fpsF=0;fpsL=now;}
+      if(!W){requestAnimationFrame(draw);return;}
+      ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
+      const t=frame*0.022;
+      for(let i=10;i>=0;i--){const pt=t-i*0.055,px=W/2+Math.cos(pt)*W*0.3,py=H/2+Math.sin(pt*1.3)*H*0.28;ctx.fillStyle='rgba(196,90,45,'+((11-i)/11*0.7)+')';ctx.beginPath();ctx.arc(px,py,Math.max(0.5,(11-i)/11*5),0,Math.PI*2);ctx.fill();}
+      ctx.fillStyle='#c0b8b0';ctx.font='10px "IBM Plex Mono",monospace';ctx.textBaseline='top';
+      ctx.fillText('frame '+frame.toLocaleString(),10,8);
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();</script>
+
   <h3>The performance challenge</h3>
   <p>
     To draw the wave field realistically, the code needs to calculate the wave value at
@@ -830,6 +885,34 @@ code {
     <pre>height = amplitude × cos( (2π / λ) × d  −  (2π / λ) × speed × time )</pre>
   </div>
 
+  <div class="demo">
+    <div class="demo-bar"><span>Live &middot; single wave source &middot; click to restart</span></div>
+    <canvas id="d2" style="height:130px;"></canvas>
+    <div class="demo-caption">One source at center. Each bright ring is a wave peak: the cosine cycling from +1 to &minus;1 and back as distance from the source increases. The rings scroll outward as time advances. Click to restart.</div>
+  </div>
+  <script>(function(){
+    const c=document.getElementById('d2'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
+    let W=0,H=130,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
+    function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=130;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
+    sz();new ResizeObserver(sz).observe(c);
+    const GR=[0xf5,0xf2,0xed],CR=[0x8b,0x5e,0x8b];
+    let t=0,last=performance.now();
+    const spd=55,lam=52,k=(Math.PI*2)/lam,reach=400;
+    c.addEventListener('click',()=>{t=0;});
+    function draw(now){
+      const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;
+      if(!W||!imgD){requestAnimationFrame(draw);return;}
+      const cx=W/2,cy=H/2,front=t*spd,dat=imgD.data;
+      for(let y=0;y<bh;y++){const py=y*3;for(let x=0;x<bw;x++){const px=x*3,dist=Math.sqrt((px-cx)**2+(py-cy)**2);let R=GR[0],G=GR[1],B=GR[2];if(dist<=front&&dist<=reach){const A=Math.max(0,1-dist/reach)*(1/(1+dist*0.009));const h=Math.tanh(A*Math.cos(k*dist-k*spd*t)*2.8);if(h>0){const m=h*0.55;R=R*(1-m)+CR[0]*m;G=G*(1-m)+CR[1]*m;B=B*(1-m)+CR[2]*m;}else{const m=-h*0.2;R=R*(1-m)+0x1a*m;G=G*(1-m)+0x1a*m;B=B*(1-m)+0x1a*m;}}const i=(y*bw+x)*4;dat[i]=R|0;dat[i+1]=G|0;dat[i+2]=B|0;dat[i+3]=255;}}
+      tctx.putImageData(imgD,0,0);ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      ctx.drawImage(tmp,0,0,bw,bh,0,0,W,H);
+      ctx.fillStyle='rgba(139,94,139,0.9)';ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fill();
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();</script>
+
   <p>
     The cosine function produces the alternating rings: it swings smoothly from +1 (peak) to -1 (trough)
     and back, over and over. The expression inside the parentheses — involving distance and time —
@@ -847,6 +930,34 @@ code {
     Where one is at a peak and the other at a trough: they partially or fully cancel.
     The pixel stays near the background tone or darkens slightly.
   </p>
+
+  <div class="demo">
+    <div class="demo-bar"><span>Live &middot; two-source interference</span></div>
+    <canvas id="d3" style="height:150px;"></canvas>
+    <div class="demo-caption">Two sources (orange and blue), same wavelength. The bright fan-shaped arcs between them are constructive interference &mdash; both waves peak simultaneously at those points. The dark gaps are destructive &mdash; one peaks as the other troughs. This geometry depends entirely on the difference in distance to each source.</div>
+  </div>
+  <script>(function(){
+    const c=document.getElementById('d3'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
+    let W=0,H=150,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
+    function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=150;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
+    sz();new ResizeObserver(sz).observe(c);
+    const GR=[0xf5,0xf2,0xed],C1=[0xc4,0x5a,0x2d],C2=[0x3a,0x7c,0xa5];
+    let t=0,last=performance.now();
+    const spd=50,lam=48,k=(Math.PI*2)/lam;
+    function draw(now){
+      const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;
+      if(!W||!imgD){requestAnimationFrame(draw);return;}
+      const srcs=[{x:W*0.3,y:H*0.5,r:C1},{x:W*0.7,y:H*0.5,r:C2}];
+      const reach=Math.max(W,H)*0.9,front=t*spd,dat=imgD.data;
+      for(let y=0;y<bh;y++){const py=y*3;for(let x=0;x<bw;x++){const px=x*3;let sumH=0,sumA=0,tR=0,tG=0,tB=0;for(const s of srcs){const dist=Math.sqrt((px-s.x)**2+(py-s.y)**2);if(dist>front||dist>reach)continue;const A=Math.max(0,1-dist/reach)*(1/(1+dist*0.009));sumH+=A*Math.cos(k*dist-k*spd*t);sumA+=A;tR+=s.r[0]*A;tG+=s.r[1]*A;tB+=s.r[2]*A;}const h01=Math.tanh(sumH*1.5);let R=GR[0],G=GR[1],B=GR[2];if(sumA>0.002){const tr=tR/sumA,tg=tG/sumA,tb=tB/sumA,en=Math.min(1,sumA*1.2);if(h01>0){const m=h01*en*0.52;R=R*(1-m)+tr*m;G=G*(1-m)+tg*m;B=B*(1-m)+tb*m;}else{const m=-h01*en*0.22;R=R*(1-m)+0x1a*m;G=G*(1-m)+0x1a*m;B=B*(1-m)+0x1a*m;}}const i=(y*bw+x)*4;dat[i]=R|0;dat[i+1]=G|0;dat[i+2]=B|0;dat[i+3]=255;}}
+      tctx.putImageData(imgD,0,0);ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      ctx.drawImage(tmp,0,0,bw,bh,0,0,W,H);
+      const cols=['#c45a2d','#3a7ca5'];srcs.forEach((s,i)=>{ctx.fillStyle=cols[i];ctx.beginPath();ctx.arc(s.x,s.y,5,0,Math.PI*2);ctx.fill();});
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();</script>
 
   <h3>Keeping colors from blowing out</h3>
   <p>
@@ -1301,6 +1412,46 @@ code {
       </div>
     </div>
   </div>
+
+  <div class="demo">
+    <div class="demo-bar"><span>Live &middot; envelope(age, lifespan) &mdash; amplitude over time</span></div>
+    <canvas id="d4" style="height:110px;"></canvas>
+    <div class="demo-caption">The plum curve is the output of <code>envelope(age, lifespan)</code> over a full node lifetime. The orange dot marks the current moment. Rise: 0.8 s smoothstep. Sustain: full strength. Fade: cosine curve over the final 25% of life, to zero.</div>
+  </div>
+  <script>(function(){
+    const c=document.getElementById('d4'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
+    let W=0,H=110,last=performance.now(),t=0;
+    function sz(){const r=c.getBoundingClientRect();W=r.width||600;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);}
+    sz();new ResizeObserver(sz).observe(c);
+    const LIFE=10;
+    function env(age,l){const rise=Math.min(1,age/0.8),rE=rise*rise*(3-2*rise);if(age>=l)return 0;const ts=l*0.75;if(age<=ts)return rE;const u=(age-ts)/(l-ts);return rE*(0.5+0.5*Math.cos(u*Math.PI));}
+    function draw(now){
+      const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;if(t>LIFE+0.5)t=0;
+      if(!W){requestAnimationFrame(draw);return;}
+      ctx.fillStyle='#f5f2ed';ctx.fillRect(0,0,W,H);
+      const pl=14,pr=14,pt=16,pb=22,gW=W-pl-pr,gH=H-pt-pb,life=LIFE*0.85;
+      ctx.strokeStyle='rgba(208,201,190,0.7)';ctx.lineWidth=0.7;
+      ctx.beginPath();ctx.moveTo(pl,pt);ctx.lineTo(pl,pt+gH);ctx.lineTo(pl+gW,pt+gH);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(pl,pt+gH);
+      for(let i=0;i<=gW;i++){const v=env(i/gW*life,life);ctx.lineTo(pl+i,pt+gH*(1-v));}
+      ctx.lineTo(pl+gW,pt+gH);ctx.closePath();ctx.fillStyle='rgba(139,94,139,0.1)';ctx.fill();
+      ctx.beginPath();ctx.strokeStyle='#8b5e8b';ctx.lineWidth=1.8;
+      for(let i=0;i<=gW;i++){const v=env(i/gW*life,life);i===0?ctx.moveTo(pl+i,pt+gH*(1-v)):ctx.lineTo(pl+i,pt+gH*(1-v));}
+      ctx.stroke();
+      const tailX=pl+0.75*gW;ctx.save();ctx.strokeStyle='rgba(208,201,190,0.6)';ctx.lineWidth=0.7;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(tailX,pt);ctx.lineTo(tailX,pt+gH);ctx.stroke();ctx.restore();
+      const cx=pl+Math.min(t/life,1)*gW;
+      ctx.save();ctx.strokeStyle='rgba(196,90,45,0.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(cx,pt);ctx.lineTo(cx,pt+gH);ctx.stroke();ctx.restore();
+      const cv=env(Math.min(t,life+0.01),life);
+      ctx.fillStyle='#c45a2d';ctx.beginPath();ctx.arc(cx,pt+gH*(1-cv),3.5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#c0b8b0';ctx.font='9px "IBM Plex Mono",monospace';ctx.textBaseline='top';
+      ctx.fillText('birth',pl,pt+gH+4);
+      ctx.textAlign='right';ctx.fillText('end of life',pl+gW,pt+gH+4);ctx.textAlign='left';
+      ctx.textBaseline='middle';ctx.fillText('1.0',pl+2,pt+3);
+      ctx.textAlign='center';ctx.fillStyle='#c8c0b4';ctx.textBaseline='top';ctx.fillText('fade start',tailX,pt+gH+4);ctx.textAlign='left';
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();</script>
 
   <!-- hitTest / hitLabel -->
   <div class="fn-card">
