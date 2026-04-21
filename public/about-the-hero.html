@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How the Resonance Field Works — atmarcus.net</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-light: #4a4a4a;
+  --ink-muted: #7a7a7a;
+  --ground: #f5f2ed;
+  --ground-warm: #ebe6dd;
+  --accent: #c45a2d;
+  --rule: #d0c9be;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --max-w: 740px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--ground);
+  line-height: 1.72;
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+/* ── Layout ── */
+.page {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(1.2rem, 5vw, 3rem);
+}
+
+/* ── Document header ── */
+.doc-header {
+  padding: 4rem 0 3rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 3.5rem;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.doc-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--ink);
+  margin-bottom: 1.2rem;
+}
+.doc-intro {
+  font-size: 1.05rem;
+  color: var(--ink-light);
+  max-width: 580px;
+  line-height: 1.7;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 1.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.back-link:hover { color: var(--accent); }
+
+/* ── Table of contents ── */
+.toc {
+  background: var(--ground-warm);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 4rem;
+}
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 1rem;
+}
+.toc ol { list-style: none; counter-reset: toc; }
+.toc li {
+  counter-increment: toc;
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  margin-bottom: 0.4rem;
+}
+.toc li::before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--ink-muted);
+  flex-shrink: 0;
+}
+.toc a {
+  color: var(--ink-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color .15s;
+}
+.toc a:hover { color: var(--accent); }
+.toc .lvl {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: #c8c0b4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── Sections ── */
+.section { margin-bottom: 4.5rem; }
+
+.depth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.depth-badge .pip {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.depth-badge .pip.on { background: var(--accent); }
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 1.3rem;
+}
+h3 {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 2rem 0 0.55rem;
+  letter-spacing: 0.01em;
+}
+p {
+  color: var(--ink-light);
+  margin-bottom: 1rem;
+}
+p strong { color: var(--ink); font-weight: 500; }
+ul.doc-list {
+  margin: 0.4rem 0 1rem 1.4rem;
+  color: var(--ink-light);
+}
+ul.doc-list li { margin-bottom: 0.3rem; }
+ul.doc-list li strong { color: var(--ink); font-weight: 500; }
+.rule { border: none; border-top: 1px solid var(--rule); margin: 3.5rem 0; }
+
+/* ── Callouts ── */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: rgba(196,90,45,0.05);
+  padding: 0.9rem 1.1rem;
+  border-radius: 0 3px 3px 0;
+  margin: 1.5rem 0;
+}
+.callout .callout-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.callout p { margin-bottom: 0; font-size: 0.95rem; }
+
+.note {
+  border-left: 3px solid var(--rule);
+  background: var(--ground-warm);
+  padding: 0.9rem 1.1rem;
+  border-radius: 0 3px 3px 0;
+  margin: 1.5rem 0;
+}
+.note p { margin-bottom: 0; font-size: 0.9rem; color: var(--ink-muted); }
+
+/* ── Inline code ── */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--ground-warm);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.1em 0.35em;
+  color: var(--ink);
+}
+
+/* ── Diagram boxes ── */
+.diagram {
+  background: var(--ground-warm);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.5rem 1.6rem;
+  margin: 1.4rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  line-height: 2;
+}
+.diagram-title {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 1rem;
+}
+.d-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.box {
+  display: inline-block;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.2rem 0.55rem;
+  background: var(--ground);
+  color: var(--ink);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+.box.accent { border-color: var(--accent); color: var(--accent); }
+.arrow { color: var(--ink-muted); font-size: 0.8rem; }
+.d-note { font-size: 0.7rem; color: var(--ink-muted); }
+
+/* ── Data card ── */
+.data-card {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1.3rem 0;
+  font-size: 0.82rem;
+}
+.data-card-header {
+  background: var(--ground-warm);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.data-field {
+  display: grid;
+  grid-template-columns: 110px 1fr 1fr;
+  border-bottom: 1px solid rgba(208,201,190,0.35);
+}
+.data-field:last-child { border-bottom: none; }
+.df-key {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: rgba(196,90,45,0.04);
+  border-right: 1px solid var(--rule);
+}
+.df-val {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #7aa87a;
+  border-right: 1px solid var(--rule);
+}
+.df-desc {
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+/* ── Function card ── */
+.fn-card {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  margin: 2.2rem 0;
+  overflow: hidden;
+}
+.fn-header {
+  background: var(--ground-warm);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.75rem 1.1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.fn-name {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+.fn-sig {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+}
+.fn-body { padding: 1rem 1.1rem; }
+.fn-purpose {
+  font-size: 0.93rem;
+  color: var(--ink-light);
+  margin-bottom: 0.9rem;
+}
+.fn-io {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+.fn-io-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.25rem;
+}
+.fn-io-val {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--accent);
+}
+
+/* ── Annotated code (side-by-side) ── */
+.annotated {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1.1rem 0;
+}
+.ann-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid rgba(208,201,190,0.35);
+}
+.ann-row:last-child { border-bottom: none; }
+.ann-code {
+  background: #1e1c19;
+  padding: 0.48rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: #c9c0b2;
+  line-height: 1.65;
+  border-right: 1px solid #2a2826;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.ann-note {
+  background: var(--ground-warm);
+  padding: 0.48rem 0.9rem;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Syntax token colors ── */
+.ky { color: #c87d4a; }      /* keyword: const, let, function, if, return */
+.fn { color: #9cb8d4; }      /* function name */
+.st { color: #8db58a; }      /* string */
+.nm { color: #b8a890; }      /* number */
+.cm { color: #505858; font-style: italic; } /* comment */
+.vr { color: #d4b896; }      /* variable reference */
+.em { color: var(--accent); font-style: normal; font-weight: 500; } /* emphasis */
+
+/* ── Standalone code block ── */
+.code-block {
+  background: #1e1c19;
+  border-radius: 4px;
+  padding: 1.1rem 1.3rem;
+  margin: 1.2rem 0;
+  overflow-x: auto;
+  position: relative;
+}
+.code-block .code-label {
+  position: absolute;
+  top: 0.5rem; right: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #3a3830;
+}
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #c9c0b2;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+/* ── Footer ── */
+.doc-footer {
+  border-top: 1px solid var(--rule);
+  padding: 2.5rem 0 5rem;
+  margin-top: 3rem;
+}
+.doc-footer p { font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 0.4rem; }
+.doc-footer a { color: var(--accent); text-decoration: none; }
+.doc-footer a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .ann-row { grid-template-columns: 1fr; }
+  .ann-note { border-top: 1px solid rgba(208,201,190,0.3); }
+  .data-field { grid-template-columns: 85px 1fr; }
+  .df-desc { display: none; }
+  .fn-io { flex-direction: column; gap: 0.6rem; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="doc-header">
+  <div class="eyebrow">atmarcus.net · How it works</div>
+  <h1>The Resonance Field</h1>
+  <p class="doc-intro">
+    The interactive canvas on my homepage isn't decoration. It's a working model of how
+    I think about my work — built from real physics, real projects, and a lot of patient tuning.
+    This document explains how it was made, starting from the very beginning.
+    You don't need any coding background to start reading. Stop wherever you want.
+  </p>
+  <a class="back-link" href="/">← Back to atmarcus.net</a>
+</header>
+
+<!-- ═══════════════ TOC ═══════════════ -->
+<nav class="toc">
+  <div class="toc-title">What's in this document</div>
+  <ol>
+    <li><a href="#s1">What you're looking at</a><span class="lvl">No code</span></li>
+    <li><a href="#s2">The metaphor — why waves?</a><span class="lvl">No code</span></li>
+    <li><a href="#s3">How computers draw moving pictures</a><span class="lvl">Concept</span></li>
+    <li><a href="#s4">The data — what the code knows</a><span class="lvl">Light code</span></li>
+    <li><a href="#s5">The physics of waves</a><span class="lvl">Math concept</span></li>
+    <li><a href="#s6">How the pieces fit together</a><span class="lvl">Architecture</span></li>
+    <li><a href="#s7">The functions, one by one</a><span class="lvl">Full code</span></li>
+    <li><a href="#s8">One frame, in slow motion</a><span class="lvl">Full code</span></li>
+    <li><a href="#s9">Author mode — tuning the field</a><span class="lvl">Full code</span></li>
+  </ol>
+</nav>
+
+<!-- ═══════════════ SECTION 1 ═══════════════ -->
+<section class="section" id="s1">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span>Level 1 · No code</span></div>
+  <div class="section-label">Section 01</div>
+  <h2>What you're looking at</h2>
+
+  <p>
+    When you visit atmarcus.net, just below the introduction, there's a quiet canvas —
+    warm, off-white, still. It looks like nothing is happening.
+    But when you click anywhere on it, a ripple expands outward from that spot.
+    A project label appears at the center. The ripple slowly spreads, brightening the areas
+    it reaches, fading at its edges, and eventually disappearing.
+  </p>
+
+  <p>
+    Click again somewhere else. Another ripple. A different project.
+    When the two ripples overlap, the places where they meet light up —
+    and the places where they cancel each other go darker.
+    This is the same thing that happens when you drop two pebbles into still water.
+  </p>
+
+  <p>
+    Each ripple is a real project I've worked on. Clicking the dot at its center,
+    or the text label next to it, takes you to that project's page.
+    Most ripples fade after a while — smaller projects fade faster, larger ones last longer.
+    A few never fade at all.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">The intention</div>
+    <p>
+      This is a direct expression of how I think about my body of work.
+      Disciplines and projects don't sit in separate buckets — they radiate outward and
+      <strong>amplify each other where they meet</strong>.
+      The tagline at the bottom of the field says it plainly:
+      <em>Where disciplines meet, they amplify.</em>
+    </p>
+  </div>
+
+  <p>
+    Every time the page loads, the order in which projects appear is shuffled randomly —
+    so no single project always dominates. The field resets itself over time.
+    There's a "Reset field" button if you want to start over immediately.
+  </p>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 2 ═══════════════ -->
+<section class="section" id="s2">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span>Level 1 · No code</span></div>
+  <div class="section-label">Section 02</div>
+  <h2>The metaphor — why waves?</h2>
+
+  <p>
+    Wave interference is a phenomenon from physics. When two waves travel through the same space —
+    whether that's water, air, or light — they add together wherever they meet.
+    In some places, the crests of both waves arrive at the same moment: the combined wave is taller.
+    In other places, a crest from one wave arrives at the same moment as a trough from the other:
+    they cancel out. The water goes flat.
+  </p>
+
+  <p>
+    Physicists call the first case <strong>constructive interference</strong> and the second
+    <strong>destructive interference</strong>. The name of my Substack newsletter —
+    <em>Constructive Interference</em> — is taken directly from this concept.
+  </p>
+
+  <h3>Weight — why projects aren't equal</h3>
+  <p>
+    Every project has a <strong>weight</strong> — a number from 1 to 10
+    that reflects how central it is to the body of work. Weight determines:
+  </p>
+  <ul class="doc-list">
+    <li><strong>Reach</strong> — how far the ripple spreads before fading out</li>
+    <li><strong>Wavelength</strong> — how tightly packed the rings are (heavier nodes have denser, more intricate patterns)</li>
+    <li><strong>Lifespan</strong> — how long the node stays visible before fading (a weight-9 node lasts roughly ten times as long as a weight-1 node)</li>
+    <li><strong>Label size</strong> — the text label is slightly larger for heavier nodes</li>
+  </ul>
+
+  <p>
+    A weight of 10 is special: that node never fades. It's permanent.
+    Sageframe — the knowledge architecture system at the center of everything I build —
+    has a weight of 10.
+  </p>
+
+  <div class="note">
+    <p>
+      The chip label in the top corner reads <strong>Constructive Interference · click to add a project</strong>.
+      That's your invitation. The field is interactive — not a passive decoration.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 3 ═══════════════ -->
+<section class="section" id="s3">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span>Level 2 · Concept</span></div>
+  <div class="section-label">Section 03</div>
+  <h2>How computers draw moving pictures</h2>
+
+  <p>
+    Before getting into the code itself, it helps to understand the surface it draws on —
+    and how animation actually works in a browser.
+  </p>
+
+  <h3>The canvas</h3>
+  <p>
+    A normal web page is made of text, images, and boxes — things the browser
+    arranges and displays automatically. But HTML includes a special element called a
+    <strong>canvas</strong>. A canvas is a blank rectangle that the browser hands over to JavaScript
+    with a single implicit instruction: <em>you draw whatever you want in here.</em>
+  </p>
+  <p>
+    The canvas is fundamentally a grid of pixels — tiny colored squares.
+    JavaScript draws by issuing commands: <em>draw a circle at this position with this radius,
+    fill this rectangle with this color, write this text here.</em>
+    After each set of commands, the screen updates.
+  </p>
+
+  <h3>The animation loop</h3>
+  <p>
+    Animation works the same way it always has — by drawing the same scene over and over,
+    slightly changed each time. Film is 24 frames per second. A browser can do 60.
+  </p>
+  <p>
+    The Resonance field uses a browser function called <code>requestAnimationFrame</code>.
+    It works like this: you tell the browser, <em>call my draw function just before
+    you repaint the screen.</em> The browser does that, your code draws whatever
+    the current state of the waves looks like, and then at the very end it calls
+    <code>requestAnimationFrame</code> again — registering itself for the next frame.
+    This loop runs indefinitely.
+  </p>
+
+  <div class="diagram">
+    <div class="diagram-title">The animation loop</div>
+    <div class="d-row">
+      <span class="box accent">draw()</span>
+      <span class="arrow">→</span>
+      <span class="box">update state</span>
+      <span class="arrow">→</span>
+      <span class="box">calculate wave field</span>
+      <span class="arrow">→</span>
+      <span class="box">paint pixels</span>
+    </div>
+    <div class="d-row">
+      <span class="arrow" style="margin-left:2.5rem;">→</span>
+      <span class="box">requestAnimationFrame</span>
+      <span class="arrow">→</span>
+      <span class="box">browser waits ~16ms</span>
+      <span class="arrow">→</span>
+      <span class="box accent">draw()</span>
+      <span style="color:#3a3830; margin-left:0.3rem;">· · ·</span>
+    </div>
+  </div>
+
+  <h3>The performance challenge</h3>
+  <p>
+    To draw the wave field realistically, the code needs to calculate the wave value at
+    every point on screen. A typical laptop screen is around 1400×800 pixels —
+    that's over a million calculations per frame, 60 times per second.
+  </p>
+  <p>
+    To keep this fast, the code works at a coarser resolution: one calculation per 3×3 block
+    of pixels, rather than per pixel. That reduces the math by a factor of 9.
+    The result is then scaled back up — the browser blurs the edges in the process,
+    which actually makes the waves look smoother, not blockier.
+    It's a deliberate and effective tradeoff.
+  </p>
+
+  <h3>Retina displays</h3>
+  <p>
+    Modern screens, especially on Apple devices, have more physical pixels than CSS
+    coordinates suggest. A canvas that appears to be 700×400 in the page layout
+    might be 1400×800 in actual device pixels. The code tracks this ratio
+    (called the <strong>device pixel ratio</strong>) and adjusts so the canvas
+    stays sharp on high-density screens.
+  </p>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 4 ═══════════════ -->
+<section class="section" id="s4">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span>Level 3 · Light code</span></div>
+  <div class="section-label">Section 04</div>
+  <h2>The data — what the code knows</h2>
+
+  <p>
+    Every program needs a way to represent the things it knows about.
+    In this case: what the projects are, where they've been placed on the canvas,
+    and what the physics parameters look like.
+    In JavaScript, a structured collection of information is called an <strong>object</strong>.
+  </p>
+
+  <h3>What a project looks like to the code</h3>
+  <p>
+    Before anything appears on screen, each project exists purely as data —
+    four labeled values bundled together:
+  </p>
+
+  <div class="data-card">
+    <div class="data-card-header">One project · JavaScript object</div>
+    <div class="data-field">
+      <div class="df-key">name</div>
+      <div class="df-val">"Sageframe"</div>
+      <div class="df-desc">The label shown on screen when this node is placed</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">url</div>
+      <div class="df-val">"https://sageframe.net"</div>
+      <div class="df-desc">Where clicking this node takes you</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">color</div>
+      <div class="df-val">"#8b5e8b"</div>
+      <div class="df-desc">The color of the wave rings and label (plum)</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">weight</div>
+      <div class="df-val">10</div>
+      <div class="df-desc">Significance 1–10. Controls reach, wavelength, label size, and lifespan</div>
+    </div>
+  </div>
+
+  <p>
+    All 12 projects are stored in a numbered list called an <strong>array</strong>.
+    When the page loads, that list is shuffled into a random order using an algorithm
+    called Fisher-Yates. Each click on the canvas places the next project from the
+    shuffled list.
+  </p>
+
+  <h3>What a placed node looks like at runtime</h3>
+  <p>
+    When a project is actually placed by a click, a richer object is created.
+    It links back to the original project data, but also records <em>where</em>
+    it landed and <em>when</em>:
+  </p>
+
+  <div class="data-card">
+    <div class="data-card-header">One placed wave source · runtime object</div>
+    <div class="data-field">
+      <div class="df-key">proj</div>
+      <div class="df-val">(project object)</div>
+      <div class="df-desc">A pointer back to the project's name, url, color, weight</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">x</div>
+      <div class="df-val">342</div>
+      <div class="df-desc">Horizontal pixel position where you clicked</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">y</div>
+      <div class="df-val">198</div>
+      <div class="df-desc">Vertical pixel position</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">bornAt</div>
+      <div class="df-val">14.23</div>
+      <div class="df-desc">Seconds since page load when this node was placed</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">lifespan</div>
+      <div class="df-val">60.0</div>
+      <div class="df-desc">How many seconds before this node fades completely</div>
+    </div>
+  </div>
+
+  <p>
+    All placed nodes live in a single array called <code>placed</code>.
+    The draw loop reads this array every frame to know what to render.
+    When a node exceeds its lifespan, it's removed from the array.
+  </p>
+
+  <h3>The physics tuning object</h3>
+  <p>
+    Separately, a set of named numbers controls how waves behave overall.
+    These come from an external file — <code>hero-config.js</code> —
+    which keeps the tunable parameters separate from the logic:
+  </p>
+
+  <div class="data-card">
+    <div class="data-card-header">HERO_RES_TUNE · physics parameters</div>
+    <div class="data-field">
+      <div class="df-key">speed</div>
+      <div class="df-val">0.30</div>
+      <div class="df-desc">How fast wave rings expand outward (multiplied by 70 for pixel speed)</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">wavelength</div>
+      <div class="df-val">66</div>
+      <div class="df-desc">Base distance between wave rings, in pixels</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">drift</div>
+      <div class="df-val">0.32</div>
+      <div class="df-desc">How much nodes slowly wander after being placed</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">smoothing</div>
+      <div class="df-val">0.55</div>
+      <div class="df-desc">How much each frame blends with the previous one (creates motion softness)</div>
+    </div>
+    <div class="data-field">
+      <div class="df-key">fadeBase</div>
+      <div class="df-val">21</div>
+      <div class="df-desc">Base lifespan in seconds for a weight-5 node. Lighter and heavier nodes scale from this.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 5 ═══════════════ -->
+<section class="section" id="s5">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span>Level 3 · Math concept</span></div>
+  <div class="section-label">Section 05</div>
+  <h2>The physics of waves</h2>
+
+  <p>
+    You don't need to know mathematics to understand this.
+    But the wave calculation is the heart of the whole system — everything visual
+    comes from it — so it's worth understanding the idea.
+  </p>
+
+  <h3>What a wave is, in numbers</h3>
+  <p>
+    A wave is something that oscillates — moves up and down — as it travels through space.
+    Think of a single point on the surface of a pond after a stone is dropped.
+    That point rises and falls in a rhythm, and so does every other point nearby,
+    each slightly delayed depending on how far from the stone it is.
+  </p>
+  <p>
+    For any point on the canvas, the code asks: <em>what is the height of the wave
+    at this exact location, right now?</em> The answer depends on four things:
+  </p>
+  <ul class="doc-list">
+    <li><strong>Distance (d)</strong> — how far this point is from the wave source</li>
+    <li><strong>Time (t)</strong> — how long the wave has been running</li>
+    <li><strong>Wavelength (λ)</strong> — how tightly packed the rings are</li>
+    <li><strong>Speed</strong> — how fast the wavefront expands</li>
+  </ul>
+
+  <p>The formula looks like this:</p>
+
+  <div class="code-block">
+    <div class="code-label">wave equation</div>
+    <pre>height = amplitude × cos( (2π / λ) × d  −  (2π / λ) × speed × time )</pre>
+  </div>
+
+  <p>
+    The cosine function produces the alternating rings: it swings smoothly from +1 (peak) to -1 (trough)
+    and back, over and over. The expression inside the parentheses — involving distance and time —
+    determines <em>where we are in that cycle</em> at any given point and moment.
+  </p>
+
+  <h3>Interference: when two waves meet</h3>
+  <p>
+    When two nodes are placed, the code calculates the wave value from <em>each</em> source
+    at every pixel cell, then adds the results together. That's it. That's interference.
+  </p>
+  <p>
+    Where both waves are at their peak simultaneously: the sum is large and positive.
+    The pixel brightens toward the node's color.
+    Where one is at a peak and the other at a trough: they partially or fully cancel.
+    The pixel stays near the background tone or darkens slightly.
+  </p>
+
+  <h3>Keeping colors from blowing out</h3>
+  <p>
+    If you keep adding waves, the total value could get very large — especially where
+    many nodes are close together. That would produce colors far outside any visible range.
+    The code passes the total through a function called <strong>tanh</strong>
+    (hyperbolic tangent), which compresses any value — no matter how large —
+    into the range -1 to +1. It's a soft ceiling and floor. Colors never blow out to
+    pure white or pure black.
+  </p>
+
+  <h3>Turning wave values into colors</h3>
+  <p>
+    The background is the warm off-white of the rest of the site.
+    A positive wave value blends that pixel toward the project's color.
+    A negative value darkens it slightly toward near-black.
+    Pixels far from any source stay the background color.
+    The blend amounts are modest — the effect is subtle, not saturated.
+  </p>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 6 ═══════════════ -->
+<section class="section" id="s6">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span>Level 4 · Architecture</span></div>
+  <div class="section-label">Section 06</div>
+  <h2>How the pieces fit together</h2>
+
+  <p>
+    The code has four distinct responsibilities. Understanding how they relate
+    makes the rest of the document much easier to follow.
+  </p>
+
+  <div class="diagram">
+    <div class="diagram-title">System map</div>
+    <div class="d-row">
+      <span class="box">hero-config.js</span>
+      <span class="arrow">→</span>
+      <span class="d-note">loads project list, colors, and physics tuning into the page</span>
+    </div>
+    <div class="d-row">
+      <span class="box">User click</span>
+      <span class="arrow">→</span>
+      <span class="box">placed[ ] array</span>
+      <span class="d-note" style="margin-left:0.3rem;">← one entry per click, with position and timestamp</span>
+    </div>
+    <div class="d-row">
+      <span class="box accent">draw( )</span>
+      <span class="arrow">→</span>
+      <span class="box">reads placed[ ]</span>
+      <span class="arrow">→</span>
+      <span class="box">calculates waves</span>
+      <span class="arrow">→</span>
+      <span class="box">paints pixels</span>
+    </div>
+    <div class="d-row">
+      <span class="box">Author panel</span>
+      <span class="arrow">→</span>
+      <span class="d-note">writes to RES_TUNE directly; draw() reads it live each frame</span>
+    </div>
+  </div>
+
+  <h3>State lives in one place</h3>
+  <p>
+    The <code>placed</code> array is the single source of truth for what's happening on the canvas.
+    Everything else is derived from it. The draw loop doesn't remember anything between frames —
+    it reads <code>placed</code>, calculates what the screen should look like right now,
+    draws it, and starts fresh on the next frame.
+  </p>
+
+  <h3>Events change state. draw() renders it.</h3>
+  <p>
+    When you click the canvas, a click handler adds a new entry to <code>placed</code>.
+    When you click Reset, a handler empties it.
+    The draw loop runs on its own schedule — 60 times per second — completely independent of events.
+    It just looks at whatever state exists at that moment and renders it.
+  </p>
+  <p>
+    This separation is one of the cleanest and most important patterns in interactive programming.
+    Events modify state. Rendering reads state. They never directly touch each other.
+    It's the same fundamental model used by modern UI frameworks like React.
+  </p>
+
+  <h3>The two files</h3>
+  <ul class="doc-list">
+    <li>
+      <strong>resonance.html</strong> — The canvas element, all the CSS, and all the JavaScript logic.
+      It's served inside an iframe embedded in the homepage. It works as a standalone page too.
+    </li>
+    <li>
+      <strong>hero-config.js</strong> — The editable data file: colors, project list, and physics parameters.
+      It loads before the main script. If it fails to load for any reason, the main file
+      has built-in fallback values so the animation still runs.
+    </li>
+  </ul>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 7 ═══════════════ -->
+<section class="section" id="s7">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span>Level 4 · Full code</span></div>
+  <div class="section-label">Section 07</div>
+  <h2>The functions, one by one</h2>
+
+  <p>
+    A function is a named, reusable block of code that does one specific job.
+    Think of it as a machine: you put something in, and get something back out.
+    Here are all the functions in this file, in plain language, with their code.
+  </p>
+
+  <div class="note">
+    <p>
+      In the annotated code below, each line is paired with a plain-English explanation on the right.
+      The colored text in the code is called syntax highlighting — it doesn't change what the code does,
+      it just makes it easier to read at a glance.
+    </p>
+  </div>
+
+  <!-- hexWithAlpha -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">hexWithAlpha</span>
+      <span class="fn-sig">( hex, a ) → string</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Converts a hex color code (like <code>"#c45a2d"</code>) and an opacity value (0 is invisible, 1 is solid)
+        into a CSS color string with transparency: <code>rgba(196,90,45,0.7)</code>.
+        Used everywhere a node or label needs to fade in or out over time.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">hex string, alpha 0–1</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">"rgba(r,g,b,a)" string</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">hexWithAlpha</span>(hex, a) {</div>
+          <div class="ann-note">Define the function. It takes a hex color string and an alpha (opacity) number.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> h = hex.<span class="fn">replace</span>(<span class="st">'#'</span>, <span class="st">''</span>);</div>
+          <div class="ann-note">Remove the leading # symbol. "c45a2d" is easier to work with than "#c45a2d".</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> r = <span class="fn">parseInt</span>(h.<span class="fn">slice</span>(<span class="nm">0</span>,<span class="nm">2</span>), <span class="nm">16</span>),</div>
+          <div class="ann-note">Take the first two characters ("c4") and convert from base-16 (hex) to a regular number: 196.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">        g = <span class="fn">parseInt</span>(h.<span class="fn">slice</span>(<span class="nm">2</span>,<span class="nm">4</span>), <span class="nm">16</span>),</div>
+          <div class="ann-note">Characters 3–4 ("5a") → 90. That's the green channel.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">        b = <span class="fn">parseInt</span>(h.<span class="fn">slice</span>(<span class="nm">4</span>,<span class="nm">6</span>), <span class="nm">16</span>);</div>
+          <div class="ann-note">Characters 5–6 ("2d") → 45. Blue channel.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> <span class="st">`rgba(${r},${g},${b},${a})`</span>;</div>
+          <div class="ann-note">Assemble and return the final color string. The backtick syntax embeds the variables directly into the text.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note">End of function.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- hexRGB -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">hexRGB</span>
+      <span class="fn-sig">( hex ) → [r, g, b]</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        The same conversion as <code>hexWithAlpha</code>, but returns the three color values
+        as raw numbers in an array instead of a string. The pixel-painting loop works
+        directly with numbers, so this avoids building and parsing strings inside
+        the innermost loop — a meaningful performance saving when it runs millions of times per second.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">hex string</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">[196, 90, 45] — three numbers 0–255</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">hexRGB</span>(hex) {</div>
+          <div class="ann-note">Simpler form — no alpha needed.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> h = hex.<span class="fn">replace</span>(<span class="st">'#'</span>, <span class="st">''</span>);</div>
+          <div class="ann-note">Strip the # symbol.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> [<span class="fn">parseInt</span>(h.<span class="fn">slice</span>(<span class="nm">0</span>,<span class="nm">2</span>),<span class="nm">16</span>),</div>
+          <div class="ann-note">Return an array: red first…</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">          <span class="fn">parseInt</span>(h.<span class="fn">slice</span>(<span class="nm">2</span>,<span class="nm">4</span>),<span class="nm">16</span>),</div>
+          <div class="ann-note">…green second…</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">          <span class="fn">parseInt</span>(h.<span class="fn">slice</span>(<span class="nm">4</span>,<span class="nm">6</span>),<span class="nm">16</span>)];</div>
+          <div class="ann-note">…blue third. All returned at once as a three-item array.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- setupCanvas -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">setupCanvas</span>
+      <span class="fn-sig">( ) → void</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Configures the canvas to exactly match the pixel dimensions of its container,
+        and scales everything correctly for high-density displays.
+        Called once on page load and again whenever the window is resized.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">none (reads from the DOM and window)</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">none (modifies the canvas element in place)</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">setupCanvas</span>() {</div>
+          <div class="ann-note">Called on load and on every resize event.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> r = canvas.<span class="fn">getBoundingClientRect</span>();</div>
+          <div class="ann-note">Ask the browser: what are the current displayed dimensions of this canvas element? This reflects the actual CSS layout, including any flex or percentage sizing.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  canvas.width  = r.width  * DPR;</div>
+          <div class="ann-note">Set the canvas's internal pixel resolution. On a retina display, DPR=2 — so we allocate twice the pixels to stay sharp.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  canvas.height = r.height * DPR;</div>
+          <div class="ann-note">Same for height.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  ctx.<span class="fn">setTransform</span>(DPR, <span class="nm">0</span>, <span class="nm">0</span>, DPR, <span class="nm">0</span>, <span class="nm">0</span>);</div>
+          <div class="ann-note">Tell the drawing context to scale all coordinates by DPR. This means we can write our drawing code in CSS pixels — "draw a circle at x=400" — and it renders correctly on both standard and retina screens without any other changes.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- wavelengthFor -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">wavelengthFor</span>
+      <span class="fn-sig">( weight ) → pixels</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Returns how far apart the wave rings should be for a given project weight.
+        Higher weight means tighter rings — a more intricate, dense pattern.
+        Lower weight means wider, more spacious rings.
+        The result is in pixels.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">weight 1–10</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">wavelength in pixels (roughly 38–106 at default settings)</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">wavelengthFor</span>(w) {</div>
+          <div class="ann-note">w is the project's weight.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> u = (w - <span class="nm">1</span>) / <span class="nm">9</span>;</div>
+          <div class="ann-note">Normalize weight to a 0–1 scale. w=1 gives u=0; w=10 gives u=1. This makes the math below cleaner — we work with a fraction rather than a number that might be 1 through 10.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> Math.<span class="fn">max</span>(<span class="nm">10</span>, RES_TUNE.wavelength * (<span class="nm">1.6</span> - u * <span class="nm">1.05</span>));</div>
+          <div class="ann-note">At u=0 (weight 1): multiply the base wavelength by 1.6 — wide rings. At u=1 (weight 10): multiply by 0.55 — tight rings. Math.max(10, …) ensures the wavelength never goes below 10px, which would look degenerate.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- reachFor -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">reachFor</span>
+      <span class="fn-sig">( weight ) → pixels</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Returns how far a node's wave spreads across the canvas before it becomes invisible.
+        This is expressed as a multiple of that node's wavelength — heavier nodes get a much
+        larger multiple, so their waves reach proportionally farther.
+        A weight-10 node's reach can span the entire canvas; a weight-1 node barely extends
+        beyond its immediate area.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">weight 1–10</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">reach in pixels</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">reachFor</span>(w) {</div>
+          <div class="ann-note"></div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> u = (w - <span class="nm">1</span>) / <span class="nm">9</span>;</div>
+          <div class="ann-note">Same normalization to 0–1 as before.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> <span class="fn">wavelengthFor</span>(w) * (<span class="nm">3</span> + u * <span class="nm">19</span>);</div>
+          <div class="ann-note">Reach = wavelength × a multiplier. At weight 1: 3× the wavelength. At weight 10: 22× the wavelength. The effect on the canvas is dramatic — a weight-10 node's wave literally fills the field.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- lifespanFor -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">lifespanFor</span>
+      <span class="fn-sig">( weight ) → seconds</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Returns how long, in seconds, a node stays visible before fading out completely.
+        Weight-10 nodes return <code>Infinity</code> — they never fade.
+        All others follow a smooth curve: a weight-5 node lasts <code>fadeBase</code> seconds;
+        weight-9 lasts about 3× longer; weight-1 lasts less than a third as long.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">weight 1–10</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">seconds (a number), or Infinity</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">lifespanFor</span>(w) {</div>
+          <div class="ann-note"></div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">if</span> (w >= <span class="nm">10</span>) <span class="ky">return</span> Infinity;</div>
+          <div class="ann-note">Weight 10 = permanent. <code>Infinity</code> is a real JavaScript value — not a placeholder. The node will never be culled.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> base = RES_TUNE.fadeBase ?? <span class="nm">20</span>;</div>
+          <div class="ann-note">Read the base duration from the tuning config. The ?? means "use 20 if this value isn't set" — a safe fallback.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> u = (w - <span class="nm">1</span>) / <span class="nm">9</span>;</div>
+          <div class="ann-note">Normalize to 0–1 as usual.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> mul = <span class="nm">0.3</span> + Math.<span class="fn">pow</span>(u, <span class="nm">1.4</span>) * <span class="nm">3.5</span>;</div>
+          <div class="ann-note">A multiplier on a smooth, accelerating curve. At u=0: 0.3×. At u=1: 3.8×. The exponent 1.4 makes the curve skew toward the heavy end — most projects are in the "notable but fading" zone.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> Math.<span class="fn">max</span>(<span class="nm">3</span>, base * mul);</div>
+          <div class="ann-note">Apply the multiplier to the base duration. Math.max(3, …) ensures even the smallest node gets at least 3 seconds — long enough to see it register.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- envelope -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">envelope</span>
+      <span class="fn-sig">( age, lifespan ) → 0 to 1</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Returns a number between 0 and 1 representing how strong a node's wave should be
+        at any point in its life. It rises smoothly from zero to full strength in the
+        first 0.8 seconds (no jarring pop-in), holds at full strength through most of the
+        node's life, then fades out gently over the final 25% of its lifespan.
+        This shape — rise, hold, fade — is called an <strong>amplitude envelope</strong>,
+        borrowed from audio synthesis.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">age in seconds, lifespan in seconds</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">0.0 to 1.0 — the node's current strength</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">envelope</span>(age, life) {</div>
+          <div class="ann-note"></div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> rise = Math.<span class="fn">min</span>(<span class="nm">1</span>, age / <span class="nm">0.8</span>);</div>
+          <div class="ann-note">How far through the 0.8-second rise phase are we? Clamps to 1 once we've passed it — so this is 0 at birth, 1 at 0.8 seconds, and stays 1 after that.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> riseE = rise * rise * (<span class="nm">3</span> - <span class="nm">2</span> * rise);</div>
+          <div class="ann-note">Smooth the linear rise using a cubic curve (called "smoothstep"). Instead of a sharp linear ramp, the rise starts slowly, accelerates through the middle, then eases into its peak. No visible pop.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">if</span> (!<span class="fn">isFinite</span>(life)) <span class="ky">return</span> riseE;</div>
+          <div class="ann-note">Permanent nodes (lifespan = Infinity) only need the rise phase. They reach full strength and stay there forever.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">if</span> (age >= life) <span class="ky">return</span> <span class="nm">0</span>;</div>
+          <div class="ann-note">If the node has exceeded its lifespan, its amplitude is zero. It's gone.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> tailStart = life * <span class="nm">0.75</span>;</div>
+          <div class="ann-note">The fade-out begins at 75% of the total lifespan.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">if</span> (age &lt;= tailStart) <span class="ky">return</span> riseE;</div>
+          <div class="ann-note">Before the fade starts, return the rise value (which is 1 for most of the node's life).</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> u = (age - tailStart) / (life - tailStart);</div>
+          <div class="ann-note">How far through the fade phase are we? 0 at the start of the fade, 1 at the very end.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">const</span> fade = <span class="nm">0.5</span> + <span class="nm">0.5</span> * Math.<span class="fn">cos</span>(u * Math.PI);</div>
+          <div class="ann-note">A cosine curve that goes from 1 to 0 smoothly. At u=0: cos(0)=1, so fade=1. At u=1: cos(π)=-1, so fade=0. The 0.5+0.5× scaling maps this to the 0–1 range.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> riseE * fade;</div>
+          <div class="ann-note">The final amplitude: the rise value (1 during most of life) multiplied by the fade curve.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- hitTest / hitLabel -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">hitTest</span>
+      <span class="fn-sig">( mx, my ) → placed node or null</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Checks whether a mouse position (mx, my) is close enough to any placed node's
+        center dot to count as clicking on it. Returns the node if there's a hit,
+        or null if the cursor isn't over any node. The companion function
+        <code>hitLabel</code> does the same check for the text labels.
+      </p>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">hitTest</span>(mx, my) {</div>
+          <div class="ann-note">Checks against the circular node dots.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">for</span> (<span class="ky">let</span> i = placed.length - <span class="nm">1</span>; i >= <span class="nm">0</span>; i--) {</div>
+          <div class="ann-note">Loop backwards through the array — newest nodes first. If nodes overlap, clicking hits the one placed most recently.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">    <span class="ky">const</span> p = placed[i];</div>
+          <div class="ann-note">Grab the node at this index.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">    <span class="ky">if</span> (Math.<span class="fn">hypot</span>(p.x - mx, p.y - my) &lt; <span class="nm">18</span>) <span class="ky">return</span> p;</div>
+          <div class="ann-note"><code>Math.hypot</code> computes straight-line distance using the Pythagorean theorem: √(dx² + dy²). If the cursor is within 18 pixels of the node center, it's a hit — return the node immediately.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  }</div>
+          <div class="ann-note"></div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  <span class="ky">return</span> <span class="ky">null</span>;</div>
+          <div class="ann-note">No node was close enough. Return null — the caller treats this as "nothing was clicked."</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+      <p class="fn-purpose" style="margin-top:1rem;">
+        <code>hitLabel</code> is nearly identical but checks against a rectangle — the bounding box
+        of each node's text label. Every frame, the draw loop stores each label's position and dimensions
+        in <code>p._labelRect</code>, which <code>hitLabel</code> reads. Clicking either the dot or
+        the label opens the project's URL.
+      </p>
+    </div>
+  </div>
+
+  <!-- ensureBuffer -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">ensureBuffer</span>
+      <span class="fn-sig">( W, H ) → void</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Makes sure the pixel buffer — the working grid the physics calculation writes into —
+        is the right size. If the canvas has been resized since the last frame,
+        it allocates a fresh buffer. Otherwise it reuses the existing one.
+        Buffer allocation is expensive, so this is called every frame but only does
+        real work when something has actually changed.
+      </p>
+      <div class="fn-io">
+        <div><div class="fn-io-label">Input</div><div class="fn-io-val">canvas width and height in CSS pixels</div></div>
+        <div><div class="fn-io-label">Output</div><div class="fn-io-val">none (updates module-level buffer variables)</div></div>
+      </div>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">const</span> bw = Math.<span class="fn">ceil</span>(W/CELL), bh = Math.<span class="fn">ceil</span>(H/CELL);</div>
+          <div class="ann-note">CELL is 3. A 900×600 canvas becomes a 300×200 buffer — 9× fewer calculations. Math.ceil rounds up so we don't cut off the edge.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">if</span> (bw !== bufW || bh !== bufH || !buf) {</div>
+          <div class="ann-note">Only rebuild if the dimensions changed or the buffer doesn't exist yet.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  buf = ctx.<span class="fn">createImageData</span>(bw, bh);</div>
+          <div class="ann-note">Allocate a new pixel buffer. Internally it's a flat array with 4 slots per pixel: Red, Green, Blue, Alpha. For a 300×200 buffer that's 240,000 numbers.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  prevBuf = <span class="ky">null</span>;</div>
+          <div class="ann-note">The previous frame's buffer is the wrong size now. Discard it — the temporal smoothing step will skip for one frame.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- reset -->
+  <div class="fn-card">
+    <div class="fn-header">
+      <span class="fn-name">reset</span>
+      <span class="fn-sig">( ) → void</span>
+    </div>
+    <div class="fn-body">
+      <p class="fn-purpose">
+        Clears everything. Called when the user clicks "Reset field."
+        Three things happen: the list of active wave sources is emptied,
+        the project rotation counter goes back to zero,
+        and the running clock resets to zero.
+      </p>
+      <div class="annotated">
+        <div class="ann-row">
+          <div class="ann-code"><span class="ky">function</span> <span class="fn">reset</span>() {</div>
+          <div class="ann-note"></div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  placed = [];</div>
+          <div class="ann-note">Empty the array. The next draw() call will find nothing in it and paint a blank field.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  projectIndex = <span class="nm">0</span>;</div>
+          <div class="ann-note">Start cycling through the project list from the beginning again.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">  tt = <span class="nm">0</span>;</div>
+          <div class="ann-note">Reset the clock to zero. Lifespans are measured relative to this clock — resetting it means every node placed after reset gets a fresh lifespan calculation.</div>
+        </div>
+        <div class="ann-row">
+          <div class="ann-code">}</div>
+          <div class="ann-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 8 ═══════════════ -->
+<section class="section" id="s8">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span>Level 4 · Full code</span></div>
+  <div class="section-label">Section 08</div>
+  <h2>One frame, in slow motion</h2>
+
+  <p>
+    The <code>draw()</code> function is where everything converges.
+    It runs roughly 60 times per second. Here's every step in order,
+    explained as if we could slow time down to watch it.
+  </p>
+
+  <h3>Step 1 — Update the clock</h3>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> now = performance.<span class="fn">now</span>();</div>
+      <div class="ann-note">Ask the browser for the current time in milliseconds. This is a high-precision timer — more accurate than a regular clock for animation work.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> dt = Math.<span class="fn">min</span>(<span class="nm">0.05</span>, (now - lastFrame) / <span class="nm">1000</span>);</div>
+      <div class="ann-note">How many seconds elapsed since the last frame? Divide by 1000 to convert from milliseconds. Cap at 0.05 seconds — if the browser tab was hidden, or the computer woke from sleep, we don't want a sudden massive time jump that breaks the physics.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">lastFrame = now;  tt += dt;</div>
+      <div class="ann-note">Record when this frame started. Advance the master clock by the elapsed time. tt is the central clock all lifespan and wave calculations read from.</div>
+    </div>
+  </div>
+
+  <h3>Step 2 — Apply drift (if enabled)</h3>
+  <p>
+    Drift makes placed nodes slowly wander, as if they have a small, organic restlessness.
+    It's disabled by default (drift=0) and only runs if the tuning config enables it.
+  </p>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">if</span> (RES_TUNE.drift > <span class="nm">0.001</span>) {</div>
+      <div class="ann-note">Only do drift math if it's actually configured — avoids unnecessary computation every frame.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  <span class="ky">const</span> settle = Math.<span class="fn">min</span>(<span class="nm">1</span>, age / <span class="nm">1.5</span>);</div>
+      <div class="ann-note">Nodes don't drift immediately. They take 1.5 seconds to "settle in" before drift reaches full strength. This prevents a freshly-placed node from sliding away from where you clicked.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  <span class="ky">const</span> mask = settle * settle * (<span class="nm">3</span> - <span class="nm">2</span> * settle);</div>
+      <div class="ann-note">Smooth the settle ramp (same smoothstep technique as the envelope). Drift fades in gradually.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  s.x += Math.<span class="fn">sin</span>(tt * <span class="nm">0.22</span> + i) * <span class="nm">0.30</span> * RES_TUNE.drift * mask * (dt * <span class="nm">60</span>);</div>
+      <div class="ann-note">Nudge X position by a tiny amount driven by a slow sine wave. Each node uses a different phase (the + i term) so they drift in different directions. Multiplying by (dt × 60) makes the drift speed frame-rate independent.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  s.y += Math.<span class="fn">cos</span>(tt * <span class="nm">0.19</span> + i * <span class="nm">1.3</span>) * <span class="nm">0.24</span> * RES_TUNE.drift * mask * (dt * <span class="nm">60</span>);</div>
+      <div class="ann-note">Same for Y but using cosine at a slightly different frequency. The combination of sine-X and cosine-Y at different frequencies creates a slow orbital drift rather than linear back-and-forth.</div>
+    </div>
+  </div>
+
+  <h3>Step 3 — Remove expired nodes</h3>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code">placed = placed.<span class="fn">filter</span>(p =></div>
+      <div class="ann-note">Filter creates a new array containing only items that pass the test. Items that fail are quietly discarded.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  !<span class="fn">isFinite</span>(p.lifespan) ||</div>
+      <div class="ann-note">Keep this node if its lifespan is Infinity (permanent nodes always pass)…</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  (tt - p.bornAt) &lt; p.lifespan + <span class="nm">0.1</span>);</div>
+      <div class="ann-note">…or keep it if its age is still within lifespan. The +0.1 second grace period ensures the fade-to-zero from the envelope function has time to fully complete before removal.</div>
+    </div>
+  </div>
+
+  <h3>Step 4 — Calculate the wave field</h3>
+  <p>
+    This is the innermost loop and the most computationally intensive step.
+    For each cell in the downsampled pixel grid:
+  </p>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> srcs = placed.<span class="fn">map</span>(p => { ... });</div>
+      <div class="ann-note">Pre-compute each node's current age, envelope value, wavefront radius, and color. Doing this once before the nested loops avoids recalculating it for every pixel.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">for</span> (<span class="ky">let</span> y = <span class="nm">0</span>; y &lt; bufH; y++) {</div>
+      <div class="ann-note">Outer loop over rows of the buffer.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  <span class="ky">for</span> (<span class="ky">let</span> x = <span class="nm">0</span>; x &lt; bufW; x++) {</div>
+      <div class="ann-note">Inner loop over columns. For each (x,y) we'll compute one pixel cell's color.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">    <span class="ky">if</span> (d > s.front || d > s.reach) <span class="ky">continue</span>;</div>
+      <div class="ann-note">Skip this source if the wavefront hasn't reached this cell yet, or if the cell is beyond the source's reach. This early exit is a critical optimization — on a large canvas, most source-pixel pairs fail this test, and the expensive cosine calculation below is skipped entirely.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">    <span class="ky">const</span> A = Math.<span class="fn">max</span>(<span class="nm">0</span>, <span class="nm">1</span> - d / s.reach) * (<span class="nm">1</span> / (<span class="nm">1</span> + d * <span class="nm">0.006</span>)) * s.env;</div>
+      <div class="ann-note">Amplitude at this point: starts at 1 near the source, falls off linearly with distance (first term), also diminishes with an inverse curve (second term), then scaled by the node's lifetime envelope (third term). All three factors combine.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">    <span class="ky">const</span> phase = k * d - k * propSpeed * s.age;</div>
+      <div class="ann-note">The wave phase at this point in space and time. k = 2π / wavelength. As d increases, the phase advances around the cycle — creating rings. As age increases, the rings scroll outward.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">    sumH += A * Math.<span class="fn">cos</span>(phase);</div>
+      <div class="ann-note">Add this source's contribution to the running total. Cosine of the phase gives the wave height at this location: oscillating between -A and +A. All sources are summed together — this is the interference calculation.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">    tintR += s.rgb[<span class="nm">0</span>] * A; tintG += s.rgb[<span class="nm">1</span>] * A; tintB += s.rgb[<span class="nm">2</span>] * A;</div>
+      <div class="ann-note">Accumulate color separately — weighted by each source's amplitude at this point. Dividing by sumAbsA later gives a blend of colors proportional to each source's influence.</div>
+    </div>
+  </div>
+
+  <h3>Step 5 — Convert wave value to color</h3>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> h01 = Math.<span class="fn">tanh</span>(sumH * <span class="nm">1.2</span>);</div>
+      <div class="ann-note">Compress the accumulated wave height through tanh. No matter how many waves pile up, the result stays between -1 and +1. The 1.2 multiplier adds a bit more contrast before compression.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> mix = h01 * energy * <span class="nm">0.42</span>;</div>
+      <div class="ann-note">Where the wave is positive, calculate a blend amount. 0.42 caps how saturated the color can get — even at peak constructive interference, you never reach pure project color. The effect stays subtle.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">R = R * (<span class="nm">1</span> - mix) + tr * mix;</div>
+      <div class="ann-note">Linear interpolation: mix between the background color (R, G, B) and the weighted project color (tr, tg, tb). This line handles red; two identical lines below handle green and blue.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> mix = -h01 * energy * <span class="nm">0.18</span>;</div>
+      <div class="ann-note">Where the wave is negative (troughs), blend toward near-black. Uses 0.18 rather than 0.42 — dark troughs are intentionally more subtle than bright peaks.</div>
+    </div>
+  </div>
+
+  <h3>Step 6 — Temporal smoothing</h3>
+  <p>
+    After the wave field is computed, each pixel is blended with the same pixel from
+    the previous frame. This is the single most visible quality enhancement:
+    it creates the soft, almost filmic quality of the animation.
+  </p>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code">a[i] = (a[i] * (<span class="nm">1</span> - smooth) + b[i] * smooth) | <span class="nm">0</span>;</div>
+      <div class="ann-note">At smoothing=0.55: each pixel is 45% the new frame and 55% the previous. Changes wash in gradually rather than switching abruptly. The <code>| 0</code> at the end truncates to an integer — pixel values must be whole numbers.</div>
+    </div>
+  </div>
+
+  <h3>Step 7 — Scale up and paint</h3>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code">tmpCtx.<span class="fn">putImageData</span>(buf, <span class="nm">0</span>, <span class="nm">0</span>);</div>
+      <div class="ann-note">Write the small buffer (say, 300×200 pixels) to a hidden off-screen canvas.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">ctx.<span class="fn">drawImage</span>(tmp, <span class="nm">0</span>, <span class="nm">0</span>, bufW, bufH, <span class="nm">0</span>, <span class="nm">0</span>, W, H);</div>
+      <div class="ann-note">Draw that small canvas stretched to fill the full display canvas. The browser applies bicubic interpolation as it scales — this blurs the block edges and makes the coarse grid look smooth rather than pixelated. A happy side effect of the performance tradeoff.</div>
+    </div>
+  </div>
+
+  <h3>Step 8 — Draw the node dots and labels</h3>
+  <p>
+    After the wave field is painted, the code draws each placed node on top:
+    a translucent halo (larger when hovered), a solid central dot, and the project name
+    as text in the node's color. The label's bounding rectangle is calculated and stored
+    in <code>p._labelRect</code> for hit-testing on the next click.
+    Node size and label font size both scale with the project's weight.
+  </p>
+
+  <h3>Step 9 — Request the next frame</h3>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="fn">requestAnimationFrame</span>(draw);</div>
+      <div class="ann-note">The last line of draw(). Register with the browser to call draw() again just before the next screen repaint. This is what creates the loop — the function schedules itself. It runs until the page closes.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ SECTION 9 ═══════════════ -->
+<section class="section" id="s9">
+  <div class="depth-badge"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span>Level 4 · Full code</span></div>
+  <div class="section-label">Section 09</div>
+  <h2>Author mode — tuning the field</h2>
+
+  <p>
+    There's a hidden control panel built into the hero. It's only visible when you open
+    the page with <code>?edit</code> appended to the URL —
+    like <code>/hero/resonance.html?edit</code>.
+    In normal production use, it's invisible.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">Why this exists</div>
+    <p>
+      Wave physics have many parameters that interact in non-obvious ways.
+      Rather than changing a number in the code, deploying to a live server, and looking at it —
+      the author panel lets you move sliders and watch the field respond in real time.
+      When it looks right, one button generates the complete config file, ready to paste in and deploy.
+      This is the tool I used to find the values currently live on the site.
+    </p>
+  </div>
+
+  <h3>How the panel activates</h3>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> IS_EDIT = <span class="ky">new</span> <span class="fn">URLSearchParams</span>(location.search).<span class="fn">has</span>(<span class="st">'edit'</span>);</div>
+      <div class="ann-note">Read the URL's query string. URLSearchParams is a browser built-in that parses "?key=value" strings. This checks whether "edit" appears as a key — without needing to parse the string manually.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">if</span> (IS_EDIT) document.body.classList.<span class="fn">add</span>(<span class="st">'edit'</span>);</div>
+      <div class="ann-note">If the URL contains ?edit, add the CSS class "edit" to the body element. The panel is hidden by default. The CSS rule <code>body.edit .tweaks { display: block }</code> makes it visible. A single class toggle — zero JavaScript beyond that.</div>
+    </div>
+  </div>
+
+  <h3>How sliders connect to the physics</h3>
+  <p>
+    Each slider is a standard HTML range input. When any slider moves, a function called
+    <code>syncTune()</code> reads all slider values, updates the <code>RES_TUNE</code> object,
+    and saves the state to the browser's local storage. Because <code>draw()</code>
+    reads from <code>RES_TUNE</code> on every frame, the wave field responds to slider
+    changes instantly — no reload, no delay.
+  </p>
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code">RES_TUNE.speed = <span class="fn">parseInt</span>(speed.value, <span class="nm">10</span>) / <span class="nm">100</span>;</div>
+      <div class="ann-note">The slider stores integers (0–200) to avoid floating-point quirks with range inputs. Dividing by 100 converts back to the decimal value (0–2.0) the physics expects.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">[speed, wl, drift, smooth, fade].<span class="fn">forEach</span>(el => el.<span class="fn">addEventListener</span>(<span class="st">'input'</span>, syncTune));</div>
+      <div class="ann-note">Wire all five sliders to syncTune in one line. Whenever any slider moves, syncTune fires.</div>
+    </div>
+  </div>
+
+  <h3>The project node editor</h3>
+  <p>
+    The author panel also shows every project node as an editable row.
+    You can rename nodes, adjust their weight, change their color,
+    edit their URL, or delete them. Each change is saved to local storage immediately.
+    A "Reset" button restores the default list.
+  </p>
+
+  <h3>Exporting the config</h3>
+  <p>
+    The Export Config button reads the current state of the colors, projects, and physics,
+    and assembles them into a complete JavaScript file — formatted exactly as
+    <code>hero-config.js</code> expects. It then copies this to the clipboard.
+    You paste it over <code>hero-config.js</code>, save the file, commit to git,
+    push to GitHub, and the Cloudflare deployment picks it up within about a minute.
+  </p>
+
+  <div class="annotated">
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">const</span> colorEntries = Object.<span class="fn">entries</span>(COLORS).<span class="fn">map</span>(([k, v]) =></div>
+      <div class="ann-note">Go through every entry in the COLORS object (each is a key-value pair)…</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code">  <span class="st">`  ${(k + ':').padEnd(11)} '${v}',`</span>).<span class="fn">join</span>(<span class="st">'\n'</span>);</div>
+      <div class="ann-note">…format each one as a line of JavaScript with the key padded to 11 characters for alignment. Join all lines with newlines.</div>
+    </div>
+    <div class="ann-row">
+      <div class="ann-code"><span class="ky">await</span> navigator.clipboard.<span class="fn">writeText</span>(out);</div>
+      <div class="ann-note">Write the assembled file string to the system clipboard. The await means we pause here until the clipboard operation completes (it's asynchronous because it requires browser permission).</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <p>
+      The full authoring loop: open <code>/hero/resonance.html?edit</code> while the local dev server runs → move sliders → Export Config → paste into <code>hero-config.js</code> → save → commit → push → trigger the deploy hook. The live site updates in about a minute.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="doc-footer">
+  <p>
+    Written as a companion to the <a href="/">Resonance Field</a> on atmarcus.net.
+    The full source code is available in the
+    <a href="https://github.com/sageframe-dharma/atmarcus.net" target="_blank" rel="noopener">sageframe-dharma/atmarcus.net</a>
+    repository on GitHub.
+  </p>
+  <p>
+    Built by <a href="/">Atticus Marcus</a> in vanilla JavaScript, HTML, and CSS.
+    No frameworks. No dependencies beyond the fonts.
+  </p>
+</footer>
+
+</div>
+</body>
+</html>
