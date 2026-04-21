@@ -48,5 +48,5 @@ window.HERO_RES_TUNE = {
   "wavelength": 66,
   "drift": 0.32,
   "smoothing": 0.55,
-  "fadeBase": 21
+  "fadeBase": 14
 };
