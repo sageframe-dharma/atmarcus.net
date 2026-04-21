@@ -360,16 +360,16 @@ code {
 
 /* ── Annotated code (side-by-side) ── */
 .annotated {
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
   margin: 1.1rem 0;
 }
 .ann-row {
-  display: block;
-  border-bottom: 3px solid var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
 }
-.ann-row:last-child { border-bottom: none; }
 .ann-code {
   background: #1e1c19;
   padding: 0.6rem 0.9rem;
