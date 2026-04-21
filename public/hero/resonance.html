@@ -404,11 +404,8 @@ function reachFor(w) {
   const u = (w - 1) / 9;
   return wavelengthFor(w) * (3 + u * 19);
 }
-/* Fade curve — tuned so default node mix all clear the field in reasonable time.
-   Only w >= 10 is permanent; everything else fades.
-   At fadeBase=20:  w1≈6s  w3≈10s  w5=20s  w7≈36s  w9≈60s                    */
+/* Fade curve — w1≈4s  w5=14s  w9≈38s  w10≈49s  (at fadeBase=14) */
 function lifespanFor(w) {
-  if (w >= 10) return Infinity;
   const base = RES_TUNE.fadeBase ?? 20;
   const u = (w - 1) / 9; // 0..1
   // Smooth ramp: 0.3 at w=1, 1.0 at w=5, 3.0 at w=9
