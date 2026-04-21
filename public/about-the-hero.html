@@ -449,6 +449,28 @@ code {
   color: var(--accent);
   font-weight: 500;
 }
+.demo-code {
+  background: #23201c;
+  color: #c8bfb4;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.65;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  border-top: 1px solid rgba(208,201,190,0.15);
+}
+.demo-code .ky  { color: #c87d4a; }
+.demo-code .fn  { color: #9cb8d4; }
+.demo-code .nm  { color: #b8a890; }
+.demo-code .cm  { color: #505858; font-style: italic; }
+.demo-code .vr  { color: #d4b896; }
+.demo-code .live-val {
+  color: #c45a2d;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
 
 /* ── Syntax token colors ── */
 .ky { color: #c87d4a; }      /* keyword: const, let, function, if, return */
@@ -698,24 +720,39 @@ code {
       <span class="demo-live" id="d1-fps">&mdash; fps</span>
     </div>
     <canvas id="d1" style="height:100px;"></canvas>
+    <div class="demo-code"><span class="cm">// These three variables drive the animation</span>
+<span class="ky">let</span> <span class="vr">speed</span>  = <span id="d1c-speed" class="live-val nm">5</span>;    <span class="cm">// how fast t advances each frame</span>
+<span class="ky">let</span> <span class="vr">trail</span>  = <span id="d1c-trail" class="live-val nm">10</span>;   <span class="cm">// how many ghost dots to draw</span>
+<span class="ky">let</span> <span class="vr">orbit</span>  = <span id="d1c-orbit" class="live-val nm">0.30</span>; <span class="cm">// orbit radius as fraction of canvas width</span>
+
+<span class="ky">function</span> <span class="fn">draw</span>() {
+  <span class="ky">const</span> <span class="vr">t</span> = frame * <span class="nm">0.022</span> * <span class="vr">speed</span>;
+  <span class="ky">for</span> (<span class="ky">let</span> i = <span class="vr">trail</span>; i &gt;= <span class="nm">0</span>; i--) {
+    <span class="ky">const</span> px = W/<span class="nm">2</span> + Math.<span class="fn">cos</span>(t - i*<span class="nm">0.055</span>) * W * <span class="vr">orbit</span>;
+    <span class="ky">const</span> py = H/<span class="nm">2</span> + Math.<span class="fn">sin</span>(t - i*<span class="nm">0.055</span>) * H * <span class="vr">orbit</span>;
+    <span class="cm">// older trail dots are more transparent</span>
+    ctx.<span class="fn">arc</span>(px, py, ...);
+  }
+  <span class="fn">requestAnimationFrame</span>(draw); <span class="cm">// schedule next frame</span>
+}</div>
     <div class="demo-controls">
-      <label class="demo-ctrl">Speed <input type="range" id="d1-speed" min="1" max="10" step="1" value="5"><span class="cv" id="d1-speedv">5×</span></label>
-      <label class="demo-ctrl">Trail <input type="range" id="d1-trail" min="2" max="24" step="1" value="10"><span class="cv" id="d1-trailv">10</span></label>
-      <label class="demo-ctrl">Orbit size <input type="range" id="d1-orbit" min="10" max="45" step="1" value="30"><span class="cv" id="d1-orbitv">30%</span></label>
+      <label class="demo-ctrl">speed <input type="range" id="d1-speed" min="1" max="10" step="1" value="5"><span class="cv" id="d1-speedv">5</span></label>
+      <label class="demo-ctrl">trail <input type="range" id="d1-trail" min="2" max="24" step="1" value="10"><span class="cv" id="d1-trailv">10</span></label>
+      <label class="demo-ctrl">orbit <input type="range" id="d1-orbit" min="10" max="45" step="1" value="30"><span class="cv" id="d1-orbitv">0.30</span></label>
     </div>
-    <div class="demo-caption">The dot redraws ~60&times; per second. The frame counter in the corner shows exactly how many times <code>draw()</code> has been called since you loaded this page. Each call schedules the next one via <code>requestAnimationFrame(draw)</code> &mdash; that&rsquo;s the loop. Use the sliders to change how fast the dot moves and how long the trail is.</div>
+    <div class="demo-caption">Drag the sliders and watch the values change <em>in the code above</em>. <code>speed</code> scales how fast <code>t</code> advances. <code>trail</code> controls how many ghost dots get drawn on each frame. <code>orbit</code> sets how wide the path is. The last line &mdash; <code>requestAnimationFrame(draw)</code> &mdash; is what keeps the loop going.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d1'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=100,frame=0,last=performance.now(),fpsF=0,fpsL=performance.now();
     const fpsEl=document.getElementById('d1-fps');
-    const sSpeed=document.getElementById('d1-speed'),vSpeed=document.getElementById('d1-speedv');
-    const sTrail=document.getElementById('d1-trail'),vTrail=document.getElementById('d1-trailv');
-    const sOrbit=document.getElementById('d1-orbit'),vOrbit=document.getElementById('d1-orbitv');
+    const sSpeed=document.getElementById('d1-speed'),vSpeed=document.getElementById('d1-speedv'),cSpeed=document.getElementById('d1c-speed');
+    const sTrail=document.getElementById('d1-trail'),vTrail=document.getElementById('d1-trailv'),cTrail=document.getElementById('d1c-trail');
+    const sOrbit=document.getElementById('d1-orbit'),vOrbit=document.getElementById('d1-orbitv'),cOrbit=document.getElementById('d1c-orbit');
     let speed=5,trail=10,orbit=0.30;
-    sSpeed.addEventListener('input',()=>{speed=+sSpeed.value;vSpeed.textContent=speed+'×';});
-    sTrail.addEventListener('input',()=>{trail=+sTrail.value;vTrail.textContent=trail;});
-    sOrbit.addEventListener('input',()=>{orbit=+sOrbit.value/100;vOrbit.textContent=sOrbit.value+'%';});
+    sSpeed.addEventListener('input',()=>{speed=+sSpeed.value;vSpeed.textContent=speed;cSpeed.textContent=speed;});
+    sTrail.addEventListener('input',()=>{trail=+sTrail.value;vTrail.textContent=trail;cTrail.textContent=trail;});
+    sOrbit.addEventListener('input',()=>{orbit=+sOrbit.value/100;vOrbit.textContent=orbit.toFixed(2);cOrbit.textContent=orbit.toFixed(2);});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);}
     sz();new ResizeObserver(sz).observe(c);
     function draw(now){
@@ -927,22 +964,32 @@ code {
   </div>
 
   <div class="demo">
-    <div class="demo-bar"><span>Live &middot; single wave source &middot; click to restart</span></div>
+    <div class="demo-bar"><span>Live &middot; single wave source &middot; click canvas to restart</span></div>
     <canvas id="d2" style="height:130px;"></canvas>
+    <div class="demo-code"><span class="cm">// The two parameters that define this wave</span>
+<span class="ky">const</span> <span class="vr">lam</span>  = <span id="d2c-lam" class="live-val nm">52</span>;  <span class="cm">// λ — wavelength in pixels (ring spacing)</span>
+<span class="ky">const</span> <span class="vr">spd</span>  = <span id="d2c-spd" class="live-val nm">55</span>;  <span class="cm">// wave propagation speed (px/s)</span>
+
+<span class="cm">// Derived — recalculated every frame</span>
+<span class="ky">const</span> <span class="vr">k</span>    = (<span class="nm">2</span> * Math.PI) / <span class="vr">lam</span>; <span class="cm">// wave number (radians per pixel)</span>
+<span class="ky">const</span> <span class="vr">front</span> = <span class="vr">t</span> * <span class="vr">spd</span>;            <span class="cm">// how far the wavefront has traveled</span>
+
+<span class="cm">// For each pixel cell:</span>
+<span class="ky">const</span> <span class="vr">height</span> = Math.<span class="fn">cos</span>( <span class="vr">k</span> * dist − <span class="vr">k</span> * <span class="vr">spd</span> * <span class="vr">t</span> );</div>
     <div class="demo-controls">
-      <label class="demo-ctrl">Wavelength λ <input type="range" id="d2-lam" min="16" max="100" step="2" value="52"><span class="cv" id="d2-lamv">52 px</span></label>
-      <label class="demo-ctrl">Speed <input type="range" id="d2-spd" min="10" max="120" step="5" value="55"><span class="cv" id="d2-spdv">55</span></label>
+      <label class="demo-ctrl">lam (λ) <input type="range" id="d2-lam" min="16" max="100" step="2" value="52"><span class="cv" id="d2-lamv">52</span></label>
+      <label class="demo-ctrl">spd <input type="range" id="d2-spd" min="10" max="120" step="5" value="55"><span class="cv" id="d2-spdv">55</span></label>
     </div>
-    <div class="demo-caption">One source at center. Each bright ring is a wave peak: the cosine cycling from +1 to &minus;1 and back as distance increases. Drag <strong>Wavelength</strong> to pack rings tighter or looser &mdash; smaller λ means more rings visible. Drag <strong>Speed</strong> to change how fast the wavefront expands. Click the canvas to restart.</div>
+    <div class="demo-caption">Drag <code>lam</code> to change ring spacing — the value you're dragging is the exact number passed to the wave equation as λ. Drag <code>spd</code> to change how fast the wavefront expands. Watch both values update in the code block above.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d2'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=130,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
-    const sLam=document.getElementById('d2-lam'),vLam=document.getElementById('d2-lamv');
-    const sSpd=document.getElementById('d2-spd'),vSpd=document.getElementById('d2-spdv');
+    const sLam=document.getElementById('d2-lam'),vLam=document.getElementById('d2-lamv'),cLam=document.getElementById('d2c-lam');
+    const sSpd=document.getElementById('d2-spd'),vSpd=document.getElementById('d2-spdv'),cSpd=document.getElementById('d2c-spd');
     let lam=52,spd=55;
-    sLam.addEventListener('input',()=>{lam=+sLam.value;vLam.textContent=lam+' px';});
-    sSpd.addEventListener('input',()=>{spd=+sSpd.value;vSpd.textContent=spd;});
+    sLam.addEventListener('input',()=>{lam=+sLam.value;vLam.textContent=lam;cLam.textContent=lam;});
+    sSpd.addEventListener('input',()=>{spd=+sSpd.value;vSpd.textContent=spd;cSpd.textContent=spd;});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=130;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
     sz();new ResizeObserver(sz).observe(c);
     const GR=[0xf5,0xf2,0xed],CR=[0x8b,0x5e,0x8b];
@@ -983,23 +1030,36 @@ code {
   <div class="demo">
     <div class="demo-bar"><span>Live &middot; two-source interference</span></div>
     <canvas id="d3" style="height:150px;"></canvas>
+    <div class="demo-code"><span class="cm">// Two source positions, one shared wavelength</span>
+<span class="ky">const</span> <span class="vr">lam</span>  = <span id="d3c-lam" class="live-val nm">48</span>;   <span class="cm">// shared λ — both sources same wavelength</span>
+<span class="ky">const</span> <span class="vr">gap</span>  = <span id="d3c-gap" class="live-val nm">0.40</span>; <span class="cm">// spacing as fraction of canvas width</span>
+<span class="ky">const</span> <span class="vr">spd</span>  = <span id="d3c-spd" class="live-val nm">50</span>;   <span class="cm">// wave speed (px/s)</span>
+
+<span class="ky">const</span> srcs = [
+  { x: W * (<span class="nm">0.5</span> − <span class="vr">gap</span>/<span class="nm">2</span>) },  <span class="cm">// left source (orange)</span>
+  { x: W * (<span class="nm">0.5</span> + <span class="vr">gap</span>/<span class="nm">2</span>) },  <span class="cm">// right source (blue)</span>
+];
+
+<span class="cm">// For each pixel, sum contributions from both sources:</span>
+<span class="ky">const</span> <span class="vr">k</span> = (<span class="nm">2</span> * Math.PI) / <span class="vr">lam</span>;
+<span class="vr">sumH</span> += A * Math.<span class="fn">cos</span>( <span class="vr">k</span> * dist − <span class="vr">k</span> * <span class="vr">spd</span> * t );</div>
     <div class="demo-controls">
-      <label class="demo-ctrl">Wavelength λ <input type="range" id="d3-lam" min="16" max="100" step="2" value="48"><span class="cv" id="d3-lamv">48 px</span></label>
-      <label class="demo-ctrl">Spacing <input type="range" id="d3-gap" min="10" max="80" step="2" value="40"><span class="cv" id="d3-gapv">40%</span></label>
-      <label class="demo-ctrl">Speed <input type="range" id="d3-spd" min="10" max="120" step="5" value="50"><span class="cv" id="d3-spdv">50</span></label>
+      <label class="demo-ctrl">lam (λ) <input type="range" id="d3-lam" min="16" max="100" step="2" value="48"><span class="cv" id="d3-lamv">48</span></label>
+      <label class="demo-ctrl">gap <input type="range" id="d3-gap" min="10" max="80" step="2" value="40"><span class="cv" id="d3-gapv">0.40</span></label>
+      <label class="demo-ctrl">spd <input type="range" id="d3-spd" min="10" max="120" step="5" value="50"><span class="cv" id="d3-spdv">50</span></label>
     </div>
-    <div class="demo-caption">Two sources (orange and blue), same wavelength. Drag <strong>Wavelength</strong> to change how fine the interference pattern is — shorter wavelengths pack more, narrower constructive arcs. Drag <strong>Spacing</strong> to move the sources apart or together and watch the pattern rotate and rescale. The math doesn't change, only the geometry does.</div>
+    <div class="demo-caption">Drag <code>lam</code> — a smaller wavelength packs more rings and creates a tighter interference pattern. Drag <code>gap</code> to move the two source positions and watch the pattern re-form around the new geometry. Every value you change maps directly to what appears in the code block above.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d3'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=150,bw=0,bh=0,tmp=null,tctx=null,imgD=null;
-    const sLam=document.getElementById('d3-lam'),vLam=document.getElementById('d3-lamv');
-    const sGap=document.getElementById('d3-gap'),vGap=document.getElementById('d3-gapv');
-    const sSpd=document.getElementById('d3-spd'),vSpd=document.getElementById('d3-spdv');
+    const sLam=document.getElementById('d3-lam'),vLam=document.getElementById('d3-lamv'),cLam=document.getElementById('d3c-lam');
+    const sGap=document.getElementById('d3-gap'),vGap=document.getElementById('d3-gapv'),cGap=document.getElementById('d3c-gap');
+    const sSpd=document.getElementById('d3-spd'),vSpd=document.getElementById('d3-spdv'),cSpd=document.getElementById('d3c-spd');
     let lam=48,gap=0.40,spd=50;
-    sLam.addEventListener('input',()=>{lam=+sLam.value;vLam.textContent=lam+' px';});
-    sGap.addEventListener('input',()=>{gap=+sGap.value/100;vGap.textContent=sGap.value+'%';});
-    sSpd.addEventListener('input',()=>{spd=+sSpd.value;vSpd.textContent=spd;});
+    sLam.addEventListener('input',()=>{lam=+sLam.value;vLam.textContent=lam;cLam.textContent=lam;});
+    sGap.addEventListener('input',()=>{gap=+sGap.value/100;vGap.textContent=gap.toFixed(2);cGap.textContent=gap.toFixed(2);});
+    sSpd.addEventListener('input',()=>{spd=+sSpd.value;vSpd.textContent=spd;cSpd.textContent=spd;});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;H=150;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);bw=Math.ceil(W/3);bh=Math.ceil(H/3);tmp=document.createElement('canvas');tmp.width=bw;tmp.height=bh;tctx=tmp.getContext('2d');imgD=tctx.createImageData(bw,bh);}
     sz();new ResizeObserver(sz).observe(c);
     const GR=[0xf5,0xf2,0xed],C1=[0xc4,0x5a,0x2d],C2=[0x3a,0x7c,0xa5];
@@ -1477,23 +1537,38 @@ code {
   <div class="demo">
     <div class="demo-bar"><span>Live &middot; envelope(age, lifespan) &mdash; amplitude over time</span></div>
     <canvas id="d4" style="height:110px;"></canvas>
+    <div class="demo-code"><span class="ky">function</span> <span class="fn">envelope</span>(age, lifespan) {
+  <span class="cm">// Rise: smoothstep from 0 → 1 over the first riseTime seconds</span>
+  <span class="ky">const</span> rise  = Math.<span class="fn">min</span>(<span class="nm">1</span>, age / <span id="d4c-rise" class="live-val nm">0.8</span>);
+  <span class="ky">const</span> riseE = rise * rise * (<span class="nm">3</span> − <span class="nm">2</span> * rise); <span class="cm">// smoothstep curve</span>
+
+  <span class="cm">// Fade: cosine taper starting at fadeStart × lifespan</span>
+  <span class="ky">const</span> tailStart = lifespan * <span id="d4c-fade" class="live-val nm">0.75</span>;
+  <span class="ky">if</span> (age &gt; tailStart) {
+    <span class="ky">const</span> u    = (age − tailStart) / (lifespan − tailStart);
+    <span class="ky">const</span> fade = <span class="nm">0.5</span> + <span class="nm">0.5</span> * Math.<span class="fn">cos</span>(u * Math.PI); <span class="cm">// 1 → 0</span>
+    <span class="ky">return</span> riseE * fade;
+  }
+  <span class="ky">return</span> riseE;
+}
+<span class="cm">// lifespan for this demo: </span><span id="d4c-life" class="live-val nm">10</span><span class="cm"> seconds</span></div>
     <div class="demo-controls">
-      <label class="demo-ctrl">Lifespan <input type="range" id="d4-life" min="3" max="30" step="0.5" value="10"><span class="cv" id="d4-lifev">10 s</span></label>
-      <label class="demo-ctrl">Fade start <input type="range" id="d4-fade" min="40" max="95" step="5" value="75"><span class="cv" id="d4-fadev">75%</span></label>
-      <label class="demo-ctrl">Rise time <input type="range" id="d4-rise" min="0.1" max="2.5" step="0.1" value="0.8"><span class="cv" id="d4-risev">0.8 s</span></label>
+      <label class="demo-ctrl">lifespan <input type="range" id="d4-life" min="3" max="30" step="0.5" value="10"><span class="cv" id="d4-lifev">10</span></label>
+      <label class="demo-ctrl">fadeStart <input type="range" id="d4-fade" min="40" max="95" step="5" value="75"><span class="cv" id="d4-fadev">0.75</span></label>
+      <label class="demo-ctrl">riseTime <input type="range" id="d4-rise" min="0.1" max="2.5" step="0.1" value="0.8"><span class="cv" id="d4-risev">0.8</span></label>
     </div>
-    <div class="demo-caption">The plum curve is the output of <code>envelope(age, lifespan)</code> over a full node lifetime. The orange dot marks the current moment. Drag <strong>Lifespan</strong> to extend or shorten the node. Drag <strong>Fade start</strong> to move where the tail decay begins (default 75%). Drag <strong>Rise time</strong> to make the attack slower or snappier.</div>
+    <div class="demo-caption">Every value you drag updates in the code above and reshapes the curve in real time. <code>riseTime</code> is the denominator in <code>age / riseTime</code> — bigger = slower attack. <code>fadeStart</code> is the multiplier on <code>lifespan</code> — 0.75 means the fade begins at 75% of life. <code>lifespan</code> is passed in directly as the second argument.</div>
   </div>
   <script>(function(){
     const c=document.getElementById('d4'),x2=window.devicePixelRatio||1,ctx=c.getContext('2d');
     let W=0,H=110,last=performance.now(),t=0;
-    const sLife=document.getElementById('d4-life'),vLife=document.getElementById('d4-lifev');
-    const sFade=document.getElementById('d4-fade'),vFade=document.getElementById('d4-fadev');
-    const sRise=document.getElementById('d4-rise'),vRise=document.getElementById('d4-risev');
+    const sLife=document.getElementById('d4-life'),vLife=document.getElementById('d4-lifev'),cLife=document.getElementById('d4c-life');
+    const sFade=document.getElementById('d4-fade'),vFade=document.getElementById('d4-fadev'),cFade=document.getElementById('d4c-fade');
+    const sRise=document.getElementById('d4-rise'),vRise=document.getElementById('d4-risev'),cRise=document.getElementById('d4c-rise');
     let LIFE=10,fadeStart=0.75,riseTime=0.8;
-    sLife.addEventListener('input',()=>{LIFE=+sLife.value;vLife.textContent=LIFE+' s';t=0;});
-    sFade.addEventListener('input',()=>{fadeStart=+sFade.value/100;vFade.textContent=sFade.value+'%';});
-    sRise.addEventListener('input',()=>{riseTime=+sRise.value;vRise.textContent=riseTime.toFixed(1)+' s';});
+    sLife.addEventListener('input',()=>{LIFE=+sLife.value;vLife.textContent=LIFE;cLife.textContent=LIFE;t=0;});
+    sFade.addEventListener('input',()=>{fadeStart=+sFade.value/100;vFade.textContent=fadeStart.toFixed(2);cFade.textContent=fadeStart.toFixed(2);});
+    sRise.addEventListener('input',()=>{riseTime=+sRise.value;vRise.textContent=riseTime.toFixed(1);cRise.textContent=riseTime.toFixed(1);});
     function sz(){const r=c.getBoundingClientRect();W=r.width||600;c.width=W*x2;c.height=H*x2;ctx.setTransform(x2,0,0,x2,0,0);}
     sz();new ResizeObserver(sz).observe(c);
     function env(age,l){const rise=Math.min(1,age/riseTime),rE=rise*rise*(3-2*rise);if(age>=l)return 0;const ts=l*fadeStart;if(age<=ts)return rE;const u=(age-ts)/(l-ts);return rE*(0.5+0.5*Math.cos(u*Math.PI));}
