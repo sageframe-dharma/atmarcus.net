@@ -122,7 +122,7 @@ function Chip({ children, color }) {
 }
 
 function StatusChip({ status }) {
-  const colors = { shipped: "#5a8a5a", "in development": "#c49a2a", proposed: C.inkMuted, draft: "#c49a2a", published: "#5a8a5a" };
+  const colors = { shipped: "#5a8a5a", "in production": "#5a8a5a", "in development": "#c49a2a", proposed: C.inkMuted, draft: "#c49a2a", published: "#5a8a5a" };
   return <Chip color={colors[status] || C.inkMuted}>{status}</Chip>;
 }
 
@@ -198,7 +198,8 @@ function App() {
           <Chip>integrated voice profiling</Chip>
           <Chip>in daily use since January 2026</Chip>
         </div>
-        <div style={{ marginTop: "1.5rem" }}>
+        <div style={{ marginTop: "1.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <ExtLink href="https://interference.sageframe.net">Interference — the instruments</ExtLink>
           <ExtLink href="https://sageframe.substack.com">Destructive Interference — forthcoming on Substack</ExtLink>
         </div>
       </Section>
@@ -209,11 +210,11 @@ function App() {
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: C.ground, marginBottom: "1.5rem" }}>The Ho System (歩)</h2>
         <Prose dark>A structured methodology for human-AI collaborative development. Not prompting — the development of judgment. The Ho System addresses the core bottleneck of the AI era: access to tools is universal, but the capacity to evaluate, direct, and maintain authority over AI-assisted work is not.</Prose>
         <Prose dark>The system operates at three levels: project framing (a four-document chain producing a buildable plan before any code is written), structured sessions with clear objectives and required reflection, and a progressive mastery model that adapts as the practitioner develops fluency. Seven months of methodology design preceded the first code commit. This sequencing is a core principle. The methodology emerged from Sageframe — a living knowledge architecture of 500+ documents built over a year of daily AI collaboration, where every question in this research program was first encountered.</Prose>
-        <Prose dark><strong style={{ color: C.ground }}>Evidence: seven production systems</strong> built from zero prior development experience, each documented from inception through deployment. Including Kanyō — a computer vision platform deployed at Harvard's Memorial Hall, developed in collaboration with Nobel laureate economist Claudia Goldin — and m4Bookmaker, a desktop application shipped on PyPI in 3.5 days.</Prose>
+        <Prose dark><strong style={{ color: C.ground }}>Evidence: 27 projects built, 19 running in production</strong> from zero prior development experience, each documented from inception through deployment. Including Kanyō — a computer vision platform deployed at Harvard's Memorial Hall, developed in collaboration with Nobel laureate economist Claudia Goldin — and m4Bookmaker, a desktop application shipped on PyPI in 3.5 days.</Prose>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
           <StatusChip status="shipped" />
           <Chip>open methodology</Chip>
-          <Chip>7 production systems</Chip>
+          <Chip>19 systems in production</Chip>
           <Chip>published documentation</Chip>
         </div>
         <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
@@ -261,10 +262,10 @@ function App() {
           <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
               <div style={{ fontFamily: F.display, fontSize: "1.05rem", color: C.ground }}>Shodo (書道)</div>
-              <StatusChip status="in development" />
+              <StatusChip status="in production" />
             </div>
             <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "#b0a99e" }}>AI conversation history as searchable, synthesizable knowledge. Not retrieval — pattern finding. Tracing intellectual threads, decision patterns, and evolving thinking across hundreds of conversations. Surfacing meta-patterns inaccessible from within any single conversation.</p>
-            <div style={{ marginTop: "0.75rem" }}><ExtLink href="https://github.com/sageframe-no-kaji/shodo">GitHub</ExtLink></div>
+            <div style={{ marginTop: "0.75rem" }}><ExtLink href="https://shodo.sageframe.net">Live demo</ExtLink></div>
           </div>
           <div style={{ padding: "1.25rem 1.5rem", background: C.darkBgDeep, border: "1px solid " + C.darkRule, borderRadius: 2 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
@@ -302,15 +303,18 @@ function App() {
         <h2 style={{ fontFamily: F.display, fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: "1.5rem" }}>*, Actually — Making Technical Knowledge Navigable</h2>
         <Prose>Technical knowledge is inaccessible — not because it's secret, but because it's structured wrong. Documentation mirrors the software's menu structure. Tutorials teach commands without understanding. Reference docs assume expertise the reader doesn't have. The result is a landscape with only two altitudes: dumbed-down tutorials that build no mental model, and expert-only references that assume you already have one.</Prose>
         <Prose>*, Actually is a design for a different kind of knowledge system — one organized around mental models and relationships between concepts, not product features or chapter order. Each concept carries authored depth layers: name, definition, usage, relationships, full theory. You enter from your question, navigate by concept, and stop when you understand. The individual principles (progressive disclosure, knowledge graphs, depth-layered content) are established. The synthesis — authored depth layers, question-based entry, and spatial navigation in a single designed experience — is new.</Prose>
-        <Prose>SSH, Actually is the first content set — a complete guide to SSH, keys, and modern authentication, published as a static document. The interactive navigable version is designed but not yet built. The system is domain-agnostic: any field where understanding requires navigating relationships between concepts.</Prose>
+        <Prose>SSH, Actually is the first content set — a complete guide to SSH, keys, and modern authentication. Ho System, Actually followed, presenting the methodology as an explorable graph. Both are live at star-actually.sageframe.net. The system is domain-agnostic: any field where understanding requires navigating relationships between concepts.</Prose>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
-          <StatusChip status="in development" />
-          <Chip>SSH, Actually guide released</Chip>
-          <Chip>interactive system designed</Chip>
+          <StatusChip status="shipped" />
+          <Chip>two content sets live</Chip>
+          <Chip>SSH · Ho System</Chip>
           <Chip>domain-agnostic</Chip>
         </div>
         <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
-          <ExtLink href="https://github.com/sageframe-no-kaji/ssh-actually">SSH, Actually — guide on GitHub</ExtLink>
+          <ExtLink href="https://star-actually.sageframe.net">star-actually.sageframe.net</ExtLink>
+          <ExtLink href="https://star-actually.sageframe.net/ssh-actually">SSH, Actually</ExtLink>
+          <ExtLink href="https://star-actually.sageframe.net/ho-actually">Ho System, Actually</ExtLink>
+          <ExtLink href="https://github.com/sageframe-no-kaji/ssh-actually">GitHub</ExtLink>
           <ExtLink href="../about-the-hero">See the progressive-depth approach applied to a different domain</ExtLink>
         </div>
       </Section>
