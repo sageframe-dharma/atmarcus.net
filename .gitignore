@@ -22,3 +22,6 @@ dist/
 .idea/
 *.swp
 *.swo
+
+# Ho process (private — repo is public)
+ho-process/
