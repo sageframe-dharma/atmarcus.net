@@ -3,3 +3,6 @@
 
 /hero/resonance.html
   Cache-Control: no-store
+
+/teaching/*
+  X-Robots-Tag: noindex

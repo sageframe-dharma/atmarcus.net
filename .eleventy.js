@@ -3,6 +3,8 @@ module.exports = function (eleventyConfig) {
   // (public/work/*.html files contain JSX-style {{ syntax that would break the template parser)
   eleventyConfig.addPassthroughCopy('public/img');
   eleventyConfig.addPassthroughCopy('public/work');
+  eleventyConfig.addPassthroughCopy('public/architecture');
+  eleventyConfig.addPassthroughCopy('public/teaching');
   eleventyConfig.addPassthroughCopy('public/hero');
   eleventyConfig.addPassthroughCopy('public/favicon.svg');
   eleventyConfig.addPassthroughCopy('public/_headers');
