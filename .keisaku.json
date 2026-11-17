@@ -1,0 +1,55 @@
+{
+  "keisaku": 1,
+  "works": [
+    {
+      "id": "atmarcus-net",
+      "name": "atmarcus.net",
+      "tags": [
+        "javascript",
+        "11ty-eleventy",
+        "rss-parser"
+      ],
+      "media": [
+        "software"
+      ],
+      "status": "shipped",
+      "repo": "git@github-dharma:sageframe-dharma/atmarcus.net.git",
+      "tech_stack": "JavaScript (@11ty/eleventy, rss-parser)",
+      "created": "2026-02-25",
+      "last_updated": "2026-09-17",
+      "headline": "Chat B: invoke /design with the two content-spec files (the prompt's Chat B section).",
+      "state": {
+        "stage": "production",
+        "last": "2026-09-16: Chat A of `ho-process/prompts/design-portfolio-teaching.md` done for both pages. `~/Nagare/Peronal Files/Professional/Web-Portfolio/content-spec-architecture.md` (59 images, 8 entries) and `content-spec-teaching.md` (~175 images, 4 loops, 6 lite embeds, 13 additional studios) written; settled selection reviews beside them; web masters processed to `Web-Portfolio/architecture/processed/` and `Web-Portfolio/teaching/processed/` with manifests. Rulings recorded in auto-memory (`portfolio-source-material`). No site code changed.",
+        "next": "Chat B: invoke `/design` with the two content-spec files (the prompt's Chat B section). Then build the two static pages from the design.",
+        "holdup": "Open questions listed at the end of each spec (CV PDF missing from the repo; Wearable Bioreactors year label; four unconfirmed attributions; name-bearing images tracked for later; Accoya rights; optional extra studios from the NuVu inventory). None blocks Chat B.",
+        "as_of": "2026-09-16"
+      },
+      "_keisaku": {
+        "generated_at": "2026-11-16T10:49:46",
+        "generator_version": "1",
+        "sources": {
+          "readme": "README.md",
+          "contract": "ho-process/kamae-6-atmarcus-net-state-memory.md",
+          "manifest": "package.json"
+        },
+        "derived_defaults": {
+          "id": "atmarcus-net",
+          "name": "atmarcus.net",
+          "media": [
+            "software"
+          ],
+          "status": "shipped",
+          "created": "2026-02-25",
+          "tags": [
+            "javascript",
+            "11ty-eleventy",
+            "rss-parser"
+          ],
+          "headline": "Chat B: invoke /design with the two content-spec files (the prompt's Chat B section)."
+        },
+        "contract_issues": []
+      }
+    }
+  ]
+}
